@@ -1,0 +1,9 @@
+# Neuropixels Python port — pinned runtime dependencies
+# Tested with Python 3.10–3.13 (uses str | None union syntax, requires >=3.10).
+#
+# Install:  pip install -r requirements.txt
+
+numpy==2.0.2
+scipy==1.14.1
+matplotlib==3.9.2
+h5py==3.11.0
