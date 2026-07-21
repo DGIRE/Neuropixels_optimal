@@ -1,0 +1,222 @@
+analysis:
+  acceptance_criteria:
+  - comparison_method: distributional
+    level: 3
+    output_id: RESULT-mrl
+    tolerance: distributional; MRL within 1e-6 on fixture slice
+  - comparison_method: circular_phase
+    level: 3
+    output_id: RESULT-phase
+    tolerance: circular distance < 1e-6 on fixture slice
+  - comparison_method: statistical_decision
+    level: 3
+    output_id: RESULT-stat
+    tolerance: same significance decision on full workload
+  - comparison_method: exact
+    level: 1
+    output_id: RESULT-qc-counts
+    tolerance: exact integer counts
+  aggregation:
+  - per-unit MRL and preferred phase over valid-sniff spikes, then per-animal mean,
+    ethanol vs control
+  analysis_definition: From the SNF sniff-sensor signal (NOT the LFP), detect valid
+    sniff segments and compute instantaneous sniff phase via the validated compute_sniff_phase;
+    assign each spike the SNF phase at its spike time, restricted to valid sniff periods;
+    per unit compute phase-locking (mean resultant length, MRL) and preferred phase;
+    compare ethanol vs control at the animal level.
+  assumptions:
+  - sniff detection + phase use compute_sniff_phase GUI-default thresholds (pinned)
+  - SNF sampled at LV_Fs (~125 Hz); spikes and SNF share the LabView/SpikeGLX clock
+    via the loader
+  data_provenance:
+    pinning_status: location as-stated in the request document; the exact session
+      list + a data-manifest hash must be pinned before Red-tier execution
+    source_refs:
+    - DATA-001
+    stated_in_request:
+    - 'Data location: pull data from multiple dated experiments under X:\GireLab Data\Room
+      359\NPDATA\DATA, using the recording sessions dated 11/1/2021, 11/3/2021, 12/15/2021,
+      5/17/2022, 6/24/2022, and 9/14/2022.'
+  docx_source_refs:
+    data_provenance:
+    - DATA-001
+  experimental_structure: Independent unit = animal (n animals); trials nested within
+    animal; units nested within animal. Statistics at the animal level (no pseudoreplication).
+  failure_conditions:
+  - SNF / spike clock misalignment detected
+  - fixture slice disagreement beyond tolerance
+  - no valid sniff segments detected in an experiment
+  inclusion_exclusion: Include only spikes falling in valid detected sniff segments;
+    exclude SNF sections flagged non-sniffing / noise. Exclude units with < 0.1 Hz
+    firing or < 50 valid-sniff spikes in a condition. Every discarded SNF section
+    is logged (experiment, time range, reason) for the QC document.
+  inputs:
+  - fields:
+    - SNF
+    - sp.st
+    - sp.clu
+    - ETH
+    - LV_Fs
+    - sniff_onsets
+    from: load_experiment_data
+    object: D-dict
+  - description: raw sniff-sensor (thermistor/pressure) signal
+    object: SNF
+    rate_Hz_source: LV_Fs (~125 Hz)
+  - object: spike_times
+    source: Kilosort dir
+    units: seconds
+  multiple_comparison: Benjamini-Hochberg FDR across units for per-unit reporting
+    only
+  preprocessing:
+  - detect sniff segments from SNF via compute_sniff_phase (GUI-default thresholds,
+    pinned)
+  - reject SNF segments flagged as noise / non-sniffing; keep only valid detected
+    sniffs
+  - sniff phase from the analytic signal of the (valid) SNF; circular statistics for
+    phase
+  prohibited_changes:
+  - using the LFP (instead of the SNF signal) for phase — SNF is required
+  - including SNF sections flagged noise / non-sniffing
+  - editing Optimized Python kernel files, Golden Fixtures, or tolerance config
+  - changing sniff-detection thresholds without human sign-off
+  randomization_seed: '5489'
+  required_outputs:
+  - desc: per-unit + per-animal MRL by condition (valid sniffs only)
+    result_id: RESULT-mrl
+    type: table
+  - desc: preferred SNF phase by condition
+    result_id: RESULT-phase
+    type: table
+  - desc: paired animal-level test + effect size + exact p
+    result_id: RESULT-stat
+    type: object
+  - desc: per-experiment n_sniffs / n_neurons / n_trials used
+    result_id: RESULT-qc-counts
+    type: table
+  - desc: per-experiment discarded SNF sections + reason
+    result_id: RESULT-qc-discards
+    type: table
+  - desc: SEPARATE QC/data document bundling the sniff-example figures + counts +
+      discard log
+    result_id: RESULT-qc-doc
+    type: document
+  required_validated_functions:
+  - compute_sniff_phase
+  - compute_spike_phase
+  - load_experiment_data
+  risk: red
+  scientific_question: Does ethanol exposure alter the phase-locking of olfactory-bulb
+    single-unit spikes to the sniff (SNF sensor) signal phase, relative to control
+    trials?
+  statistical_model: Paired comparison across animals (ethanol vs control) of animal-mean
+    MRL; circular test for preferred-phase shift; effect sizes and exact p reported.
+  status: confirmatory
+  task_id: NP-DEMO-1
+contract_version: 1
+figures:
+- axis_requirements:
+    log_scale: false
+    truncation_permitted: false
+    x_label: SNF sniff phase (rad)
+    y_label: spike rate (norm.) / MRL
+    zero_reference: true
+  caption_requirements:
+  - state n_animals and n_units per condition (computed, not typed)
+  - state exact p and effect size from RESULT-stat
+  docx_source_refs: {}
+  figure_id: FIG-DEMO1-01
+  panels: []
+  quality:
+    colorblind_review: true
+    min_font: 7
+    raster_dpi: 300
+    vector: true
+  required: true
+  scientific_purpose: Show the population shift in spike-SNF phase locking with ethanol,
+    with the raw per-unit distribution visible (not just summary bars).
+  sketch_guidance:
+    intent: Follow the layout of the included sketch (overlaid ethanol/control population
+      curves across sniff phase, per-unit points behind). Layout/overlay/annotation
+      only — values, N, error bars, axis units and no-truncation come from the contract
+      + results, never the sketch.
+    source: figure_examples/Demo figure.bmp
+  source_results:
+  - RESULT-mrl
+  - RESULT-phase
+  - RESULT-stat
+  statistical_annotations:
+    exact_p_values: true
+    permitted_tests:
+    - paired_animal_level
+    significance_stars: false
+  title: Ethanol vs control phase-locking of OB units to the sniff (SNF) signal
+  visual_encoding:
+    condition_mapping:
+      control: dashed
+      ethanol: solid
+    raw_data_also_available: true
+- axis_requirements:
+    log_scale: false
+    truncation_permitted: false
+    x_label: time (s)
+    y_label: SNF signal (a.u.)
+    zero_reference: false
+  caption_requirements:
+  - one panel per experiment, labeled by session date
+  - state n_sniffs / n_neurons / n_trials for that experiment (computed)
+  docx_source_refs: {}
+  figure_id: FIG-DEMO1-QC
+  panels: []
+  quality:
+    colorblind_review: true
+    min_font: 7
+    raster_dpi: 300
+    vector: true
+  required: true
+  scientific_purpose: For each experiment, show a representative SNF trace with detected
+    sniff segments highlighted and discarded (noise / non-sniffing) sections marked,
+    so the reader can see what counted as a valid sniff.
+  source_results:
+  - RESULT-qc-counts
+  - RESULT-qc-discards
+  statistical_annotations:
+    exact_p_values: false
+    permitted_tests: []
+    significance_stars: false
+  title: Example sniffing per experiment (interim QC)
+  visual_encoding:
+    condition_mapping:
+      discarded: shaded
+      valid_sniff: solid
+    raw_data_also_available: true
+open_decisions: []
+report:
+  appendices:
+  - 'SEPARATE QC/data document (RESULT-qc-doc): per-experiment sniff-example figures
+    (FIG-DEMO1-QC), n_sniffs / n_neurons / n_trials, and a discarded-section log (experiment,
+    time range, reason).'
+  docx_source_refs: {}
+  intended_audience: lab + demo
+  output_filename: NP-DEMO-1_ethanol_sniff_phase_locking.docx
+  reporting_rules:
+    exact_N: true
+    prohibit_causal_language: false
+    prohibit_uncontracted_post_hoc: true
+    report_effect_sizes: true
+    report_exact_p: true
+    report_exclusions: true
+    separate_qc_document_required: true
+  required_figures:
+  - FIG-DEMO1-01
+  required_sections:
+  - Question
+  - Methods
+  - Results
+  - Figure
+  - Limitations
+  required_tables:
+  - RESULT-mrl
+  - RESULT-phase
+  scientific_status: confirmatory
+task_id: NP-DEMO-1
