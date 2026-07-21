@@ -1,0 +1,145 @@
+task_id: NP-DEMO-1
+contract_version: 1
+p3_status: PARTIAL  # code implemented and validated; full 6-session run blocked by data access
+
+# ============================================================
+# P3 EXECUTION SUMMARY
+# ============================================================
+p3_steps_completed:
+  1_cartography: DONE
+    file: cartography.yaml
+  2_oracle: DONE
+    file: ../03_software/test_np_demo1_oracle.py
+    tests: 13 synthetic microcases, all analytically grounded
+  3_implementation: DONE
+    file: ../03_software/np_demo1_analysis.py
+    oracle_gate: 13/13 PASS
+  4_numeric_gate: DONE
+    gates_passed: 5
+    details:
+      - valid_sniff_mask: 2,015,166 valid of 2,036,596 spikes; all -1 sentinels excluded
+      - mrl_and_preferred_phase: 20-unit spot-check vs direct formula, worst diff 1.11e-16
+      - unit_included: 69 of 379 units excluded by rate < 0.1 Hz — matches golden unitFiringRate
+      - sentinel/NaN consistency: all 379 units consistent with kernel unitMeanSniffPhase NaN pattern
+      - classify_ethanol: exact boolean match vs direct formula across all 2,036,596 spikes
+  5_independent_rederive: DONE
+    file: rederive_check.py
+    three_way_agreement:
+      stage_A_mrl: worst diff 1.11e-16 (tol 1e-12) — PASS
+      stage_A_phase: worst diff 2.665e-15 (tol 1e-12) — PASS
+      stage_C_ethanol: exact boolean match — PASS
+      stage_D_rank_biserial: worst diff 1.11e-16 (tol 1e-10) — PASS
+  6_rng_gate: N/A  # no stochastic stages; Wilcoxon is deterministic
+  7_scientific_audit: DONE
+    verdict: NO BLOCKERS; NO MAJORS
+    minors:
+      - MINOR-1: no fixture-anchored level-3 test against real experiment slices
+        (deferred until X drive accessible; oracle is synthetic only)
+      - MINOR-2: _discard_runs reason labels are duration heuristics, not kernel noise flags
+        (cosmetic; does not affect inclusion logic; requires caption clarification in QC doc)
+      - MINOR-3: n_neurons_valid counts condition-OR; differs from animals entering paired stat
+        (requires caption definition in QC doc)
+  8_freeze_results: PARTIAL  # see DATA_BLOCKER below
+
+# ============================================================
+# DATA BLOCKER — requires user action
+# ============================================================
+DATA_BLOCKER:
+  description: >-
+    Raw data drive X:\GireLab Data\Room 359\NPDATA\DATA is not mounted in this
+    session. The full 6-session analysis (DATA-001, sessions 11/1/2021, 11/3/2021,
+    12/15/2021, 5/17/2022, 6/24/2022, 9/14/2022) cannot run without it.
+  required_action: >-
+    Mount the X: drive (or copy data to an accessible path) and run:
+      python _pipeline/NP-DEMO-1/03_software/np_demo1_analysis.py
+    or use the run_multi_session_analysis() entry point with the six session directories.
+  session_dirs_needed:
+    - "X:\\GireLab Data\\Room 359\\NPDATA\\DATA\\<session_dir_11_1_2021>"
+    - "X:\\GireLab Data\\Room 359\\NPDATA\\DATA\\<session_dir_11_3_2021>"
+    - "X:\\GireLab Data\\Room 359\\NPDATA\\DATA\\<session_dir_12_15_2021>"
+    - "X:\\GireLab Data\\Room 359\\NPDATA\\DATA\\<session_dir_5_17_2022>"
+    - "X:\\GireLab Data\\Room 359\\NPDATA\\DATA\\<session_dir_6_24_2022>"
+    - "X:\\GireLab Data\\Room 359\\NPDATA\\DATA\\<session_dir_9_14_2022>"
+  run_command: >-
+    cd "C:\Projects\Repos\Neuropixels\_pipeline\NP-DEMO-1\03_software"
+    && "C:\Users\david\anaconda3\python.exe" run_analysis_np_demo1.py
+
+# ============================================================
+# PARTIAL RESULTS (single fixture session, validation only)
+# ============================================================
+fixture_session_partial_results:
+  description: >-
+    Results below are from the single golden-fixture session (not one of the 6
+    DATA-001 sessions). Used for code validation only — NOT the analysis result.
+    NB: this session has 99% ethanol spikes due to ETH_thr > 0.11 for nearly
+    all time; this imbalance is likely not representative of the 6 actual sessions.
+  n_units: 379
+  n_sniffs: 3852
+  n_trials: 45
+  n_included_ethanol: 310
+  n_included_control: 152
+  animal_mean_MRL_ethanol: 0.025159
+  animal_mean_MRL_control: 0.098112
+  note: >-
+    Control MRL > Ethanol MRL in fixture — likely an imbalance artifact (99%
+    ethanol, 1% control spikes in this session). Do not interpret scientifically.
+
+# ============================================================
+# REQUIRED RESULT OBJECTS (to be populated on full run)
+# ============================================================
+required_outputs:
+  RESULT-mrl:
+    status: PENDING_DATA
+    description: per-unit + per-animal MRL by condition (valid sniffs only)
+    source_function: run_multi_session_analysis -> 'RESULT-mrl' key
+    acceptance_criteria:
+      level: 3
+      tolerance: distributional; MRL within 1e-6 on fixture slice
+      comparison_method: distributional
+
+  RESULT-phase:
+    status: PENDING_DATA
+    description: preferred SNF phase by condition
+    source_function: run_multi_session_analysis -> 'RESULT-phase' key
+    acceptance_criteria:
+      level: 3
+      tolerance: circular distance < 1e-6 on fixture slice
+      comparison_method: circular_phase
+
+  RESULT-stat:
+    status: PENDING_DATA
+    description: paired animal-level test + effect size + exact p
+    source_function: paired_animal_test (called by run_multi_session_analysis)
+    requires_n_animals: 2  # minimum for Wilcoxon; contract implies 6
+    notes: >-
+      Cannot compute from single fixture session. Wilcoxon exact mode requires
+      at least 2 paired animals. Full 6-session run required.
+
+  RESULT-qc-counts:
+    status: PENDING_DATA
+    description: per-experiment n_sniffs / n_neurons / n_trials used
+    source_function: qc_counts (called in run_multi_session_analysis)
+    acceptance_criteria:
+      level: 1
+      tolerance: exact integer counts
+      comparison_method: exact
+
+  RESULT-qc-discards:
+    status: PENDING_DATA
+    description: per-experiment discarded SNF sections + reason
+    source_function: _discard_runs (called in run_session)
+
+  RESULT-qc-doc:
+    status: PENDING_P4
+    description: SEPARATE QC/data document (figures + counts + discard log)
+    notes: P4 figure-building step; depends on RESULT-qc-counts and RESULT-qc-discards
+
+# ============================================================
+# KERNEL NON-REGRESSION
+# ============================================================
+kernel_tests:
+  status: PASS
+  n_tests: 18
+  run: "C:\\Users\\david\\anaconda3\\python.exe -m pytest tests/ -q"
+  timestamp: "2026-07-21"
+  note: Kernel untouched — implementation is additive caller only

@@ -1,0 +1,26 @@
+active_run_id: null
+approved_contract_version: 1
+blocking_findings:
+  - id: DATA_BLOCKER
+    type: environment
+    severity: blocking_for_full_run
+    description: >-
+      Raw data drive X:\GireLab Data\Room 359\NPDATA\DATA is not mounted.
+      P3 code is fully implemented and validated (oracle 13/13, numeric gate
+      5/5, three-way agreement, scientific audit PASS). Full 6-session result
+      objects require X drive access. Run run_analysis_np_demo1.py when mounted.
+    action_required: mount_x_drive_and_rerun
+data:
+  approved_contract_version: 1
+  project_dir: C:\Projects\Repos\Neuropixels
+  p3_completed: true
+  oracle_tests: 13/13
+  kernel_tests: 18/18
+  scientific_audit: PASS_NO_BLOCKERS
+  data_drive: NOT_MOUNTED
+next_permitted_actions:
+- MOUNT_DATA_DRIVE_AND_RERUN
+- P4_FIGURES_IF_DATA_AVAILABLE
+risk: red
+state: P3_CODE_COMPLETE_AWAITING_DATA
+task_id: NP-DEMO-1

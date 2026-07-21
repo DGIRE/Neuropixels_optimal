@@ -1,0 +1,105 @@
+task_id: NP-DEMO-1
+generated_by: repository-cartographer
+kernel_root: C:\Projects\Repos\Neuropixels\Optimized Python
+extension_point: C:\Projects\Repos\Neuropixels\_pipeline\NP-DEMO-1\03_software
+
+reusable_functions:
+  compute_sniff_phase:
+    file: C:\Projects\Repos\Neuropixels\Optimized Python\analyses\compute_sniff_phase.py
+    signature: "def compute_sniff_phase(D: dict, threshold_std: float = -0.5) -> dict"
+    returns: "dict with SNF_filt, SNF_z, SNF_PH, sniff_onsets, sniff_onsets_s, sniff_dur_s, sniff_thr"
+    notes: >-
+      Port of MATLAB compute_sniff_phase.m. Low-pass FIR filtering (order 20, 40 Hz),
+      z-score normalization (ddof=1), downward threshold crossing with MIN_ISI rejection,
+      per-onset phase ramps (0..1 capped at 0.5 s, -1 outside cycles). threshold_std
+      defaults to -0.5 (GUI-default, PINNED — must not change without human sign-off).
+      Uses matlab_round for MAX_DUR/MIN_ISI scalar computations (HAZ-001 mitigation).
+
+  compute_spike_phase:
+    file: C:\Projects\Repos\Neuropixels\Optimized Python\analyses\compute_spike_phase.py
+    signature: "def compute_spike_phase(D: dict, optimized: bool | None = None) -> dict"
+    returns: "dict with spike_SNF_PH (phase at each spike), unitMeanSniffPhase (mean per unit; NaN if <5 valid spikes)"
+    notes: >-
+      Requires D keys: SNF_PH, sniff_onsets, spikeTimes, sp.clu, unitIDs, LV_Fs, SNF.
+      Valid phase = SNF_PH >= 0 (sentinel -1 = outside sniff cycle). Time-index mapping
+      via matlab_round(spike_time_s * LV_Fs), clamped to [0, nLV-1].
+      Optimized path (bincount) == baseline to 1e-12 tolerance.
+
+  load_experiment_data:
+    file: C:\Projects\Repos\Neuropixels\Optimized Python\load_experiment_data.py
+    signature: "def load_experiment_data(files: dict, checkpoint_dir: str | None = None) -> dict"
+    returns: >-
+      dict D with: LabView sensor data (ETH, SNF, TR, TS, FR, LV_Fs); LFP (filtered &
+      downsampled); spike data (spikeTimes, sp, unitIDs, unitDepths, unitAmps,
+      unitFiringRate, sniff_onsets from loader).
+    notes: >-
+      Loads .dat (LabView), .bin (SpikeGLX LFP), and Kilosort output.
+      E1 optimization: vectorized per-unit aggregation (float64, rtol=1e-5 vs baseline).
+      E2 optimization: fast noise exclusion. checkpoint_dir saves intermediates.
+      SNF at LV_Fs (~125 Hz); spikes at NP_Fs (~30 kHz); shared clock via driftmap.
+
+fixtures:
+  - name: SNF_raw
+    path: C:\Projects\Repos\Neuropixels\Golden Fixtures\01_labview\SNF.npy
+    description: "Raw sniff sensor counts, (134950,) float64; rtol=1e-12, atol=1e-12"
+  - name: SNF_filt
+    path: C:\Projects\Repos\Neuropixels\Golden Fixtures\08_sniff_phase\SNF_filt.npy
+    description: "FIR low-pass filtered SNF, same shape; max|delta| < 9.5e-7"
+  - name: SNF_z
+    path: C:\Projects\Repos\Neuropixels\Golden Fixtures\08_sniff_phase\SNF_z.npy
+    description: "Z-scored SNF (ddof=1); rtol=1e-12, max|delta| < 3.5e-12"
+  - name: SNF_PH
+    path: C:\Projects\Repos\Neuropixels\Golden Fixtures\08_sniff_phase\SNF_PH.npy
+    description: "Sniff phase (0-1 in cycle, -1 outside); rtol=1e-12"
+  - name: sniff_onsets
+    path: C:\Projects\Repos\Neuropixels\Golden Fixtures\08_sniff_phase\sniff_onsets.npy
+    description: "Sniff onset sample indices (3852 onsets); bit-exact"
+  - name: spike_SNF_PH
+    path: C:\Projects\Repos\Neuropixels\Golden Fixtures\10_spike_phase\spike_SNF_PH.npy
+    description: "Phase at each spike (nearest LV index); rtol=1e-12"
+  - name: unitMeanSniffPhase
+    path: C:\Projects\Repos\Neuropixels\Golden Fixtures\10_spike_phase\unitMeanSniffPhase.npy
+    description: "Mean phase per unit (NaN if <5 valid spikes); rtol=1e-12, equal_nan=true"
+  - name: unitIDs
+    path: C:\Projects\Repos\Neuropixels\Golden Fixtures\07_units\unitIDs.npy
+    description: "Cluster IDs of included units, (379,) int32; bit-exact"
+  - name: unitFiringRate
+    path: C:\Projects\Repos\Neuropixels\Golden Fixtures\07_units\unitFiringRate.npy
+    description: "Per-unit firing rate (Hz); rtol=1e-12"
+
+hazards:
+  - id: HAZ-001
+    description: >-
+      MATLAB half-away-from-zero rounding. round(62.5) → MATLAB=63, Python=62.
+      Corrupts MAX_DUR/MIN_ISI and hence all SNF_PH ramps (~2141 samples affected).
+    mitigation: "Use analyses._common.matlab_round() — already baked into kernel functions"
+
+  - id: HAZ-002
+    description: >-
+      SNF/spike clock misalignment: spike time → LV index via matlab_round(t * LV_Fs),
+      clamped to array bounds. Drift between LabView and SpikeGLX clocks corrupts phase.
+    mitigation: >-
+      load_experiment_data uses ks_driftmap when available. Validate spike_SNF_PH
+      against fixture (rtol 1e-12). Clock misalignment is a contract FAILURE CONDITION.
+
+  - id: HAZ-003
+    description: "PROHIBITED: using D['LFP'] instead of D['SNF'] for phase. LFP is a neural signal, SNF is behavioral."
+    mitigation: "compute_sniff_phase / compute_spike_phase operate on D['SNF'] only. Fixture enforces this."
+
+  - id: HAZ-004
+    description: "Float64 vs float32 divergence in E1 (vectorized unit aggregation); unitDepths/unitAmps tolerance rtol=1e-5."
+    mitigation: "Use optconfig default (optimized). optconfig.set_baseline() reverts if needed."
+
+  - id: HAZ-005
+    description: "NaN unitMeanSniffPhase when unit has <5 valid spikes — correct per contract exclusion rules."
+    mitigation: "Filter with ~np.isnan(); log every excluded unit per condition in QC document."
+
+  - id: HAZ-006
+    description: >-
+      New analysis requires MRL and preferred phase per unit per condition (ethanol vs control).
+      The kernel assigns phase to spikes but does NOT compute MRL — that is new code that
+      must sit in the extension point, NOT the kernel.
+    mitigation: >-
+      Implement circular statistics (MRL = |mean(exp(i*phase_rad))|, preferred = angle(mean(...)))
+      in a new file at the extension point. Use scipy.stats.circmean/circvar or manual
+      circular mean. Validate against synthetic oracle before running full data.
