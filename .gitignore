@@ -3,6 +3,11 @@
 # exceed GitHub's limits; move them to new machines out-of-band (zip/drive/rsync).
 /Golden Fixtures/
 
+# Raw/aggregate experimental data — excluded from Git for the same reason
+# (large binary data; exceeds GitHub's limits). Present locally so the
+# pipeline runs; move to new machines out-of-band (zip/drive/rsync).
+/DATA/
+
 # Python
 __pycache__/
 *.py[cod]

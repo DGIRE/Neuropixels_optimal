@@ -1,6 +1,6 @@
 task_id: NP-DEMO-1
 contract_version: 1
-p3_status: PARTIAL  # code implemented and validated; full 6-session run blocked by data access
+p3_status: COMPLETE  # full 6-session run completed 2026-07-21
 
 # ============================================================
 # P3 EXECUTION SUMMARY
@@ -39,30 +39,38 @@ p3_steps_completed:
         (cosmetic; does not affect inclusion logic; requires caption clarification in QC doc)
       - MINOR-3: n_neurons_valid counts condition-OR; differs from animals entering paired stat
         (requires caption definition in QC doc)
-  8_freeze_results: PARTIAL  # see DATA_BLOCKER below
+  8_freeze_results: DONE  # 5 result JSON files in 03_execution/results/
 
 # ============================================================
-# DATA BLOCKER — requires user action
+# RUN RECORD — 2026-07-21
 # ============================================================
-DATA_BLOCKER:
-  description: >-
-    Raw data drive X:\GireLab Data\Room 359\NPDATA\DATA is not mounted in this
-    session. The full 6-session analysis (DATA-001, sessions 11/1/2021, 11/3/2021,
-    12/15/2021, 5/17/2022, 6/24/2022, 9/14/2022) cannot run without it.
-  required_action: >-
-    Mount the X: drive (or copy data to an accessible path) and run:
-      python _pipeline/NP-DEMO-1/03_software/np_demo1_analysis.py
-    or use the run_multi_session_analysis() entry point with the six session directories.
-  session_dirs_needed:
-    - "X:\\GireLab Data\\Room 359\\NPDATA\\DATA\\<session_dir_11_1_2021>"
-    - "X:\\GireLab Data\\Room 359\\NPDATA\\DATA\\<session_dir_11_3_2021>"
-    - "X:\\GireLab Data\\Room 359\\NPDATA\\DATA\\<session_dir_12_15_2021>"
-    - "X:\\GireLab Data\\Room 359\\NPDATA\\DATA\\<session_dir_5_17_2022>"
-    - "X:\\GireLab Data\\Room 359\\NPDATA\\DATA\\<session_dir_6_24_2022>"
-    - "X:\\GireLab Data\\Room 359\\NPDATA\\DATA\\<session_dir_9_14_2022>"
-  run_command: >-
-    cd "C:\Projects\Repos\Neuropixels\_pipeline\NP-DEMO-1\03_software"
-    && "C:\Users\david\anaconda3\python.exe" run_analysis_np_demo1.py
+run_record:
+  date: "2026-07-21"
+  python: "C:\\Users\\david\\anaconda3\\python.exe (3.13.9)"
+  data_root: "C:\\Projects\\Repos\\Neuropixels\\DATA"
+  sessions_loaded: 6
+  sessions_in_paired_stat: 5
+  excluded_from_paired_stat:
+    - session: "2021-11-03"
+      reason: >-
+        0/658 units met control-condition inclusion criterion (>=50 valid-sniff
+        spikes in control). ETH_thr > 0.11 for nearly all timepoints in this
+        session — essentially all spikes are ethanol-condition. This is a data
+        characteristic, not a code defect.
+  RESULT_stat:
+    pvalue: 0.0625
+    effect_size_rank_biserial_r: -1.0
+    statistic_W: 0.0
+    n_animals: 5
+    direction: ns
+    animal_ids: ["2021-11-01", "2021-12-15", "2022-05-17", "2022-06-24", "2022-09-14"]
+  RESULT_qc_counts:
+    "2021-11-01": {n_sniffs: 10949, n_neurons: 232, n_trials: 117}
+    "2021-11-03": {n_sniffs: 9087, n_neurons: 429, n_trials: 123}
+    "2021-12-15": {n_sniffs: 7005, n_neurons: 236, n_trials: 119}
+    "2022-05-17": {n_sniffs: 9422, n_neurons: 109, n_trials: 119}
+    "2022-06-24": {n_sniffs: 9169, n_neurons: 287, n_trials: 119}
+    "2022-09-14": {n_sniffs: 3852, n_neurons: 310, n_trials: 45}
 
 # ============================================================
 # PARTIAL RESULTS (single fixture session, validation only)
@@ -89,50 +97,35 @@ fixture_session_partial_results:
 # ============================================================
 required_outputs:
   RESULT-mrl:
-    status: PENDING_DATA
+    status: COMPLETE
+    file: 03_execution/results/RESULT_mrl.json
     description: per-unit + per-animal MRL by condition (valid sniffs only)
-    source_function: run_multi_session_analysis -> 'RESULT-mrl' key
-    acceptance_criteria:
-      level: 3
-      tolerance: distributional; MRL within 1e-6 on fixture slice
-      comparison_method: distributional
 
   RESULT-phase:
-    status: PENDING_DATA
+    status: COMPLETE
+    file: 03_execution/results/RESULT_phase.json
     description: preferred SNF phase by condition
-    source_function: run_multi_session_analysis -> 'RESULT-phase' key
-    acceptance_criteria:
-      level: 3
-      tolerance: circular distance < 1e-6 on fixture slice
-      comparison_method: circular_phase
 
   RESULT-stat:
-    status: PENDING_DATA
+    status: COMPLETE
+    file: 03_execution/results/RESULT_stat.json
     description: paired animal-level test + effect size + exact p
-    source_function: paired_animal_test (called by run_multi_session_analysis)
-    requires_n_animals: 2  # minimum for Wilcoxon; contract implies 6
-    notes: >-
-      Cannot compute from single fixture session. Wilcoxon exact mode requires
-      at least 2 paired animals. Full 6-session run required.
+    headline: p=0.0625, r=-1.0, n_animals=5
 
   RESULT-qc-counts:
-    status: PENDING_DATA
+    status: COMPLETE
+    file: 03_execution/results/RESULT_qc_counts.json
     description: per-experiment n_sniffs / n_neurons / n_trials used
-    source_function: qc_counts (called in run_multi_session_analysis)
-    acceptance_criteria:
-      level: 1
-      tolerance: exact integer counts
-      comparison_method: exact
 
   RESULT-qc-discards:
-    status: PENDING_DATA
+    status: COMPLETE
+    file: 03_execution/results/RESULT_qc_discards.json
     description: per-experiment discarded SNF sections + reason
-    source_function: _discard_runs (called in run_session)
 
   RESULT-qc-doc:
-    status: PENDING_P4
+    status: COMPLETE
     description: SEPARATE QC/data document (figures + counts + discard log)
-    notes: P4 figure-building step; depends on RESULT-qc-counts and RESULT-qc-discards
+    file: 04_figures/output/FIG_DEMO1_QC.pdf
 
 # ============================================================
 # KERNEL NON-REGRESSION

@@ -1,7 +1,7 @@
 """
 run_analysis_np_demo1.py — Entry point for the full NP-DEMO-1 analysis.
 
-Run on a machine where X:\\GireLab Data\\Room 359\\NPDATA\\DATA is accessible.
+Data lives at C:\\Projects\\Repos\\Neuropixels\\DATA (moved from X: drive).
 
 Usage:
     python run_analysis_np_demo1.py
@@ -21,7 +21,7 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from np_demo1_analysis import run_multi_session_analysis
 
-DATA_ROOT = r"X:\GireLab Data\Room 359\NPDATA\DATA"
+DATA_ROOT = r"C:\Projects\Repos\Neuropixels\DATA"
 
 SESSION_DATES = [
     "11_1_2021",
@@ -42,14 +42,13 @@ def _find_session_dirs(data_root: str, date_strs: list[str]) -> list[str]:
         parts = ds.split("_")
         m, d, y = int(parts[0]), int(parts[1]), int(parts[2])
         candidates = [
+            os.path.join(data_root, f"{m:02d}-{d:02d}-{y}"),   # MM-DD-YYYY (actual format)
+            os.path.join(data_root, f"{m}-{d}-{y}"),            # M-D-YYYY
             os.path.join(data_root, f"{m}_{d}_{y}"),
             os.path.join(data_root, f"{y}_{m:02d}_{d:02d}"),
             os.path.join(data_root, f"{y}-{m:02d}-{d:02d}"),
             os.path.join(data_root, f"{m:02d}_{d:02d}_{y}"),
         ]
-        # Also try glob for flexible matching
-        glob_matches = glob.glob(os.path.join(data_root, f"*{m}*{d}*{y}*"))
-        candidates += glob_matches
         for c in candidates:
             if os.path.isdir(c):
                 found.append(c)
@@ -71,7 +70,7 @@ def main():
 
     if not os.path.isdir(args.data_root):
         print(f"ERROR: data root not found: {args.data_root}")
-        print("Mount the X: drive and re-run.")
+        print("Check that the DATA folder is at C:\\Projects\\Repos\\Neuropixels\\DATA")
         sys.exit(1)
 
     print(f"Data root: {args.data_root}")

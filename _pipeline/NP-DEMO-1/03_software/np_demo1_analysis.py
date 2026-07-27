@@ -236,7 +236,21 @@ def run_session(session_dir: str) -> dict:
     with unit_id, n_spikes_total, session_duration_s, condition results),
     sniff_onsets, trial_numbers, ETH_thr, qc_discards.
     """
-    files, missing = or_validate_files(session_dir, strict=True)
+    files, missing = or_validate_files(session_dir, strict=False)
+    # If the auto-picked ksDir is a phy sub-directory (e.g. phy2.5PShank1) that
+    # lacks channel_map.npy / channel_positions.npy, promote to its parent once.
+    _KS_PROBE_FILES = ("channel_map.npy", "channel_positions.npy")
+    if files["ksDir"] and any(
+        not os.path.isfile(os.path.join(files["ksDir"], f)) for f in _KS_PROBE_FILES
+    ):
+        parent = os.path.dirname(files["ksDir"])
+        if all(os.path.isfile(os.path.join(parent, f)) for f in _KS_PROBE_FILES):
+            files["ksDir"] = parent
+            missing = [m for m in missing if "channel_map" not in m and "channel_positions" not in m]
+    if missing:
+        raise FileNotFoundError(
+            f"Required files missing in {session_dir!r}:\n  " + "\n  ".join(missing)
+        )
     D = load_experiment_data(files)
     D = compute_sniff_phase(D)                 # pinned threshold_std=-0.5 (GUI default)
     D = threshold_eth(D)                        # pinned eth_threshold=0.11 (GUI default)
