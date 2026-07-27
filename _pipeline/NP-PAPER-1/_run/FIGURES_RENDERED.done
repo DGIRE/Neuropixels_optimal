@@ -1,0 +1,7 @@
+artifact: 06_figures/
+kind: agent
+note: ''
+recorded_by: rw-build-figures
+state: FIGURES_RENDERED
+timestamp: '2026-07-25T19:11:41Z'
+who: rw-build-figures

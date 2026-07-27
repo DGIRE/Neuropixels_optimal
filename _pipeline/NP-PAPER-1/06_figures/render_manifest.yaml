@@ -1,0 +1,52 @@
+task_id: NP-PAPER-1
+generated_by: render_figures_np_paper1.py (03_software, additive, Blueprint v2 P4 pure renderer)
+note: 'Every plotted number traces to 06_figures/figure_data/*.npz (already frozen-traced,
+  read-only). No recomputation/re-derivation performed here. No figure_examples/ sketch existed
+  for this task (confirmed empty); rendered purely from contract_v001.yaml figure specs.'
+figures:
+  FIG-PAPER1-TRACES:
+    output_files:
+    - fig_paper1_traces.pdf
+    - fig_paper1_traces.png
+    rendered_from_figure_data:
+    - fig_traces_data.npz
+    influenced_by: null  # no figure_examples/ sketch existed (confirmed empty)
+  FIG-PAPER1-SPECTRO:
+    output_files:
+    - fig_paper1_spectro.pdf
+    - fig_paper1_spectro.png
+    rendered_from_figure_data:
+    - fig_spectro_data.npz
+    influenced_by: null  # no figure_examples/ sketch existed (confirmed empty)
+  FIG-PAPER1-SNIFFRATE:
+    output_files:
+    - fig_paper1_sniffrate.pdf
+    - fig_paper1_sniffrate.png
+    rendered_from_figure_data:
+    - fig_sniffrate_data.npz
+    influenced_by: null  # no figure_examples/ sketch existed (confirmed empty)
+  FIG-PAPER1-PSD:
+    output_files:
+    - fig_paper1_psd.pdf
+    - fig_paper1_psd.png
+    rendered_from_figure_data:
+    - fig_psd_data.npz
+    influenced_by: null  # no figure_examples/ sketch existed (confirmed empty)
+  FIG-PAPER1-COH:
+    output_files:
+    - fig_paper1_coh.pdf
+    - fig_paper1_coh.png
+    rendered_from_figure_data:
+    - fig_coh_data.npz
+    influenced_by: null  # no figure_examples/ sketch existed (confirmed empty)
+    scientific_honesty_check:
+      max_peak_coherence_percentile_across_30_cells: 90.4
+      null_never_exceeded: true
+  FIG-PAPER1-DEPTH-SUMMARY:
+    output_files:
+    - fig_paper1_depth_summary.pdf
+    - fig_paper1_depth_summary.png
+    rendered_from_figure_data:
+    - fig_depth_summary_data.npz
+    - fig_psd_data.npz (depth_ycoords_um axis annotation only)
+    influenced_by: null  # no figure_examples/ sketch existed (confirmed empty)

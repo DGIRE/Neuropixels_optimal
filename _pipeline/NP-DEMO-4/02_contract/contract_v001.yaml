@@ -1,0 +1,576 @@
+analysis:
+  acceptance_criteria:
+  - comparison_method: exact
+    level: 1
+    output_id: RESULT-eth-mask
+    tolerance: Binary contact mask and n_trials_eth must match NP-DEMO-3 validated
+      outputs exactly for the same 6 sessions (deterministic threshold; zero tolerance).
+  - comparison_method: exact
+    level: 1
+    output_id: RESULT-unit-inclusion
+    tolerance: n_units_recorded and n_units_included are exact integers; unit ID lists
+      must match exactly on fixture slice.
+  - comparison_method: distributional
+    level: 3
+    output_id: RESULT-sniff-rate-matrix
+    tolerance: Per-trial sniff rate vector within 1e-4 Hz of reference on fixture
+      slice; distributional agreement on full workload. Fixture from first validated
+      compute_sniff_rate run.
+  - comparison_method: distributional
+    level: 3
+    output_id: RESULT-fr-per-trial
+    tolerance: Per-trial population firing rate within 1e-4 Hz on fixture slice (deterministic
+      sliding-window); distributional agreement on full workload.
+  - comparison_method: numeric
+    level: 2
+    output_id: RESULT-eth-per-trial
+    tolerance: Per-trial raw ETH values within 1e-6 of reference on fixture slice
+      (deterministic from D['ETH']).
+  - comparison_method: numeric
+    level: 1
+    output_id: RESULT-methods-table
+    tolerance: n_trials_eth and n_units_* exact integers; avg_sniffs and avg_eth_contacts
+      within 1e-4 on fixture slice.
+  - comparison_method: statistical_decision
+    level: 3
+    output_id: RESULT-sniff-stat
+    tolerance: Same significance decision (alpha=0.05) on full workload; W exact integer
+      match; exact p within 1e-6; rank-biserial r within 1e-4 on fixture slice.
+  aggregation:
+  - docx_source_refs:
+    - RQ-002
+    - CON-001
+    - CON-002
+    - OUT-003
+    - OUT-004
+    - OUT-005
+    step: 'For each odd-TR LabView trial extract: (a) instantaneous sniff rate vector;
+      (b) population firing rate vector; (c) raw ETH sensor values (D[''ETH''] before
+      mean-subtraction) — all over the full 0-40 s TS window at LV sample resolution.
+      Store as (n_LabView_trials x n_samples) matrices for RESULT-sniff-rate-matrix,
+      RESULT-fr-per-trial, RESULT-eth-per-trial.'
+  - docx_source_refs:
+    - OUT-003
+    - OUT-004
+    - OUT-005
+    step: 'For Figure 1/2/3 Panel 2: pool all LabView trials across all sessions;
+      compute trial-averaged signal and 95% parametric CI (mean ± 1.96*SEM) at each
+      time point (0-40 s) for RESULT-sniff-rate-avg, RESULT-fr-avg, RESULT-eth-avg.'
+  - docx_source_refs:
+    - CON-003
+    step: 'For CON-003: per LabView trial identify the first discrete ETH contact
+      event (first above-threshold run overlapping that trial''s sample range). Extract
+      mean sniff rate within that contact period and mean sniff rate during the pre-valve
+      control window (TS=0-10 s, excluding the contact period). If a trial has no
+      contact event, exclude it from CON-003 and log. Compute per-session mean for
+      each condition.'
+  - docx_source_refs:
+    - CON-003
+    step: 'CON-003 cross-animal test: apply exact two-sided Wilcoxon signed-rank test
+      (scipy.stats.wilcoxon, mode=''exact'') to the 6 per-animal pairs (mean sniff
+      rate in first contact vs. mean sniff rate in control period). Report W, exact
+      two-sided p, rank-biserial r, n_animals=6.'
+  - docx_source_refs:
+    - OUT-001
+    step: 'For RESULT-methods-table per session: (a) n_trials_eth (discrete ETH contact
+      events); (b) avg_sniffs_per_LabView_trial (mean sniff onsets per odd-TR trial,
+      same onset detection as compute_sniff_rate); (c) avg_eth_contacts_per_LabView_trial
+      (mean count of discrete ETH contact events per odd-TR trial); (d) n_units_recorded;
+      (e) n_units_included.'
+  analysis_definition:
+    description: 'Per experiment (6 sessions, 1 animal each): (1) load D-dict via
+      load_experiment_data, applying _fix_ks_dir() for 2022-09-14; (2) detect ethanol
+      contact events via validated detect_eth_contact (mean-subtract ETH, threshold
+      strictly > 0.05, fixed rule, no per-experiment adjustment; n_trials_eth = count
+      of discrete above-threshold runs); (3) segment LabView trials using odd TR values
+      (0-40 s, TS=0-40000 ms; correct corrupted first TS to 0); exclude even TR intervals;
+      (4) compute instantaneous sniff rate at each LV sample via compute_sniff_rate
+      (onset detection + 1/ISI interpolation); (5) apply unit inclusion (FR >= 0.1
+      Hz AND >= 5000 total spikes); (6) compute 50 ms sliding-window firing rate per
+      included unit, then average across units for population trace; (7) for each
+      LabView trial extract sniff rate, population firing rate, and raw ETH (D[''ETH''])
+      over the full 0-40 s window; (8) for CON-003, per LabView trial identify the
+      first discrete ETH contact event, compute mean sniff rate during that contact
+      and during the pre-valve control window (TS=0-10 s, excluding contact overlap);
+      average both within session; test 6 per-animal pairs with exact two-sided Wilcoxon
+      signed-rank test; report W, exact p, rank-biserial r.'
+    docx_source_refs:
+    - RQ-002
+    - CON-001
+    - CON-002
+    - CON-003
+    - PROH-001
+  assumptions: []
+  data_provenance:
+    description: 'Six sessions, one animal each (confirmed by David Gire 2026-07-23
+      — OPEN-007 resolved), under C:\Projects\Repos\Neuropixels\DATA: 2021-11-01,
+      2021-11-03, 2021-12-15, 2022-05-17, 2022-06-24, 2022-09-14. The 2022-09-14 session
+      is multi-shank and requires _fix_ks_dir(). Session 2021-11-03 is provisionally
+      included; excluded if detect_eth_contact finds no contact events. Conventions
+      file: C:\Projects\Repos\Neuropixels\DATA\Conventions\Neuropixels experimental
+      conventions.docx.'
+    docx_source_refs:
+    - DATA-001
+    - DATA-002
+  docx_source_refs: {}
+  experimental_structure:
+    description: 'Six recording sessions correspond to 6 distinct animals (one animal
+      per session, confirmed by David Gire 2026-07-23 — OPEN-007 resolved). Sessions:
+      2021-11-01, 2021-11-03, 2021-12-15, 2022-05-17, 2022-06-24, 2022-09-14. For
+      CON-003, sniff rate values are averaged within each session/animal, and the
+      resulting 6 per-animal pairs are used for the Wilcoxon test (n_animals=6, no
+      nesting correction required).'
+    docx_source_refs:
+    - DATA-002
+    - CON-003
+  failure_conditions:
+  - condition: detect_eth_contact finds no above-threshold contact events for a session;
+      session logged and excluded.
+    docx_source_refs:
+    - PROH-001
+  - condition: After excluding sessions with no contact events, fewer than 3 sessions
+      remain for CON-003 Wilcoxon; execution blocked and reported.
+    docx_source_refs:
+    - CON-003
+  - condition: Fixture-slice disagreement beyond pinned tolerance for any required
+      output.
+    docx_source_refs:
+    - PROH-001
+    - CON-001
+  inclusion_exclusion:
+  - docx_source_refs:
+    - CON-001
+    rule: Unit included only if overall mean firing rate >= 0.1 Hz AND total spike
+      count >= 5000 throughout the entire experiment. Both criteria must be satisfied
+      simultaneously.
+  - docx_source_refs:
+    - DATA-001
+    rule: Only odd TR values constitute valid LabView trials; even TR values (inter-trial
+      intervals) are excluded from all analyses and figures.
+  - docx_source_refs:
+    - PROH-001
+    rule: Ethanol contact detection uses validated detect_eth_contact.py verbatim
+      (mean-subtracted ETH strictly > 0.05, fixed threshold, no per-experiment adjustment).
+      n_trials_eth = count of discrete contiguous above-threshold runs across full
+      session.
+  - docx_source_refs:
+    - CON-003
+    rule: LabView trials with no ETH contact event (zero above-threshold runs within
+      the trial sample range) are excluded from CON-003 sniff-rate comparison and
+      logged with reason.
+  - docx_source_refs:
+    - DATA-001
+    - DATA-002
+    rule: 2022-09-14 multi-shank session requires _fix_ks_dir() in load_experiment_data
+      to locate Kilosort output at the correct directory depth.
+  - docx_source_refs:
+    - PROH-001
+    - DATA-002
+    rule: Session 2021-11-03 is included; if detect_eth_contact returns zero contact
+      events it is excluded with reason logged and dropped from all downstream statistics.
+  inputs:
+  - docx_source_refs:
+    - DATA-001
+    fields:
+    - SNF
+    - ETH
+    - TR
+    - TS
+    - sp.st
+    - sp.clu
+    - unitIDs
+    - LV_Fs
+    - unitFiringRate
+    from: load_experiment_data
+    object: D-dict
+  - description: 'Raw sniff-sensor pressure trace (LabView .dat, ~125 Hz). Source
+      for instantaneous sniff rate: detect sniff onsets, compute inter-onset intervals,
+      interpolate 1/ISI to each LV sample (Hz).'
+    docx_source_refs:
+    - RQ-002
+    object: SNF
+  - description: Ethanol sensor trace, normalized 0-1. Mean-subtracted before thresholding
+      at 0.05 to detect contact events (PROH-001). Raw ETH (before mean-subtraction)
+      reported in Figure 3 per CON-002.
+    docx_source_refs:
+    - CON-002
+    - PROH-001
+    object: ETH
+  - description: LabView trial number per sample (int32). Odd TR values = valid trials;
+      even TR values = inter-trial intervals (excluded).
+    docx_source_refs:
+    - DATA-001
+    object: TR
+  - description: Within-trial timestamp per sample in ms. TS=0 = trial start; pre-valve
+      control period = TS 0-10000 ms; odor period = TS 10000-20000 ms (valve open);
+      post-odor period = TS 20000-40000 ms (odor cleared, recording continues). Trial
+      ends at TS=40000 ms. First TS sample per trial is corrupted; set to 0.
+    docx_source_refs:
+    - DATA-001
+    object: TS
+  - docx_source_refs:
+    - DATA-001
+    - DATA-002
+    object: spike_times
+    source: Kilosort output dir via load_experiment_data; requires _fix_ks_dir() for
+      2022-09-14 multi-shank session.
+    units: seconds
+  multiple_comparison:
+    description: None. A single paired test comparing two conditions (sniff rate in
+      first ethanol contact vs. pre-valve control period) across 6 animals. No per-trial
+      or per-unit correction is contracted.
+    docx_source_refs:
+    - CON-003
+  preprocessing:
+  - docx_source_refs:
+    - DATA-001
+    - DATA-002
+    step: 'Load D-dict for each of the 6 sessions (dates: 2021-11-01, 2021-11-03,
+      2021-12-15, 2022-05-17, 2022-06-24, 2022-09-14) via load_experiment_data; apply
+      _fix_ks_dir() for 2022-09-14 (multi-shank).'
+  - docx_source_refs:
+    - PROH-001
+    step: 'Detect ethanol contact events: subtract mean of entire ETH trace, threshold
+      strictly > 0.05. Count discrete contiguous above-threshold runs as n_trials_eth.
+      Fixed rule, no per-experiment adjustment, all 6 sessions. Reuse detect_eth_contact.py
+      from NP-DEMO-3 verbatim. If session 2021-11-03 yields zero contact events, log
+      as excluded and drop.'
+  - docx_source_refs:
+    - DATA-001
+    step: 'Segment LabView trials: contiguous samples sharing the same odd TR value
+      define one trial (0-40 s per TS). Even TR values excluded. Correct corrupted
+      first TS per trial to 0.'
+  - docx_source_refs:
+    - RQ-002
+    step: 'Compute instantaneous sniff rate at each LV sample from SNF via compute_sniff_rate:
+      (a) detect sniff onsets; (b) compute inter-onset intervals; (c) interpolate
+      1/ISI to each sample (Hz); nearest-neighbor extrapolation outside onset boundaries.'
+  - docx_source_refs:
+    - CON-001
+    step: 'Apply unit inclusion: retain unit if and only if overall mean firing rate
+      >= 0.1 Hz AND total spike count >= 5000 throughout the experiment. Log n_units_recorded
+      and n_units_included per session.'
+  - docx_source_refs:
+    - CON-001
+    step: For each included unit compute 50 ms sliding-window firing rate (spikes
+      in [t-25 ms, t+25 ms] / 0.05 s) at each LV sample. Average across included units
+      for population firing rate trace (Hz).
+  prohibited_changes:
+  - change: Modifying detect_eth_contact.py (NP-DEMO-3 kernel) in any way — threshold,
+      mean-subtraction, or contiguous-run logic.
+    docx_source_refs:
+    - PROH-001
+  - change: Using raw (non-mean-subtracted) ETH for ethanol contact thresholding.
+    docx_source_refs:
+    - PROH-001
+  - change: Applying per-experiment threshold adjustment; identical 0.05 rule must
+      apply to all 6 sessions.
+    docx_source_refs:
+    - PROH-001
+  - change: Editing any file under Optimized Python/, Golden Fixtures/, or any tolerance
+      configuration.
+    docx_source_refs:
+    - DATA-001
+  - change: Using LFP instead of SNF for sniff rate computation.
+    docx_source_refs:
+    - RQ-002
+  - change: Computing firing rate with window other than 50 ms centered at t (window
+      [t-25 ms, t+25 ms] is contract-pinned).
+    docx_source_refs:
+    - CON-001
+  - change: Including even-TR LabView trials (inter-trial intervals) in any analysis
+      or figure.
+    docx_source_refs:
+    - DATA-001
+  required_outputs:
+  - desc: 'Per-session: mean-subtracted ETH trace, binary contact mask (strictly-above-threshold
+      = True), n_trials_eth (integer count of discrete above-threshold runs). Defines
+      contact event boundaries for all downstream analyses.'
+    docx_source_refs:
+    - PROH-001
+    result_id: RESULT-eth-mask
+    type: table
+  - desc: 'Per-session: n_units_recorded (total Kilosort units), n_units_included
+      (meeting FR >= 0.1 Hz AND >= 5000 spikes), list of included unit IDs.'
+    docx_source_refs:
+    - CON-001
+    result_id: RESULT-unit-inclusion
+    type: table
+  - desc: 'Per-session: (n_LabView_trials x n_samples) matrix of instantaneous sniff
+      rate (Hz) at each LV sample for each odd-TR trial (TS=0-40 s window).'
+    docx_source_refs:
+    - RQ-002
+    - OUT-003
+    result_id: RESULT-sniff-rate-matrix
+    type: matrix
+  - desc: Trial-averaged instantaneous sniff rate (Hz) and 95% parametric CI (mean
+      ± 1.96*SEM) at each time point (0-40 s), pooled across all sessions and LabView
+      trials.
+    docx_source_refs:
+    - OUT-003
+    result_id: RESULT-sniff-rate-avg
+    type: array
+  - desc: 'Per-session: (n_LabView_trials x n_samples) matrix of average population
+      firing rate (Hz, mean across included units) at each LV sample for each odd-TR
+      trial (TS=0-40 s window).'
+    docx_source_refs:
+    - CON-001
+    - OUT-004
+    result_id: RESULT-fr-per-trial
+    type: matrix
+  - desc: Trial-averaged population firing rate (Hz) and 95% parametric CI (mean ±
+      1.96*SEM) at each time point (0-40 s), pooled across all sessions and LabView
+      trials.
+    docx_source_refs:
+    - OUT-004
+    result_id: RESULT-fr-avg
+    type: array
+  - desc: 'Per-session: (n_LabView_trials x n_samples) matrix of raw ETH sensor value
+      (D[''ETH''], normalized 0-1, before mean-subtraction) for each odd-TR trial
+      (TS=0-40 s window).'
+    docx_source_refs:
+    - CON-002
+    - OUT-005
+    result_id: RESULT-eth-per-trial
+    type: matrix
+  - desc: Trial-averaged raw ETH sensor value and 95% parametric CI (mean ± 1.96*SEM)
+      at each time point (0-40 s), pooled across all sessions and LabView trials.
+    docx_source_refs:
+    - OUT-005
+    result_id: RESULT-eth-avg
+    type: array
+  - desc: 'Per-session: n_trials_eth (ETH contact events), avg_sniffs_per_LabView_trial,
+      avg_eth_contacts_per_LabView_trial, n_units_recorded, n_units_included.'
+    docx_source_refs:
+    - OUT-001
+    result_id: RESULT-methods-table
+    type: table
+  - desc: 'CON-003 Wilcoxon result: W statistic, exact two-sided p-value, rank-biserial
+      r, n_animals=6, per-animal mean sniff rate in first contact and control period,
+      n_qualifying_trials_per_session.'
+    docx_source_refs:
+    - CON-003
+    result_id: RESULT-sniff-stat
+    type: object
+  required_validated_functions:
+  - docx_source_refs:
+    - PROH-001
+    module: _pipeline/NP-DEMO-3/03_software/detect_eth_contact.py
+    name: detect_eth_contact
+    usage: Reuse NP-DEMO-3 validated kernel VERBATIM (eth_threshold=0.05, mean-subtracted
+      ETH, fixed rule, no per-experiment adjustment). n_trials_eth = count of discrete
+      contiguous above-threshold runs.
+  - docx_source_refs:
+    - DATA-001
+    - DATA-002
+    module: Optimized Python/load_experiment_data.py
+    name: load_experiment_data
+    usage: Standard D-dict loader. MUST apply _fix_ks_dir() helper for the 2022-09-14
+      session (multi-shank; KS output one directory level deeper).
+  risk: red
+  scientific_question:
+    description: Does instantaneous sniff rate, olfactory-bulb population firing rate,
+      and ethanol-sensor signal vary systematically within and across ethanol-contact
+      trials? Specifically, does instantaneous sniff rate significantly increase within
+      the first ethanol contact on each LabView trial relative to the pre-valve control
+      period (TS = 0-10 s)?
+    docx_source_refs:
+    - RQ-001
+    - RQ-002
+    - CON-003
+  statistical_model:
+  - docx_source_refs:
+    - CON-003
+    level: cross_animal
+    method: 'Exact two-sided Wilcoxon signed-rank test (scipy.stats.wilcoxon, mode=''exact'').
+      Input: 6 per-animal pairs (mean sniff rate in first ETH contact vs. mean sniff
+      rate in pre-valve control period, TS=0-10 s). Report: W statistic, exact two-sided
+      p-value, matched-pairs rank-biserial r as effect size (r = 1 - 2W/(n*(n+1)/2)).
+      n_pairs=6. Resolution of OPEN-006 by David Gire 2026-07-23.'
+  status: exploratory
+  task_id: NP-DEMO-4
+contract_version: 1
+figures:
+- axis_requirements:
+    log_scale: false
+    truncation_permitted: false
+    x_label: time from trial start (s)
+    y_label: trial number (LabView) [Panel 1] / sniff rate (Hz) [Panel 2]
+    zero_reference: true
+  caption_requirements:
+  - 'colorbar labeled: sniff rate (Hz)'
+  - n_trials (LabView) and n_sessions stated (injected from RESULT-methods-table,
+    never typed by hand)
+  - 95% CI computed as mean ± 1.96*SEM across all trials, stated in caption
+  docx_source_refs:
+  - OUT-003
+  figure_id: FIG-DEMO4-1-SNIFF
+  panels: []
+  quality:
+    colorblind_review: false
+    min_font: 7
+    raster_dpi: 300
+    truncation_permitted: false
+    vector: true
+  required: true
+  scientific_purpose: 'Characterize how instantaneous sniff rate evolves over the
+    full 40-second LabView trial (TS=0-40 s) across all trials, and show the trial-averaged
+    profile with uncertainty. Panel 1: heatmap (waterfall) with one row per odd-TR
+    LabView trial (y-axis = trial number), time on x-axis (0-40 s, TS=0 reference),
+    instantaneous sniff rate (Hz) as color (jet colormap). Panel 2: line plot of sniff
+    rate averaged across all trials (pooled across sessions) with 95% parametric CI
+    (mean ± 1.96*SEM) as shaded band.'
+  source_results:
+  - RESULT-sniff-rate-matrix
+  - RESULT-sniff-rate-avg
+  statistical_annotations:
+    exact_p_values: false
+    permitted_tests: []
+    significance_stars: false
+  title: 'Figure 1: Sniff rate within each trial'
+  visual_encoding:
+    condition_mapping:
+      colormap: jet
+      panel1: waterfall_heatmap
+      panel2: line_with_ci_shading
+    raw_data_also_available: true
+- axis_requirements:
+    log_scale: false
+    truncation_permitted: false
+    x_label: time from trial start (s)
+    y_label: trial number (LabView) [Panel 1] / firing rate (Hz) [Panel 2]
+    zero_reference: true
+  caption_requirements:
+  - 'colorbar labeled: firing rate (Hz)'
+  - n_units_included per session stated (injected from RESULT-unit-inclusion, never
+    typed by hand)
+  - 'state unit inclusion criteria: overall FR >= 0.1 Hz AND >= 5000 total spikes'
+  docx_source_refs:
+  - OUT-004
+  figure_id: FIG-DEMO4-2-FR
+  panels: []
+  quality:
+    colorblind_review: false
+    min_font: 7
+    raster_dpi: 300
+    truncation_permitted: false
+    vector: true
+  required: true
+  scientific_purpose: 'Characterize how average olfactory-bulb population firing rate
+    (mean across all included units) evolves over the full 40-second LabView trial,
+    and show the trial-averaged profile with uncertainty. Panel 1: heatmap (waterfall)
+    with one row per odd-TR LabView trial (y-axis = trial number), time on x-axis
+    (0-40 s, TS=0 reference), average population firing rate (Hz) as color (jet colormap).
+    Panel 2: line plot of population firing rate averaged across all trials (pooled
+    across sessions) with 95% parametric CI (mean ± 1.96*SEM) as shaded band.'
+  source_results:
+  - RESULT-fr-per-trial
+  - RESULT-fr-avg
+  - RESULT-unit-inclusion
+  statistical_annotations:
+    exact_p_values: false
+    permitted_tests: []
+    significance_stars: false
+  title: 'Figure 2: Firing rate within each trial'
+  visual_encoding:
+    condition_mapping:
+      colormap: jet
+      panel1: waterfall_heatmap
+      panel2: line_with_ci_shading
+    raw_data_also_available: true
+- axis_requirements:
+    log_scale: false
+    truncation_permitted: false
+    x_label: time from trial start (s)
+    y_label: trial number (LabView) [Panel 1] / ETH sensor value (a.u.) [Panel 2]
+    zero_reference: true
+  caption_requirements:
+  - 'colorbar labeled: ETH sensor value (a.u., normalized 0-1)'
+  - state that raw (pre-mean-subtraction) ETH is plotted, per CON-002
+  - 95% CI computed as mean ± 1.96*SEM across all trials, stated in caption
+  docx_source_refs:
+  - OUT-005
+  figure_id: FIG-DEMO4-3-ETH
+  panels: []
+  quality:
+    colorblind_review: false
+    min_font: 7
+    raster_dpi: 300
+    truncation_permitted: false
+    vector: true
+  required: true
+  scientific_purpose: 'Show the raw ETH sensor value (D[''ETH''], normalized 0-1,
+    before mean-subtraction, per CON-002) within each LabView trial and the trial-averaged
+    ETH profile, characterizing the structure and timing of ethanol exposure across
+    trials. Panel 1: heatmap (waterfall) with one row per odd-TR LabView trial (y-axis
+    = trial number), time on x-axis (0-40 s, TS=0 reference), raw ETH sensor value
+    as color (jet colormap). Panel 2: line plot of raw ETH sensor value averaged across
+    all trials (pooled across sessions) with 95% parametric CI (mean ± 1.96*SEM) as
+    shaded band.'
+  source_results:
+  - RESULT-eth-per-trial
+  - RESULT-eth-avg
+  statistical_annotations:
+    exact_p_values: false
+    permitted_tests: []
+    significance_stars: false
+  title: 'Figure 3: Ethanol sensor value within each trial'
+  visual_encoding:
+    condition_mapping:
+      colormap: jet
+      panel1: waterfall_heatmap
+      panel2: line_with_ci_shading
+    raw_data_also_available: true
+open_decisions: []
+reports:
+- appendices: []
+  docx_source_refs:
+  - OUT-001
+  - OUT-002
+  intended_audience: lab + demo (interim descriptive deliverable)
+  output_filename: NP-DEMO-4_methods.docx
+  reporting_rules:
+    exact_N: true
+    prohibit_causal_language: true
+    prohibit_uncontracted_post_hoc: true
+    report_effect_sizes: false
+    report_exact_p: false
+    report_exclusions: true
+    separate_qc_document_required: true
+  required_figures: []
+  required_sections:
+  - Methods
+  - Per-Experiment Summary Table
+  required_tables:
+  - RESULT-methods-table
+  role: methods_report
+  scientific_status: interim
+- appendices: []
+  docx_source_refs:
+  - CON-003
+  - OUT-002
+  - OUT-003
+  - OUT-004
+  - OUT-005
+  intended_audience: lab + demo
+  output_filename: NP-DEMO-4_results.docx
+  reporting_rules:
+    exact_N: true
+    prohibit_causal_language: false
+    prohibit_uncontracted_post_hoc: true
+    report_effect_sizes: true
+    report_exact_p: true
+    report_exclusions: true
+    separate_qc_document_required: false
+  required_figures:
+  - FIG-DEMO4-1-SNIFF
+  - FIG-DEMO4-2-FR
+  - FIG-DEMO4-3-ETH
+  required_sections:
+  - Results
+  - Figures
+  required_tables:
+  - RESULT-sniff-stat
+  role: results_report
+  scientific_status: confirmatory
+task_id: NP-DEMO-4

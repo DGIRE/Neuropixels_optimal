@@ -1,0 +1,27 @@
+n_experiments: 6
+pairs:
+- experiment: '2021-11-01'
+  mean_MRL_control: 0.01267733794304337
+  mean_MRL_ethanol: 0.03117694052249561
+- experiment: '2021-11-03'
+  mean_MRL_control: 0.01761658167644472
+  mean_MRL_ethanol: 0.0521452729398063
+- experiment: '2021-12-15'
+  mean_MRL_control: 0.01702666907108694
+  mean_MRL_ethanol: 0.0442097474922564
+- experiment: '2022-05-17'
+  mean_MRL_control: 0.07782382914294061
+  mean_MRL_ethanol: 0.031817526628255766
+- experiment: '2022-06-24'
+  mean_MRL_control: 0.045907640374429265
+  mean_MRL_ethanol: 0.06657210348870424
+- experiment: '2022-09-14'
+  mean_MRL_control: 0.026069345432618705
+  mean_MRL_ethanol: 0.10160311666177815
+rank_biserial_r: 0.5238095238095238
+threshold_significance: 0.05
+wilcoxon_p: 0.3125
+wilcoxon_statistic: 5.0
+x_labels:
+- control
+- ethanol

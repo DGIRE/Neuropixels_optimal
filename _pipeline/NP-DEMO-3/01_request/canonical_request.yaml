@@ -1,0 +1,83 @@
+extracted_items:
+- item_id: PROH-001
+  source_location: para 1
+  text: 'Test whether ethanol changes how olfactory bulb single units lock their spikes
+    to the sniff phase vs. control (use the SNF signal from the data for sniffs).
+    Use the actual SNF signal rather than the LFP to test the phase locking. Detect
+    sniffs and sniff phase with the validated compute_sniff_phase function using its
+    default sniff-onset threshold (threshold_std = -0.5). Do not use any sections
+    of the SNF signal that are noise rather than sniffing: a spike counts only when
+    its sniff phase is valid (spike_SNF_PH >= 0); discard and log the rest. Quantify
+    phase locking per unit as the mean resultant length (MRL) and preferred phase
+    of the unit''s spikes relative to sniff phase, computed separately for the ethanol
+    and control conditions. Produce two reports and sets of figures for this task:
+    Methods and Results.'
+  type: prohibition
+- item_id: PROH-002
+  source_location: para 3
+  text: 'To find ethanol contacts, for each experiment subtract the mean of the entire
+    time series of the ethanol trace, then use a threshold of 0.05 to mark ethanol
+    presence: when the mean-subtracted signal is above 0.05 ethanol is present, and
+    at or below 0.05 the condition is control. Do not use the raw ethanol signal for
+    thresholding. Apply this same fixed rule to all six sessions with no per-experiment
+    threshold adjustment. Define the number of trials for an experiment as the count
+    of discrete ethanol-contact events (contiguous runs of samples above the 0.05
+    mean-subtracted threshold).'
+  type: prohibition
+- item_id: CON-001
+  source_location: para 5
+  text: Include a unit in the analysis only if it has an overall firing rate of at
+    least 0.1 Hz and at least 50 valid-sniff spikes combined across the ethanol and
+    control conditions.
+  type: constraint
+- item_id: OUT-001
+  source_location: para 7
+  text: Provide interim figures from your analysis as “Methods” figures, showing examples
+    of sniffing and the concurrent mean-subtracted ethanol signal from each experiment
+    used in the analysis. On these figures include the thresholds used to mark sniff
+    onset (threshold_std = -0.5) as well as ethanol contact (0.05 on the mean-subtracted
+    trace) as red dashed lines on the appropriate figure panel. Also show sniff-locked
+    PSTH examples of the single unit with the strongest phase locking to sniffs and
+    the single unit with the weakest locking, where locking strength is the MRL computed
+    on all valid-sniff spikes pooled across the ethanol and control conditions (condition-agnostic).
+    Select these as the strongest and weakest across all experiments (two units total),
+    not one pair per experiment. For each experiment, the methods report includes
+    the number of sniffs detected, number of neurons recorded, and number of trials
+    used, as well as the length (in minutes) of the experiment and the percentage
+    of time with usable sniffs during that experiment. Include these exact numbers
+    in the methods report. Also describe any discarded sections of data from each
+    animal and the reason that section was discarded. Provide this information in
+    the methods report.
+  type: requested_output
+- item_id: PROH-003
+  source_location: para 9
+  text: Finally, provide a results report as well as figures. A rough sketch of the
+    structure of the results figure is included. In the results report include statistics
+    across all units as well as statistics across all used experiments. For the across-units
+    (unit-level) test, compare each unit's ethanol vs control MRL using a linear mixed-effects
+    model with condition as a fixed effect and animal/experiment as a random intercept
+    (so that units nested within the same animal are corrected for); report the condition
+    fixed-effect exact p and the standardized fixed-effect estimate as the effect
+    size (this is a single population model, so no per-unit multiple-comparison correction
+    is applied). For the across-experiments (animal-level) test, compare each experiment's
+    mean per-unit MRL between ethanol and control with a paired, exact, two-sided
+    Wilcoxon signed-rank test and report matched-pairs rank-biserial r as the effect
+    size, with the exact p. Provide two results figures – one for the experiment-level
+    analysis and one for the unit-level analysis. Also include an “examples” results
+    figure that shows sniff-locked PSTHs of the units that showed the strongest change
+    in their phase locking to sniffing, where “strongest change” is the largest absolute
+    change in MRL between conditions, |delta_MRL| = |MRL_ethanol − MRL_control|; show
+    the top 5 such units. Use only units from experiments that have a reasonable amount
+    of data from each condition (more than 500 spikes for each selected unit in each
+    condition). For each example unit, this figure should also show a map of where
+    the unit was recorded on the Neuropixels array.
+  type: prohibition
+- item_id: DATA-001
+  source_location: para 11
+  text: 'Data location: pull data from multiple dated experiments under C:\Projects\Repos\Neuropixels\DATA,
+    using the recording sessions dated 11/1/2021, 11/3/2021, 12/15/2021, 5/17/2022,
+    6/24/2022, and 9/14/2022.'
+  type: data_source
+request_id: REQ-NP-DEMO-3
+source_document: NP-DEMO-3 request.docx
+source_hash: ddb8cb39d93c081d8a763eb99ec7bc086c094fb47bc4ba819878755a358c1cb9

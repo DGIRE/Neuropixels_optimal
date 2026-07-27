@@ -1,0 +1,45 @@
+excluded_sessions: []
+included_sessions:
+- '2021-11-01'
+- '2021-11-03'
+- '2021-12-15'
+- '2022-05-17'
+- '2022-06-24'
+- '2022-09-14'
+load_failures: {}
+haz06_proh002_sd_flag_finding:
+  summary: 'PROH-002''s pinned SD-based Pass-1 flag rule (|count-mean| > sd) did not
+    flag 2021-11-03 on this real-data run, because one other session''s Pass-1 contact
+    count is a large outlier that inflates the cross-session SD; 2021-11-03''s own
+    Pass-1 count (3 contacts) then falls within +/-1 SD of the mean despite being
+    built almost entirely from ethanol-condition spikes (near-zero control-condition
+    spikes per unit). This is a DEVIATION finding for human/contract-designer review,
+    NOT a change to the pinned, oracle-tested proh_002_adjustment() implementation
+    -- see np_demo2_analysis.py module docstring / PR notes for detail. Downstream
+    effect: this session''s animal-level mean_mrl_control and its units dominate RESULT-delta-mrl''s
+    top-5 |delta_MRL| ranking (see per-session degenerate-MRL diagnostic below).'
+  per_session_diagnostic:
+    '2021-11-01':
+      n_included_units: 232
+      n_units_zero_ctrl_spikes: 3
+      n_units_degenerate_ctrl_mrl_lt5_spikes: 14
+    '2021-11-03':
+      n_included_units: 429
+      n_units_zero_ctrl_spikes: 374
+      n_units_degenerate_ctrl_mrl_lt5_spikes: 55
+    '2021-12-15':
+      n_included_units: 236
+      n_units_zero_ctrl_spikes: 0
+      n_units_degenerate_ctrl_mrl_lt5_spikes: 7
+    '2022-05-17':
+      n_included_units: 109
+      n_units_zero_ctrl_spikes: 3
+      n_units_degenerate_ctrl_mrl_lt5_spikes: 5
+    '2022-06-24':
+      n_included_units: 287
+      n_units_zero_ctrl_spikes: 75
+      n_units_degenerate_ctrl_mrl_lt5_spikes: 48
+    '2022-09-14':
+      n_included_units: 310
+      n_units_zero_ctrl_spikes: 10
+      n_units_degenerate_ctrl_mrl_lt5_spikes: 52

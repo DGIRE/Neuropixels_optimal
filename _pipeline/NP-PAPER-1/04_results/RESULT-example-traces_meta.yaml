@@ -1,0 +1,8 @@
+session: 06-24-2022
+segment_start_s: 80.0
+segment_end_s: 90.0
+inhalation_mask_lv_fs: 125.0
+display_convention_note: Representative experiment = most retained all-control/all-valid-sniff
+  4-s windows, tie-break earliest date. Representative segment = first qualifying
+  contiguous control-valid span of fixed length 10.0s. Non-scientific, presentation
+  only.

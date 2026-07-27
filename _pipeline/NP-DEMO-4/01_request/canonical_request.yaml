@@ -1,0 +1,88 @@
+extracted_items:
+- item_id: DATA-001
+  source_location: para 1
+  text: 'Before interpreting my request, read the following file to establish the
+    conventions and terminology used for this data set: "C:\Projects\Repos\Neuropixels\DATA\Conventions\Neuropixels
+    experimental conventions.docx"'
+  type: data_source
+- item_id: RQ-001
+  source_location: para 2
+  text: 'I would like to examine:'
+  type: scientific_question
+- item_id: RQ-002
+  source_location: para 3
+  text: Sniff rate. For each trial, log the instantaneous sniff rate at each timepoint.
+  type: scientific_question
+- item_id: CON-001
+  source_location: para 4
+  text: Firing rate for all units. For each unit, bin its spiking into 50ms bins such
+    that at each time point (t) the value reported is the sum of all spikes that happened
+    at t-25 ms to t+25 ms. Include a unit in the analysis only if it has an overall
+    firing rate of at least 0.1 Hz and at least 5000 valid spikes throughout the experiment.
+  type: constraint
+- item_id: CON-002
+  source_location: para 5
+  text: Ethanol sensor values. For each trial, use the ETH value across that trial.
+  type: constraint
+- item_id: OUT-001
+  source_location: para 6
+  text: 'Methods: Report the number of trials for each experiment as well as the average
+    number of sniffs per trial and average ethanol contacts per trial for that experiment.
+    Also report total number of units recorded for each experiment.'
+  type: requested_output
+- item_id: CON-003
+  source_location: para 7
+  text: 'Results: Test whether sniff rate significantly increases within the first
+    ethanol contact on each trial compared to the control period before that contact.
+    Average these values within animal and perform statistical analysis across animals.'
+  type: constraint
+- item_id: OUT-002
+  source_location: para 8
+  text: For all reports produce a docx for human review.
+  type: requested_output
+- item_id: OUT-003
+  source_location: para 9
+  text: 'Figures:
+
+    Figure 1 – sniff rate within each trial– Panel 1: create a waterfall plot with
+    trial on the y axis, time on the x axis, and sniff rate as the color. Use jet
+    colormap. Panel 2: Show a line plot of the sniff rate across time averaged across
+    all trials and show the 95% confidence interval for the mean.'
+  type: requested_output
+- item_id: OUT-004
+  source_location: para 10
+  text: 'Figure 2 – firing rate within each trial – Panel 1: create a waterfall plot
+    with trial on the y axis, time on the x axis, and average firing rate as the color.
+    Use jet colormap. Panel 2: Show a line plot of the average firing rate across
+    time averaged across all trials and show the 95% confidence interval for the mean.'
+  type: requested_output
+- item_id: OUT-005
+  source_location: para 11
+  text: 'Figure 3 – ethanol within each trial – Panel 1: create a waterfall plot with
+    trial on the y axis, time on the x axis, and ethanol sensor value as the color.
+    Use jet colormap. Panel 2: Show a line plot of the average ethanol sensor value
+    across trials and show the 95% confidence interval for the mean.'
+  type: requested_output
+- item_id: PROH-001
+  source_location: para 13
+  text: 'To find ethanol contacts, for each experiment subtract the mean of the entire
+    time series of the ethanol trace, then use a threshold of 0.05 to mark ethanol
+    presence: when the mean-subtracted signal is above 0.05 ethanol is present, and
+    at or below 0.05 the condition is control. Do not use the raw ethanol signal for
+    thresholding. Apply this same fixed rule to all six sessions with no per-experiment
+    threshold adjustment. Define the number of trials for an experiment as the count
+    of discrete ethanol-contact events (contiguous runs of samples above the 0.05
+    mean-subtracted threshold). This procedure was already used for NP-DEMO-3 and
+    exists here:
+
+    "C:\Projects\Repos\Neuropixels\_pipeline\NP-DEMO-3\03_software\detect_eth_contact.py"'
+  type: prohibition
+- item_id: DATA-002
+  source_location: para 14
+  text: 'Data location: pull data from multiple dated experiments under C:\Projects\Repos\Neuropixels\DATA,
+    using the recording sessions dated 11/1/2021, 11/3/2021, 12/15/2021, 5/17/2022,
+    6/24/2022, and 9/14/2022.'
+  type: data_source
+request_id: REQ-NP-DEMO-4
+source_document: NP-DEMO-4 request.docx
+source_hash: fd7751698134bfd3b614cae416f49d0c5cb20abbe76670c16769efa8a27f4942

@@ -1,0 +1,38 @@
+------------------------------ PROMPT ------------------------------
+
+Autonomously prepare the contract for task NP-PAPER-1 in project
+C:\Projects\Repos\Neuropixels, then STOP for human approval -- do NOT approve.
+
+Run these steps in order, using research_workflow's --project flag (never `cd ... &&`),
+and run any python as "$RW_PY" (never bare python / py / anaconda):
+
+1. research_workflow --project C:\Projects\Repos\Neuropixels init   NP-PAPER-1 --risk red
+   (skip if the task already exists.)
+2. research_workflow --project C:\Projects\Repos\Neuropixels ground NP-PAPER-1
+3. research_workflow --project C:\Projects\Repos\Neuropixels ingest NP-PAPER-1 ^
+      --request "C:\Projects\Repos\Neuropixels\_pipeline\NP-PAPER-1\01_request\NP-PAPER-1_request.docx"
+   Confirm the request's data line was captured as a DATA-* item.
+
+4. Act as the CONTRACT-DESIGNER. Author
+   C:\Projects\Repos\Neuropixels\_pipeline\NP-PAPER-1\contract_spec.yaml to research_workflow's
+   schema (task_id, contract_version, analysis{...}, figures[...], report OR reports{...},
+   acceptance_criteria, data_provenance, open_decisions). Include a multi-figure and multi-document report format.
+   Provide the contract as a docx for human review in addition to a machine useable yaml.
+   Put EVERY genuinely unresolved scientific choice in open_decisions
+   -- do NOT guess or invent a method the request did not state. Write the yaml to a file; do not
+   use `python -c` heredocs.
+
+5. research_workflow --project C:\Projects\Repos\Neuropixels contract NP-PAPER-1 ^
+      --spec "C:\Projects\Repos\Neuropixels\_pipeline\NP-PAPER-1\contract_spec.yaml"
+6. research_workflow --project C:\Projects\Repos\Neuropixels status NP-PAPER-1
+
+7. If status shows open decisions (> 0) or the contract did not reach AWAITING_HUMAN_REVIEW:
+   STOP and report the exact open_decisions / error for the human to resolve in the request.
+   Otherwise report: "Contract for NP-PAPER-1 rendered (yaml_sha ...), state AWAITING_HUMAN_REVIEW,
+   0 open decisions -- ready for review at 02_contract\contract_v001.docx." Do NOT run approve.
+
+Do not edit anything under Optimized Python\ or Golden Fixtures\ or any tolerance config. If any
+step errors, STOP and report it; do not improvise around a hook block.
+
+-----------------------------------------------------------------------------------------------------
+

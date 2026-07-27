@@ -1,0 +1,30 @@
+lmm:
+  chisq: 1.8220444473567454
+  df: 4
+  pvalue: 0.7684468115431163
+  marginal_mean_range: 0.002152315817306183
+  icc: 0.7465444841341057
+friedman:
+  statistic: 1.7600000000000051
+  df: 4
+  pvalue: 0.7797918739613721
+  kendalls_w: 0.08800000000000026
+omnibus_significant: false
+posthoc: null
+n_animals: 5
+n_sessions: 6
+animal_session_map:
+  11-01-2021: NP8
+  11-03-2021: NP8
+  12-15-2021: Np10
+  5-17-2022: NP12
+  06-24-2022: NP15
+  09-14-2022: NP22
+note: 'DEV-002 (resolved 2026-07-25): fit on the 5-animal x 5-depth (n=25) animal-level
+  table -- NP8''s 2 sessions (2021-11-01, 2021-11-03) averaged per depth before this
+  fit, not the raw 6-session table. ''groups'' in the LMM is 5 animals, not 6 sessions.'
+lmm_convergence_note: 'MixedLM raised 2 convergence-related warning(s) fitting the
+  5-animal x 5-depth (n=25) table: The MLE may be on the boundary of the parameter
+  space.; The MLE may be on the boundary of the parameter space.. Reported per coordinator
+  instruction, not hidden -- interpret the LMM chi-square/p alongside the (convergence-warning-free)
+  Friedman result.'

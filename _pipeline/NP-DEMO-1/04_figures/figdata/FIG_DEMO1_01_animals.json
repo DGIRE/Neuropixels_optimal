@@ -1,0 +1,52 @@
+[
+  {
+    "session_date": "2021-11-01",
+    "condition": "ethanol",
+    "mrl": 0.01219394687980339
+  },
+  {
+    "session_date": "2021-11-01",
+    "condition": "control",
+    "mrl": 0.06380507412167935
+  },
+  {
+    "session_date": "2021-12-15",
+    "condition": "ethanol",
+    "mrl": 0.01612986546808727
+  },
+  {
+    "session_date": "2021-12-15",
+    "condition": "control",
+    "mrl": 0.07148012391906913
+  },
+  {
+    "session_date": "2022-05-17",
+    "condition": "ethanol",
+    "mrl": 0.07180189755190818
+  },
+  {
+    "session_date": "2022-05-17",
+    "condition": "control",
+    "mrl": 0.07478985019418749
+  },
+  {
+    "session_date": "2022-06-24",
+    "condition": "ethanol",
+    "mrl": 0.043086287123129535
+  },
+  {
+    "session_date": "2022-06-24",
+    "condition": "control",
+    "mrl": 0.22313088839017747
+  },
+  {
+    "session_date": "2022-09-14",
+    "condition": "ethanol",
+    "mrl": 0.025158978043861156
+  },
+  {
+    "session_date": "2022-09-14",
+    "condition": "control",
+    "mrl": 0.09811203470671603
+  }
+]

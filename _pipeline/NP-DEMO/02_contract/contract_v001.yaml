@@ -1,0 +1,149 @@
+analysis:
+  acceptance_criteria:
+  - comparison_method: distributional
+    level: 3
+    output_id: RESULT-mrl
+    tolerance: distributional; MRL within 1e-6 on fixture slice
+  - comparison_method: circular_phase
+    level: 3
+    output_id: RESULT-phase
+    tolerance: circular distance < 1e-6 on fixture slice
+  - comparison_method: statistical_decision
+    level: 3
+    output_id: RESULT-stat
+    tolerance: same significance decision on full workload
+  aggregation:
+  - per-unit MRL and preferred phase, then per-animal mean, ethanol vs control
+  analysis_definition: Band-pass OB LFP to the sniff band; compute instantaneous phase
+    (Hilbert); assign each spike the LFP phase at its time; per unit compute phase-locking
+    (mean resultant length, MRL) and preferred phase; compare ethanol vs control at
+    the animal level.
+  assumptions:
+  - sniff-band definition inherited from compute_sniff_phase GUI defaults
+  - LFP and spikes share the SpikeGLX clock (already aligned by the loader)
+  docx_source_refs: {}
+  experimental_structure: Independent unit = animal (n animals); trials nested within
+    animal; units nested within animal. Statistics at the animal level (no pseudoreplication).
+  failure_conditions:
+  - LFP/spike clock misalignment detected
+  - fixture slice disagreement beyond tolerance
+  inclusion_exclusion: Exclude units with firing rate < 0.1 Hz or < 50 spikes in a
+    condition; exclude LFP channels flagged noisy in the hazard catalog.
+  inputs:
+  - fields:
+    - LFP
+    - sp.st
+    - sp.clu
+    - ETH
+    - SNF
+    - NP_Fs
+    - LV_Fs
+    from: load_experiment_data
+    object: D-dict
+  - channel_order_source: SpikeGLX .meta
+    object: raw_LFP
+    rate_Hz: 1000
+    units: microvolt
+  - object: spike_times
+    source: Kilosort dir
+    units: seconds
+  multiple_comparison: Benjamini-Hochberg FDR across units for per-unit reporting
+    only
+  preprocessing:
+  - LFP band-pass = SOS Butterworth, filtfilt, padlen per hazard catalog
+  - phase via analytic signal (Hilbert); circular statistics for phase
+  prohibited_changes:
+  - editing Optimized Python kernel files
+  - editing Golden Fixtures or tolerance config
+  - changing the sniff-band or filter definition without human sign-off
+  randomization_seed: '5489'
+  required_outputs:
+  - desc: per-unit + per-animal MRL by condition
+    result_id: RESULT-mrl
+    type: table
+  - desc: preferred phase by condition
+    result_id: RESULT-phase
+    type: table
+  - desc: paired test + effect size + exact p
+    result_id: RESULT-stat
+    type: object
+  required_validated_functions:
+  - compute_spike_phase
+  - compute_sniff_phase
+  - load_experiment_data
+  risk: red
+  scientific_question: Does ethanol exposure alter the phase-locking of olfactory-bulb
+    single-unit spikes to the sniff-band LFP phase, relative to control trials?
+  statistical_model: Paired comparison across animals (ethanol vs control) of animal-mean
+    MRL; circular test for preferred-phase shift; effect sizes reported.
+  status: confirmatory
+  task_id: NP-DEMO
+contract_version: 1
+figures:
+- axis_requirements:
+    log_scale: false
+    truncation_permitted: false
+    x_label: LFP sniff-band phase (rad)
+    y_label: spike rate (norm.) / MRL
+    zero_reference: true
+  caption_requirements:
+  - state n_animals and n_units per condition (computed, not typed)
+  - state exact p and effect size from RESULT-stat
+  docx_source_refs: {}
+  figure_id: FIG-DEMO-01
+  panels: []
+  quality:
+    colorblind_review: true
+    min_font: 7
+    raster_dpi: 300
+    vector: true
+  required: true
+  scientific_purpose: Show the population shift in spike-LFP phase locking with ethanol,
+    with the raw per-unit distribution visible (not just summary bars).
+  sketch_guidance:
+    intent: Follow the layout of the included sketch (overlaid ethanol/control population
+      curves across sniff phase, per-unit points behind). Layout/overlay/annotation
+      only — values, N, error bars, axis units and no-truncation come from the contract
+      + results, never the sketch.
+    source: figure_examples/Demo figure.bmp
+  source_results:
+  - RESULT-mrl
+  - RESULT-phase
+  - RESULT-stat
+  statistical_annotations:
+    exact_p_values: true
+    permitted_tests:
+    - paired_animal_level
+    significance_stars: false
+  title: Ethanol vs control phase-locking of OB units to sniff-band LFP
+  visual_encoding:
+    condition_mapping:
+      control: dashed
+      ethanol: solid
+    raw_data_also_available: true
+open_decisions: []
+report:
+  appendices: []
+  docx_source_refs: {}
+  intended_audience: lab + demo
+  output_filename: NP-DEMO_ethanol_phase_locking.docx
+  reporting_rules:
+    exact_N: true
+    prohibit_causal_language: false
+    prohibit_uncontracted_post_hoc: true
+    report_effect_sizes: true
+    report_exact_p: true
+    report_exclusions: true
+  required_figures:
+  - FIG-DEMO-01
+  required_sections:
+  - Question
+  - Methods
+  - Results
+  - Figure
+  - Limitations
+  required_tables:
+  - RESULT-mrl
+  - RESULT-phase
+  scientific_status: confirmatory
+task_id: NP-DEMO

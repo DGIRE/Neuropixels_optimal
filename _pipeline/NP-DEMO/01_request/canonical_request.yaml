@@ -1,0 +1,10 @@
+extracted_items:
+- item_id: OUT-001
+  source_location: para 1
+  text: Test whether ethanol changes how olfactory bulb single units lock their spikes
+    to the sniff phase vs. control. Provide a report as well as one population figure.
+    A rough sketch of the figure is included.
+  type: requested_output
+request_id: REQ-NP-DEMO
+source_document: Demo_request.docx
+source_hash: 4f4293d909f6d3758b80cb995c69e9d8f8ae1f4c15f9fd2be2732f905744b6a5

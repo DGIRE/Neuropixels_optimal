@@ -1,0 +1,29 @@
+claim_evidence:
+- injected_value: '0.0625'
+  placeholder: '{{RESULT-stat.pvalue}}'
+  source: RESULT_stat.json:pvalue
+- injected_value: '-1.00'
+  placeholder: '{{RESULT-stat.effect_size}}'
+  source: RESULT_stat.json:effect_size (rank-biserial r)
+- injected_value: '0.0'
+  placeholder: '{{RESULT-stat.statistic}}'
+  source: RESULT_stat.json:statistic (W)
+- injected_value: '5'
+  placeholder: '{{RESULT-stat.n_animals}}'
+  source: RESULT_stat.json:n_animals
+- injected_value: '6'
+  placeholder: '{{RESULT-qc-counts.n_sessions_loaded}}'
+  source: RESULT_qc_counts.json:count(keys)
+- injected_value: '5'
+  placeholder: '{{RESULT-qc-counts.n_sessions_in_paired_stat}}'
+  source: RESULT_stat.json:len(animal_ids)
+- injected_value: '1603'
+  placeholder: '{{RESULT-mrl.n_units_ethanol_included}}'
+  source: FIG_DEMO1_01_units.json:count(condition=='ethanol') [derived from RESULT_mrl.json
+    via build_figdata.py]
+- injected_value: '644'
+  placeholder: '{{RESULT-mrl.n_units_control_included}}'
+  source: FIG_DEMO1_01_units.json:count(condition=='control') [derived from RESULT_mrl.json
+    via build_figdata.py]
+orphan_scan: CLEAN
+unresolved_placeholders: []

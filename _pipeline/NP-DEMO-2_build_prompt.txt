@@ -1,0 +1,111 @@
+NP-DEMO-2 -- Phase B build-driver prompt (Claude Code CLI)
+=========================================================
+ONE-TIME SETUP:
+  1. Set RW_PY to the vras venv python. This ONE env var drives BOTH the enforcement
+     hooks AND every analysis python call, so the build always uses vras -- which
+     ALREADY has scipy / statsmodels / pandas / numpy + research_workflow. Set it in the
+     SAME shell you launch claude from:
+       PowerShell: $env:RW_PY="C:/Projects/Repos/Agentic Research/Research Setup/research_workflow/vras/Scripts/python.exe"
+     WHY THIS MATTERS: Claude runs shell commands in a subshell that does NOT inherit
+     venv "activation", and vras lives OUTSIDE the Neuropixels project, so a bare
+     `python` resolves to anaconda (on the global PATH), not vras -- which is exactly
+     why earlier runs hunted for an interpreter and used C:\Users\david\anaconda3\
+     python.exe. Pinning RW_PY removes the ambiguity. NO pip install is needed; vras
+     already has the stack. (analysis-requirements.txt is only for a FRESH install on a
+     new machine.)
+  2. Make sure the updated .claude is in place IN THE PROJECT: settings.json AND
+     hooks\block-dangerous-bash.py must BOTH exist. Launch claude, do one edit, confirm
+     NO "hook error" lines; an edit under Golden Fixtures\ or Optimized Python\ must be
+     BLOCKED.
+
+HOW TO RUN
+  Attended (you watch, approve the rare prompt):  cd C:\Projects\Repos\Neuropixels ; claude   ; then paste the PROMPT below.
+  UNATTENDED (no prompts; hooks are the guardrail):
+       cd C:\Projects\Repos\Neuropixels
+       claude -p "<paste the PROMPT below>" --permission-mode bypassPermissions
+     bypassPermissions skips ALL interactive prompts (including Claude Code's
+     command-injection heuristics that no allowlist can silence). Safety still holds
+     because PreToolUse hooks fire in every mode: block-protected-paths /
+     block-contract-mutation / block-uncontracted-analysis / require-approved-contract
+     / block-dangerous-bash (rm, pip install, curl/wget, git push, sudo, and any
+     write/delete to the kernel or fixtures). Run this ONLY on the machine that holds
+     the real data + kernel; never with a networked/credentialed shell you care about.
+  Prerequisite: NP-DEMO-2 contract APPROVED and `verify` prints VALID.
+
+------------------------------ PROMPT (paste verbatim) ------------------------------
+
+Drive the approved NP-DEMO-2 contract through its build using research_workflow
+run/step only -- do not fast-forward, do not invent folders, do not approve or sign off.
+
+LOOP MECHANICS. Repeat until the state reaches AWAITING_FINAL_HUMAN_APPROVAL:
+(1) run:  research_workflow --project C:\Projects\Repos\Neuropixels run NP-DEMO-2
+    -- it prints the next state, who to dispatch, and the artifact to produce.
+(2) Do exactly that state's work, writing outputs ONLY into the canonical
+    _pipeline\NP-DEMO-2\ subdirs (03_software, 04_results, 05_validation, 06_figures,
+    07_report, 08_traceability).
+(3) Record it:  research_workflow --project C:\Projects\Repos\Neuropixels step
+    NP-DEMO-2 --state <STATE> --by <agent>
+Only step a state whose artifact you actually produced. After EACH artifact,
+immediately step it and run again; keep looping -- do not end your turn until run
+reports AWAITING_FINAL_HUMAN_APPROVAL. If run prints a dispatch for a state whose
+artifact you already wrote, you forgot to step it -- record it and continue. For the
+OPTIONAL OPTIMIZED state, skip it with step --state RESULTS_FROZEN.
+
+INTERPRETER (do this or the run will use the wrong python). Run EVERY python invocation
+as "$RW_PY" -- e.g.  "$RW_PY" 03_software\my_analysis.py  or  "$RW_PY" -m pytest ... .
+"$RW_PY" is the vras venv python; it has scipy / statsmodels / pandas + research_workflow.
+Do NOT use bare `python`, `py`, `python3`, or any anaconda path: in Claude's subshell a
+bare `python` resolves to anaconda (vras is outside this project and not on that shell's
+PATH). If "$RW_PY" is empty, STOP and tell the user to set it -- do not fall back to
+`python`.
+
+COMMAND STYLE (keeps the run smooth / avoids approval prompts). Use ONE interpreter:
+always "$RW_PY" (above). WRITE analysis code to a .py FILE under 03_software\ (or
+analyses\) and run it as `python 03_software\<name>.py` -- do NOT use `python -c` with
+long inline heredocs or `#` comments (that trips the path-validation heuristic), and do
+NOT paste multi-hundred-line scripts inline (that trips the over-length parser). Prefer
+simple, single commands over compound `cd "..." && ... 2>&1 | tail` chains (the "cd with
+output redirection" heuristic forces approval); rely on research_workflow's --project
+flag and absolute paths instead of `cd`. Keep paths quoted but avoid gratuitous
+backslash escaping. Never search the whole C:\ drive (`find / -path ...`); the venv +
+kernel are at known locations. Never pip install during the build (set the env up first).
+
+HARD RULES (the hooks enforce these; do not fight them). Phase-lock spikes to the SNF
+sniff-sensor signal, NEVER the LFP (PROH-001). Reuse the validated kernel functions --
+load_experiment_data, compute_sniff_phase, threshold_eth, compute_spike_phase,
+compute_sniff_psth, plot_unit_locations -- and NEVER write to anything under
+Optimized Python\ or Golden Fixtures\, or any tolerance config; new code goes in
+analyses\ beside the kernel or in 03_software\. Read raw data ONLY from
+C:\Projects\Repos\Neuropixels\DATA for the six dated sessions. Include only valid-sniff
+spikes (spike_SNF_PH >= 0.0); discard and LOG every -1/noise section (experiment,
+start_s, end_s, reason). If you cannot follow any contract clause exactly, STOP and file
+a deviation to 08_traceability\deviations.yaml -- do not improvise.
+
+STATISTICS -- TWO LEVELS. Animal level: paired scipy.stats.wilcoxon (exact, two-sided)
+on per-animal mean per-unit delta_MRL across the usable animals (up to 6), effect size =
+matched-pairs rank-biserial r -> RESULT-stat-animal. Unit level: a statsmodels linear
+mixed-effects model of per-unit MRL with condition as a fixed effect and animal as a
+random intercept (this corrects for units nested in animals -- no per-unit FDR), effect
+size = the standardized condition coefficient -> RESULT-stat-unit. Unit inclusion: drop
+units < 0.1 Hz or < 50 valid-sniff spikes combined across conditions.
+
+FIGURE SELECTIONS (pinned). Results "examples" figure (FIG-DEMO2-RES-EX): the k = 5
+units with the largest |delta_MRL| = |MRL_ethanol - MRL_control|, each with its probe-
+location map via plot_unit_locations. Methods QC-PSTH figure (FIG-DEMO2-QC-PSTH): the
+single strongest and single weakest units by MRL computed on ALL valid-sniff spikes
+POOLED across conditions (condition-agnostic -- 2 units total, across all experiments,
+not per-experiment). QC traces figure (FIG-DEMO2-QC): per-experiment SNF and ETH panels
+with sniff-onset and ethanol-contact thresholds drawn as red dashed lines, discards shaded.
+
+DELIVERABLES -- TWO SEPARATE DOCUMENTS (the contract carries both as report roles).
+Methods/QC document (07_report, ..._METHODS.docx): per-experiment n_sniffs / n_neurons /
+n_trials / length-minutes / % usable-sniff, the discard log, the PROH-002 threshold-
+adjustment log, and FIG-DEMO2-QC + FIG-DEMO2-QC-PSTH. Results document (..._RESULTS.docx):
+animal-level and unit-level statistics with FIG-DEMO2-RES-EXP, FIG-DEMO2-RES-UNIT,
+FIG-DEMO2-RES-EX. EVERY number in a report must be injected from a result object in
+04_results\ -- no hand-typed statistics.
+
+When run reports AWAITING_FINAL_HUMAN_APPROVAL, STOP and summarize what was produced.
+Do not sign off.
+
+-------------------------------------------------------------------------------------

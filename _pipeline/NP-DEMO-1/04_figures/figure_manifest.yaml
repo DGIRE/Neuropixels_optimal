@@ -1,0 +1,61 @@
+task_id: NP-DEMO-1
+p4_figures_status: COMPLETE
+date: "2026-07-21"
+
+figures:
+  FIG-DEMO1-01:
+    status: COMPLETE
+    files:
+      - output/FIG_DEMO1_01.pdf    # vector
+      - output/FIG_DEMO1_01.png    # 300 dpi raster
+    sources:
+      - figdata/FIG_DEMO1_01_units.json    # derived from RESULT_mrl.json + RESULT_phase.json
+      - figdata/FIG_DEMO1_01_animals.json  # animal-level means from RESULT_mrl.json
+      - figdata/FIG_DEMO1_01_stat.json     # from RESULT_stat.json
+    audit:
+      result: NO_BLOCKERS
+      majors_found: 2
+      majors_resolved: 2
+      resolutions:
+        - MAJOR-2 (visual encoding): control=open circles, ethanol=filled circles adapts
+            the contracted control=dashed / ethanol=solid convention to scatter representation.
+        - MAJOR-1 (y-axis content): the contracted y-label 'spike rate (norm.) / MRL' implies
+            population phase-tuning curves (normalized firing rate vs sniff phase). These
+            are not computable from the frozen P3 result objects (which store only per-unit
+            MRL and preferred phase, not per-spike phase histograms). The figure shows MRL
+            honestly labeled 'MRL (mean resultant length)'. Adding spike-rate tuning curves
+            would require extending the P3 result objects with per-unit phase histograms —
+            a documented P3/P4 limitation, not a rendering error.
+      minors_found: 2
+      minors_resolved: 2
+      minor_notes:
+        - MINOR-1 (population curve): sketch guidance calls for population phase-tuning
+            curves overlaid on per-unit scatter. Not implemented because binned spike rates
+            are not in the frozen results (see MAJOR-1 note above). Raw scatter + paired
+            means are displayed instead — honest to data, no fabricated curve.
+        - MINOR-2 (QC excerpts): figure title now explicitly states "~90 s excerpt per session;
+            timestamps are relative to session start."
+
+  FIG-DEMO1-QC:
+    status: COMPLETE
+    files:
+      - output/FIG_DEMO1_QC.pdf
+      - output/FIG_DEMO1_QC.png
+    sources:
+      - figdata/FIG_DEMO1_QC_meta.json    # n_sniffs/n_neurons/n_trials from RESULT_qc_counts
+      - figdata/FIG_DEMO1_QC_traces.json  # raw SNF excerpts (display only, not scientific)
+    audit:
+      result: PASS_NO_BLOCKERS_NO_MAJORS
+
+# Limitation note for report (see MAJOR-1 above)
+p3_result_gap:
+  description: >-
+    P3 result objects (RESULT-mrl, RESULT-phase) store per-unit MRL and preferred
+    phase. They do NOT store per-spike phase arrays or per-unit phase histograms.
+    The contracted FIG-DEMO1-01 y-axis label 'spike rate (norm.) / MRL' implies
+    an option to show normalized spike rate tuning curves, which requires per-spike
+    phase data. This representation is deferred to a future analysis extension.
+  action: >-
+    If spike-rate phase tuning curves are required, add per-unit phase histograms
+    (e.g., 36-bin circular histograms of spike_SNF_PH per unit per condition) to
+    the P3 result objects and re-run the build_figdata + renderer steps.

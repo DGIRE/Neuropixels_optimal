@@ -1,0 +1,12 @@
+active_run_id: null
+approved_contract_version: 1
+blocking_findings: []
+data:
+  approved_contract_version: 1
+  project_dir: C:\Projects\Repos\Neuropixels
+next_permitted_actions:
+- SIGNED_OFF
+- REPORT_REVISION
+risk: red
+state: AWAITING_FINAL_HUMAN_APPROVAL
+task_id: NP-DEMO-3

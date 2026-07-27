@@ -1,0 +1,79 @@
+====================================================================
+AUTONOMOUS CAUTIONS — CONTRACT PHASE (Neuropixels research_workflow)
+====================================================================
+Purpose: a running list of hard-won cautions for agents running the
+research_workflow contract pipeline against this project
+(C:\Projects\Repos\Neuropixels). Read this BEFORE any autonomous or
+semi-autonomous contract run. Add a new numbered CAUTION whenever a run
+hits an avoidable hazard.
+
+--------------------------------------------------------------------
+CAUTION 1 — NEVER CHANGE THE SHELL WORKING DIRECTORY. RUN EVERY Bash
+            CALL FROM THE PROJECT ROOT.
+--------------------------------------------------------------------
+Project root = C:\Projects\Repos\Neuropixels
+(the directory that contains .claude\).
+
+WHAT WENT WRONG (observed, recovered):
+  During exploration an agent cd-ed into a subdirectory. That single
+  `cd` PERMANENTLY BROKE this project's .claude\settings.json hooks for
+  every subsequent Bash call in the session.
+
+WHY IT HAPPENS (the mechanism — understand this, don't just memorize):
+  The PreToolUse/PostToolUse hooks in .claude\settings.json invoke the
+  hook scripts by a path that is resolved RELATIVE TO THE SHELL'S CURRENT
+  DIRECTORY (e.g. .claude\hooks\*.py, not an absolute path). The hook
+  runner uses whatever the shell's cwd is at the moment the hook fires.
+  So the instant the cwd is anything other than the project root, EVERY
+  hook can no longer find its script and crashes with "file not found".
+  - This kills hooks on ALL following Bash calls, not just the one that
+    cd-ed.
+  - It even fails on a bare `cd` back toward the root, because the hook
+    fires BEFORE the command runs — so you cannot always "cd back" to fix
+    it from inside a normal, hook-guarded Bash call.
+  - A crashing hook is worse than no hook: depending on config it either
+    hard-blocks every command or (if non-blocking) silently disables the
+    guardrails that are supposed to protect Optimized Python, Golden
+    Fixtures, and tolerances during an autonomous run.
+
+THE RULES (follow all of them):
+  1. Do NOT use `cd`. Not `cd sub`, not `cd sub && cmd`, not
+     `pushd`/`popd`, not `(cd sub && cmd)` in a subshell — the subshell
+     still changes cwd while the hook resolves its path.
+  2. Reach files by ABSOLUTE PATH instead of moving into their folder.
+     - Bad:   cd _pipeline\NP-XXX && python foo.py
+     - Good:  python "C:\Projects\Repos\Neuropixels\_pipeline\NP-XXX\foo.py"
+  3. If a tool genuinely needs a working directory, pass it as an
+     argument that does NOT move the shell (e.g. a tool's own
+     --cwd/--project/--directory flag, or `git -C <dir> ...`,
+     `python -C`-style options), never a shell `cd`.
+     For research_workflow specifically, use its `--project` flag:
+       research_workflow --project C:\Projects\Repos\Neuropixels <cmd> ...
+  4. Keep every Bash invocation self-contained and root-relative. Assume
+     the shell always starts at project root and MUST end at project
+     root.
+
+IF IT ALREADY HAPPENED (recovery):
+  The cwd must be reset to the project root WITHOUT a hook firing, because
+  the broken hook will crash the very command that tries to fix it. Reset
+  the directory with a single one-off call that bypasses the hook layer
+  (a sandbox-disabled / hook-disabled Bash call that does nothing but
+  return the shell to C:\Projects\Repos\Neuropixels). After the cwd is
+  back at project root, hooks resolve again and normal hook-guarded Bash
+  can resume. Do this once, verify the next ordinary Bash call shows NO
+  "hook error" / "file not found" lines, then continue.
+  - Treat this recovery as an exception, not a routine. The correct state
+    is "never left project root in the first place."
+
+VERIFY (cheap check before trusting an autonomous run):
+  After the first Bash call, confirm there are no hook "file not found" /
+  "hook error" lines in the output. If you see them, STOP: the guardrails
+  are off. Reset to project root per the recovery step above before doing
+  any write, analysis, or contract step — otherwise protected assets are
+  unprotected.
+
+ONE-LINE REMINDER:
+  Stay at C:\Projects\Repos\Neuropixels. Absolute paths only. Never `cd`,
+  never `cd ... &&`. A changed cwd = broken hooks = silently disabled
+  safety.
+====================================================================

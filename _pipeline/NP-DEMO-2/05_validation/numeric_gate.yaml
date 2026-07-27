@@ -1,0 +1,84 @@
+gate: NUMERIC_OK
+task_id: NP-DEMO-2
+fixture_session: '2022-09-14'
+kernel_root: C:\Projects\Repos\Neuropixels\Optimized Python
+fixture_root: C:\Projects\Repos\Neuropixels\Golden Fixtures
+total_checks: 14
+n_pass: 14
+n_fail: 0
+gate_pass: true
+checks:
+  stage_08_sniff_phase:
+    SNF_PH:
+      pass: true
+      max_abs_diff: 0.0
+      rtol: 1.0e-06
+      atol: 1.0e-09
+    SNF_filt:
+      pass: true
+      max_abs_diff: 1.0728836059570312e-06
+      rtol: 1.0e-06
+      atol: 1.0e-09
+    SNF_z:
+      pass: true
+      max_abs_diff: 3.113953539468639e-12
+      rtol: 1.0e-06
+      atol: 1.0e-09
+    sniff_onsets:
+      pass: true
+      max_abs_diff: 0.0
+      rtol: 1.0e-12
+      atol: 1.0e-12
+    sniff_onsets_s:
+      pass: true
+      max_abs_diff: 0.0
+      rtol: 1.0e-12
+      atol: 1.0e-12
+    sniff_dur_s:
+      pass: true
+      max_abs_diff: 0.0
+      rtol: 1.0e-06
+      atol: 1.0e-09
+    sniff_thr:
+      pass: true
+      max_abs_diff: 0.0
+      rtol: 0
+      atol: 0
+  stage_09_eth_threshold:
+    ETH_thr:
+      pass: true
+      max_abs_diff: 0.0
+      rtol: 0
+      atol: 0
+    eth_threshold:
+      pass: true
+      max_abs_diff: 0.0
+      rtol: 0
+      atol: 0
+  stage_10_spike_phase:
+    spike_SNF_PH:
+      pass: true
+      max_abs_diff: 0.0
+      rtol: 1.0e-12
+      atol: 1.0e-12
+    unitMeanSniffPhase:
+      pass: true
+      max_abs_diff: 4.052314039881821e-15
+      rtol: 1.0e-12
+      atol: 1.0e-12
+  stage_11_sniff_psth:
+    psth_phase:
+      pass: true
+      max_abs_diff: 7.105427357601002e-15
+      rtol: 1.0e-09
+      atol: 1.0e-12
+    centers_phase:
+      pass: true
+      max_abs_diff: 1.1102230246251565e-16
+      rtol: 1.0e-09
+      atol: 1.0e-12
+    n_events:
+      pass: true
+      max_abs_diff: 0.0
+      rtol: 0
+      atol: 0

@@ -1,0 +1,1007 @@
+analysis:
+  acceptance_criteria:
+  - comparison_method: exact
+    level: 1
+    output_id: RESULT-full-lfp
+    tolerance: Full-duration LFP restricted to the first 10 s must equal the current
+      10-s loader output channel-for-channel within float64 numerical tolerance (regression
+      anchor rtol <= 1e-9, atol <= 1e-12).
+  - comparison_method: exact
+    level: 1
+    output_id: five-depth-selection
+    tolerance: Five chosen channel indices are exact integers; ycoords (um) match
+      exactly; deterministic given xcoords/ycoords (zero tolerance).
+  - comparison_method: numeric
+    level: 2
+    output_id: RESULT-coh-spectrum
+    tolerance: Coherence within rtol 1e-6 / atol 1e-9 vs the independent reference
+      on the synthetic fixture slice; distributional agreement on the full workload.
+  - comparison_method: numeric
+    level: 2
+    output_id: RESULT-lfp-psd
+    tolerance: LFP PSD within rtol 1e-6 / atol 1e-9 on the fixture slice.
+  - comparison_method: numeric
+    level: 2
+    output_id: RESULT-snf-psd
+    tolerance: SNF PSD within rtol 1e-6 / atol 1e-9 on the fixture slice.
+  - comparison_method: exact
+    level: 1
+    output_id: RESULT-null-threshold
+    tolerance: Bit-for-bit reproducible given seed 5489 on re-run (zero tolerance).
+      Cross-implementation acceptance is at the significance-decision level (see RESULT-theta-coh
+      / RESULT-depth-stat).
+  - comparison_method: numeric
+    level: 2
+    output_id: RESULT-theta-coh
+    tolerance: Mean/peak theta coherence and peak frequency within rtol 1e-6 on the
+      fixture slice; significant-theta fraction and peak-coherence percentile inherit
+      the circular-shift significance DECISION (exceeds/does-not-exceed 95% null)
+      as the workload-level accepted comparison.
+  - comparison_method: exact
+    level: 1
+    output_id: RESULT-best-depth
+    tolerance: Best-depth ordinal per experiment, overall ranking, and per-ordinal
+      consistency counts are exact integers; deterministic given RESULT-theta-coh.
+  - comparison_method: statistical_decision
+    level: 3
+    output_id: RESULT-depth-stat
+    tolerance: Same significance decision (alpha=0.05) on re-run for the mixed-effects
+      LRT and Friedman; chi-square/Friedman statistic and exact p within rtol 1e-4;
+      Kendall's W, marginal-mean range, ICC, and post-hoc rank-biserial r within 1e-4;
+      Holm-surviving pairs identical.
+  - comparison_method: numeric
+    level: 2
+    output_id: RESULT-sniff-rate
+    tolerance: Median and IQR of instantaneous sniff rate within 1e-4 Hz on the fixture
+      slice (deterministic from validated compute_sniff_phase onsets).
+  - comparison_method: exact
+    level: 1
+    output_id: RESULT-qc-counts
+    tolerance: length_min, n_windows_used, n_windows_excluded (ethanol/noise), n_sniffs,
+      channel indices exact integers; ycoords and pct_usable within 1e-4.
+  - comparison_method: exact
+    level: 1
+    output_id: RESULT-qc-discards
+    tolerance: Discarded-span reasons and boundaries exact; start_s/end_s within one
+      LFP sample (1 ms) of the deterministic mask edges.
+  - comparison_method: numeric
+    level: 2
+    output_id: RESULT-example-traces
+    tolerance: Band-filtered LFP and inhalation mask within rtol 1e-6 on the fixture
+      slice (deterministic filters); representative segment chosen by the display
+      convention in the figure contract.
+  - comparison_method: scientific
+    level: 4
+    output_id: RESULT-methods-doc
+    tolerance: 'Scientific-level review: all injected numbers must match their source
+      RESULT objects exactly (no hand-typed values); required sections/figures/tables
+      present; exclusions and discarded-section log complete; QC framing correct.'
+  - comparison_method: scientific
+    level: 4
+    output_id: RESULT-results-doc
+    tolerance: 'Scientific-level review: injected numbers match sources exactly; exact
+      p-values and effect sizes reported; exploratory (non-causal) framing for depth-dependence,
+      confirmatory framing for the coherence replication; required figures/tables
+      present.'
+  aggregation:
+  - docx_source_refs:
+    - OUT-009
+    - RQ-023
+    - RQ-040
+    - OUT-010
+    step: Per experiment x depth, compute multitaper LFP PSD, SNF PSD (depth-independent),
+      and LFP-sniff coherence C(f)=|S12|/sqrt(S1*S2) via multitaper_psd_coherence
+      (4-s windows, 50% overlap, 7 Slepian tapers NW=4, freqs >= 0.25 Hz), aggregated
+      over retained windows. Retain per-window time-resolved spectrograms/coherence
+      for the Fig 1C heatmaps with sniff-rate overlay.
+  - docx_source_refs:
+    - RQ-024
+    - CON-003
+    - RQ-041
+    - RQ-038
+    step: Per experiment x depth, build the circular-shift null (>=1000 shifts, seed
+      5489) and the per-frequency 95% threshold; report observed coherence as its
+      percentile within the null.
+  - docx_source_refs:
+    - OUT-011
+    - RQ-059
+    - RQ-060
+    - RQ-061
+    - RQ-062
+    - CON-016
+    - OUT-028
+    step: Per experiment x depth, reduce coherence to mean theta coherence (primary,
+      2-12 Hz), peak theta coherence + frequency, significant-theta fraction, peak-coherence
+      percentile.
+  - docx_source_refs:
+    - RQ-026
+    - RQ-027
+    - RQ-028
+    - OUT-012
+    - OUT-029
+    step: 'Best depth: per experiment = depth with highest mean theta coherence; overall
+      = depth with highest grand-mean theta coherence across experiments; report per-ordinal
+      consistency counts (how many experiments each ordinal won).'
+  - docx_source_refs:
+    - RQ-029
+    - OUT-014
+    - OUT-015
+    - OUT-016
+    - OUT-013
+    - RQ-068
+    step: 'Depth statistics via depth_statistics: mixed-effects LRT (chi-square, df,
+      exact p, marginal-mean range + ICC) + Friedman (stat, df, exact p, Kendall''s
+      W) + Holm-corrected Wilcoxon post-hoc with rank-biserial r if the omnibus is
+      significant. If significant, report whether the overall-best depth is significantly
+      greater than the others.'
+  - docx_source_refs:
+    - OUT-018
+    - RQ-030
+    - RQ-031
+    - RQ-032
+    - RQ-033
+    - OUT-030
+    - OUT-031
+    - OUT-032
+    step: 'Per experiment QC aggregation: recording length (min); n all-control all-valid-sniff
+      4-s windows used; n windows excluded split by reason (ethanol overlap vs invalid-sniff/noise
+      overlap); n sniffs detected and retained; instantaneous sniff-rate range/median/IQR;
+      pct usable time; the five channel indices + ycoords; discarded-section log (start_s,
+      end_s, reason).'
+  analysis_definition:
+    description: 'Per experiment (6 sessions, control epochs only): (1) load D-dict
+      via load_experiment_data; (2) select the five depths via select_five_depths
+      from xcoords/ycoords; (3) extract full-duration LFP for those five channels
+      via extract_full_lfp (preserving validated preprocessing; regression-anchored
+      to the current 10-s loader); (4) build the per-window control mask via build_window_control_mask
+      (detect_eth_contact rule: mean-subtracted ETH > 0.05 = ethanol; any ethanol
+      sample excludes the 4-s window; log ethanol time excluded); (5) run compute_sniff_phase
+      (threshold_std=-0.5) and build_valid_sniff_mask (1/ISI instantaneous rate; ISI
+      5th/95th-percentile trimming; SNF_PH==-1 noise spans invalid); (6) resample
+      raw SNF to the LFP rate via resample_snf_to_lfp; (7) per depth, tile into 4-s
+      / 50%-overlap windows, keep all-control all-valid-sniff windows, compute multitaper
+      LFP PSD, SNF PSD, and LFP-sniff coherence C(f)=|S12|/sqrt(S1*S2) via multitaper_psd_coherence;
+      (8) build the circular-shift null (>=1000 shifts, seed 5489) via circular_shift_null
+      and the 95% threshold; (9) reduce each coherence spectrum to mean/peak theta
+      coherence, significant-theta fraction, peak percentile via reduce_theta_coherence;
+      (10) per experiment pick the best depth (highest mean theta coherence), rank
+      depths overall by grand-mean theta coherence, count per-ordinal wins; (11) run
+      depth_statistics (mixed-effects LRT + Friedman + Holm-corrected Wilcoxon post-hoc
+      if significant). Exclude any session with fewer than 30 valid 4-s windows from
+      the depth statistics and log it (PROH-002/CON-008).'
+    docx_source_refs:
+    - OUT-005
+    - RQ-012
+    - RQ-017
+    - RQ-018
+    - RQ-022
+    - RQ-024
+    - RQ-025
+    - RQ-026
+    - RQ-029
+    - PROH-002
+    - CON-008
+  assumptions: []
+  data_provenance:
+    description: 'Six sessions under C:\Projects\Repos\Neuropixels\DATA, one animal
+      each (confirmed by David Gire 2026-07-23, NP-DEMO-4 OPEN-007, same six dates):
+      2021-11-01, 2021-11-03, 2021-12-15, 2022-05-17, 2022-06-24, 2022-09-14 (= DATA-004''s
+      11/1/2021, 11/3/2021, 12/15/2021, 5/17/2022, 6/24/2022, 9/14/2022). Each restricted
+      to control (non-ethanol) epochs. All six DATA folders confirmed present. Because
+      no two sessions share an animal, DATA-003''s animal-grouping contingency does
+      not apply; session is the random-effect grouping.'
+    docx_source_refs:
+    - DATA-004
+    - CON-001
+    - CON-009
+    - CON-010
+    - CON-011
+    - CON-012
+    - CON-013
+    - CON-014
+    - DATA-003
+  docx_source_refs: {}
+  experimental_structure:
+    description: 'Six recording sessions under the data root (2021-11-01, 2021-11-03,
+      2021-12-15, 2022-05-17, 2022-06-24, 2022-09-14), each treated as one independent
+      experiment and the animal-level unit of analysis (CON-001). Each of these six
+      sessions was confirmed by David Gire (2026-07-23, NP-DEMO-4 OPEN-007) to correspond
+      to a distinct animal -- the identical six dates -- so DATA-003''s shared-animal
+      contingency does NOT apply: experiment == session == animal (1:1), and session
+      is the correct random-effect grouping (no nesting correction). Within each experiment
+      the five depths are measured on the same time windows, so the design is repeated-measures
+      (within-experiment) across depths: up to 6 experiments x 5 depths = 30 per-experiment
+      x per-depth mean theta-coherence values, fewer if a session is excluded per
+      PROH-002/CON-008.'
+    docx_source_refs:
+    - CON-001
+    - DATA-003
+    - DATA-004
+    - CON-004
+    - CON-009
+    - CON-010
+    - CON-011
+    - CON-012
+    - CON-013
+    - CON-014
+  failure_conditions:
+  - condition: A session yields fewer than 30 valid 4-s windows after masking; it
+      is excluded from the depth statistics and logged (never silently dropped).
+    docx_source_refs:
+    - PROH-002
+    - CON-008
+  - condition: Fewer than 3 sessions survive the >=30-window criterion, leaving the
+      repeated-measures depth statistics underpowered; execution blocked and reported.
+    docx_source_refs:
+    - PROH-002
+    - CON-004
+  - condition: Full-duration LFP fails the first-10-s regression anchor against the
+      current loader; extraction blocked and reported.
+    docx_source_refs:
+    - OUT-026
+  - condition: Multitaper PSD/coherence fails the synthetic-fixture tolerance (rtol
+      1e-6 / atol 1e-9); analysis blocked.
+    docx_source_refs:
+    - DATA-002
+  - condition: Circular-shift null is not bit-for-bit reproducible given seed 5489;
+      significance blocked.
+    docx_source_refs:
+    - RQ-038
+  inclusion_exclusion:
+  - docx_source_refs:
+    - PROH-008
+    - CON-002
+    rule: 'Control epochs only: every analysis window must lie ENTIRELY within control
+      (mean-subtracted ETH <= 0.05). Any window containing >=1 ethanol sample is excluded.'
+  - docx_source_refs:
+    - RQ-020
+    - RQ-021
+    - OUT-008
+    rule: 'Valid-sniff only: exclude any 4-s window overlapping an invalid-sniff span
+      (ISI outside 5th/95th percentile OR SNF_PH==-1 noise).'
+  - docx_source_refs:
+    - PROH-002
+    - CON-008
+    rule: Sessions with fewer than 30 valid 4-s windows after masking are excluded
+      from the depth statistics and logged in the Methods report; never silently dropped.
+  - docx_source_refs:
+    - RQ-014
+    - RQ-016
+    rule: Depth selection restricted to channels having BOTH a valid LFP row and a
+      ycoord; lower-channel-index tie-break fixes a single column throughout.
+  - docx_source_refs:
+    - PROH-003
+    - PROH-008
+    rule: Ethanol/control detection uses the detect_eth_contact rule verbatim (mean-subtracted
+      ETH strictly > 0.05); no per-experiment threshold adjustment across the 6 sessions.
+  - docx_source_refs:
+    - RQ-043
+    rule: Head-fixed vs free-moving contrast from the paper is out of scope; these
+      recordings are a single behavioral condition.
+  inputs:
+  - docx_source_refs:
+    - RQ-011
+    - RQ-052
+    - RQ-053
+    - RQ-054
+    - RQ-055
+    - RQ-056
+    - RQ-057
+    - RQ-058
+    fields:
+    - LFP
+    - LFP_t
+    - LFP_Fs
+    - NP_Fs
+    - SNF
+    - ETH
+    - LV_Fs
+    - xcoords
+    - ycoords
+    from: load_experiment_data
+    object: D-dict
+  - description: 'The neural signal (channels x samples @ LFP_Fs ~1000 Hz). One channel
+      = one depth. Validated preprocessing: order-4 Butterworth low-pass at 400 Hz
+      on native signal, then decimation to 1000 Hz. Requires full-duration extraction
+      (see new function extract_full_lfp) for the five selected channels only.'
+    docx_source_refs:
+    - RQ-053
+    - RQ-054
+    - OUT-005
+    object: LFP
+  - description: Raw sniff-sensor (cannula pressure) trace (n,) @ LV_Fs ~125 Hz. The
+      respiratory reference for coherence (the paper's thermistor analogue). Used
+      RAW (resampled to LFP rate) for coherence/PSD; NOT the detected phase (PROH-009).
+      Also the source signal for compute_sniff_phase onset/valid-sniff detection.
+    docx_source_refs:
+    - RQ-055
+    - PROH-009
+    - OUT-008
+    object: SNF
+  - description: 'Ethanol sensor trace (n,) @ LV_Fs. Used ONLY to define control epochs:
+      mean-subtract the entire trace, mark ethanol wherever mean-subtracted > 0.05
+      (control at/below). Fixed rule, no per-experiment adjustment.'
+    docx_source_refs:
+    - CON-015
+    - PROH-003
+    - PROH-008
+    object: ETH
+  - description: Sampling rate of SNF/ETH (~125 Hz); SNF/ETH/LFP share the recording
+      clock.
+    docx_source_refs:
+    - RQ-056
+    - PROH-005
+    object: LV_Fs
+  - description: Probe channel geometry (nCh,) in um; ycoord = position along the
+      probe. Basis for the deterministic five-depth selection. All fields already
+      validated in the kernel.
+    docx_source_refs:
+    - RQ-057
+    - RQ-012
+    object: xcoords/ycoords
+  - description: Native Neuropixels sample rate; used when re-deriving LFP for the
+      full duration (extract_full_lfp).
+    docx_source_refs:
+    - RQ-058
+    - OUT-005
+    object: NP_Fs
+  multiple_comparison:
+    description: Holm correction across the pairwise depth-comparison family in the
+      post-hoc step ONLY, and only when the omnibus depth test is significant (p<0.05).
+      No other multiplicity correction is contracted. Uncontracted post-hoc comparisons
+      are prohibited.
+    docx_source_refs:
+    - OUT-016
+    - PROH-006
+  preprocessing:
+  - docx_source_refs:
+    - DATA-004
+    - RQ-011
+    step: Load D-dict for each of the 6 sessions (2021-11-01, 2021-11-03, 2021-12-15,
+      2022-05-17, 2022-06-24, 2022-09-14) via load_experiment_data.
+  - docx_source_refs:
+    - RQ-012
+    - RQ-013
+    - RQ-014
+    - RQ-015
+    - RQ-016
+    - OUT-006
+    - OUT-007
+    step: 'Select five channels via select_five_depths: min/max ycoord among valid
+      channels; targets at fractions 0.00/0.25/0.50/0.75/1.00; nearest ycoord with
+      lower-channel-index tie-break (single fixed column); label Depth 1..5 tip->surface.
+      Record channel indices + ycoords (um) per experiment.'
+  - docx_source_refs:
+    - OUT-005
+    - RQ-054
+    - OUT-026
+    step: 'Extract full-duration LFP for the five selected channels via extract_full_lfp
+      (order-4 Butterworth LP @ 400 Hz -> decimate to 1000 Hz, preserved exactly).
+      Regression anchor: first 10 s must equal the current loader channel-for-channel
+      within numerical tolerance.'
+  - docx_source_refs:
+    - PROH-003
+    - CON-002
+    - PROH-008
+    step: Define control epochs via detect_eth_contact rule (mean-subtract entire
+      ETH; ETH_ms > 0.05 = ethanol; at/below = control). Fixed rule, no per-experiment
+      adjustment, all 6 sessions. Do NOT threshold raw ETH. Log total ethanol time
+      excluded per experiment.
+  - docx_source_refs:
+    - PROH-004
+    - PROH-007
+    - RQ-019
+    - RQ-020
+    - RQ-021
+    - OUT-008
+    step: 'Run compute_sniff_phase (threshold_std=-0.5 pinned). Derive instantaneous
+      sniff rate (1/ISI) and the valid-sniff mask via build_valid_sniff_mask: exclude
+      ISI < 5th or > 95th percentile of the experiment''s ISI distribution; mark SNF_PH==-1
+      spans as invalid-sniff noise.'
+  - docx_source_refs:
+    - PROH-005
+    - PROH-009
+    - RQ-044
+    step: Resample raw SNF from LV_Fs (~125 Hz) up to the LFP rate (~1000 Hz) on the
+      shared clock via polyphase/band-limited interpolation for coherence. Use the
+      raw SNF (resampled), not the detected phase (PROH-009).
+  - docx_source_refs:
+    - CON-002
+    - OUT-008
+    - RQ-040
+    step: Tile each recording into 4-s windows with 50% overlap; exclude any window
+      that overlaps an ethanol sample OR an invalid-sniff span. Surviving windows
+      are all-control and all-valid-sniff.
+  prohibited_changes:
+  - change: Editing the Optimized Python kernel analysis logic, the Golden Fixtures,
+      or any tolerance configuration (beyond the additive, validated full-duration
+      LFP extraction).
+    docx_source_refs:
+    - PROH-010
+  - change: Adjusting the sniff-onset threshold_std away from -0.5 without separate
+      human sign-off.
+    docx_source_refs:
+    - PROH-007
+    - PROH-004
+  - change: Adjusting the ethanol threshold per experiment, or thresholding the RAW
+      (non-mean-subtracted) ETH signal. The 0.05 mean-subtracted rule is fixed for
+      all six sessions.
+    docx_source_refs:
+    - PROH-003
+    - PROH-008
+  - change: Substituting the detected sniff phase (SNF_PH) for the raw SNF signal
+      in the coherence computation. Coherence uses raw SNF (resampled) vs LFP.
+    docx_source_refs:
+    - PROH-009
+  - change: 'Tuning any pinned spectral parameter: 4-s windows, 50% overlap, 7 Slepian
+      tapers (NW=4), 0.25 Hz lower bound, theta 2-12 Hz.'
+    docx_source_refs:
+    - RQ-040
+    - RQ-039
+  - change: 'Changing the circular-shift null: <1000 shifts, a threshold other than
+      the 95th percentile, or a seed other than 5489.'
+    docx_source_refs:
+    - RQ-041
+    - CON-003
+  - change: 'Applying the SNF-not-LFP prohibition from the phase-locking family: this
+      task intentionally analyzes the LFP as the neural signal and SNF as the respiratory
+      reference.'
+    docx_source_refs:
+    - PROH-001
+  - change: Running uncontracted post-hoc comparisons or using causal/over-definitive
+      language for the exploratory depth-dependence question.
+    docx_source_refs:
+    - PROH-006
+    - OUT-016
+  required_outputs:
+  - desc: 'Per experiment x depth: LFP-sniff coherence C(f)=|S12|/sqrt(S1*S2) vs frequency,
+      averaged over retained all-control all-valid-sniff windows.'
+    docx_source_refs:
+    - RQ-064
+    - OUT-010
+    - RQ-023
+    result_id: RESULT-coh-spectrum
+    type: array
+  - desc: 'Per experiment x depth: LFP power spectrum vs frequency (multitaper, retained
+      windows).'
+    docx_source_refs:
+    - RQ-065
+    - OUT-010
+    result_id: RESULT-lfp-psd
+    type: array
+  - desc: 'Per experiment: SNF power spectrum vs frequency (depth-independent).'
+    docx_source_refs:
+    - RQ-066
+    - OUT-010
+    result_id: RESULT-snf-psd
+    type: array
+  - desc: 'Per experiment x depth: 95% circular-shift null coherence threshold vs
+      frequency (>=1000 shifts, seed 5489).'
+    docx_source_refs:
+    - RQ-067
+    - CON-003
+    - RQ-041
+    result_id: RESULT-null-threshold
+    type: array
+  - desc: 'Per experiment x depth: mean theta coherence (primary, 2-12 Hz), peak theta
+      coherence + frequency, significant-theta fraction, peak-coherence percentile
+      vs null.'
+    docx_source_refs:
+    - OUT-028
+    - OUT-011
+    - RQ-060
+    - RQ-061
+    - RQ-062
+    - CON-016
+    result_id: RESULT-theta-coh
+    type: table
+  - desc: Per-experiment best depth; overall depth ranking by grand-mean theta coherence;
+      per-ordinal consistency counts.
+    docx_source_refs:
+    - OUT-029
+    - RQ-027
+    - RQ-028
+    - OUT-012
+    result_id: RESULT-best-depth
+    type: table
+  - desc: 'Varies-by-depth tests: mixed-effects LRT (chi-square, df, exact p, marginal-mean
+      range + ICC) + Friedman (stat, df, exact p, Kendall''s W) + Holm-corrected Wilcoxon
+      post-hoc pairs with rank-biserial r if the omnibus is significant.'
+    docx_source_refs:
+    - RQ-068
+    - OUT-014
+    - OUT-015
+    - OUT-016
+    - OUT-013
+    result_id: RESULT-depth-stat
+    type: object
+  - desc: 'Per experiment: instantaneous sniff-rate distribution (control epochs)
+      with median and IQR; range.'
+    docx_source_refs:
+    - OUT-030
+    - RQ-031
+    - RQ-007
+    result_id: RESULT-sniff-rate
+    type: table
+  - desc: 'Per experiment: length_min, n_windows_used, n_windows_excluded (ethanol
+      / noise), n_sniffs (detected and retained), pct_usable, five chosen channel
+      indices + ycoords (um).'
+    docx_source_refs:
+    - OUT-031
+    - RQ-030
+    - RQ-032
+    result_id: RESULT-qc-counts
+    type: table
+  - desc: 'Per experiment: discarded spans (experiment, start_s, end_s, reason: ethanol
+      / non-sniff noise / ISI outlier).'
+    docx_source_refs:
+    - OUT-032
+    - RQ-033
+    result_id: RESULT-qc-discards
+    type: table
+  - desc: 'Representative control segment backing FIG-PAPER1-TRACES: SNF + per-depth
+      band-filtered LFP (theta 2-12, beta 18-30, gamma 65-100 + envelope) + inhalation
+      mask + sniff-onset markers.'
+    docx_source_refs:
+    - RQ-069
+    - OUT-019
+    - RQ-004
+    result_id: RESULT-example-traces
+    type: array
+  - desc: 'Per experiment: full-duration preprocessed LFP for the five selected channels
+      (regression-anchored to the current 10-s loader). Intermediate object feeding
+      all spectral estimates.'
+    docx_source_refs:
+    - OUT-005
+    - OUT-026
+    result_id: RESULT-full-lfp
+    type: array
+  - desc: 'Deliverable A: Methods / QC report (.docx).'
+    docx_source_refs:
+    - OUT-033
+    - OUT-017
+    - OUT-018
+    result_id: RESULT-methods-doc
+    type: document
+  - desc: 'Deliverable B: Results report (.docx).'
+    docx_source_refs:
+    - OUT-034
+    - OUT-022
+    - OUT-023
+    result_id: RESULT-results-doc
+    type: document
+  required_validated_functions:
+  - docx_source_refs:
+    - RQ-011
+    - OUT-005
+    - RQ-054
+    - PROH-010
+    module: Optimized Python/load_experiment_data.py
+    name: load_experiment_data
+    usage: Standard D-dict loader providing LFP/LFP_t/LFP_Fs/NP_Fs/SNF/ETH/LV_Fs/xcoords/ycoords.
+      Reused as-is; NOT edited. The additive full-duration LFP extraction (extract_full_lfp)
+      preserves this loader's validated preprocessing (order-4 Butterworth LP @ 400
+      Hz -> decimate to 1000 Hz, constants LFP_LP_HZ=400.0, LFP_OUT_FS=1000.0) exactly.
+  - docx_source_refs:
+    - PROH-004
+    - PROH-007
+    - RQ-019
+    - RQ-021
+    module: Optimized Python/analyses/compute_sniff_phase.py
+    name: compute_sniff_phase
+    usage: Reused VERBATIM at the pinned default threshold_std=-0.5 (PROH-007; never
+      adjusted without separate human sign-off). Provides sniff_onsets_s (inhalation
+      onset times, s), sniff_dur_s, and SNF_PH (per-sample phase 0..1; -1 marks noise
+      / outside-cycle spans). sniff_onsets_s -> inter-sniff intervals -> instantaneous
+      sniff rate; SNF_PH==-1 spans -> invalid-sniff (noise) sections.
+  - docx_source_refs:
+    - PROH-003
+    - PROH-008
+    - CON-002
+    module: _pipeline/NP-DEMO-3/03_software/detect_eth_contact.py
+    name: detect_eth_contact
+    usage: 'Reuse the NP-DEMO-3 validated ethanol-detection RULE verbatim (eth_threshold=0.05,
+      mean-subtract ENTIRE ETH trace, mark ETH_ms > 0.05 = ethanol; at/below = control;
+      no per-experiment adjustment). Provides eth_contact_mask at LV_Fs. NOTE: this
+      task needs a WINDOW-LEVEL control mask on the LFP clock, not the contact-run
+      count, so a thin new deterministic wrapper (build_window_control_mask) consumes
+      eth_contact_mask -- the thresholding rule itself is reused unchanged (PROH-003/PROH-008).'
+  risk: red
+  scientific_question:
+    description: Across the olfactory-bulb Neuropixels probe, (Q1) which recording
+      depth best aligns the LFP to sniffing -- i.e. which of five evenly-spaced depths
+      has the strongest theta-band (2-12 Hz) LFP-sniff spectral coherence, the paper's
+      measure of alignment -- and (Q2) does the strength of that alignment vary systematically
+      with depth across experiments? A per-depth replication of Rafilson et al. (2024),
+      Figure 1, computed on control (non-ethanol) epochs only.
+    docx_source_refs:
+    - OUT-001
+    - OUT-002
+    - RQ-002
+    - OUT-003
+    - RQ-025
+    - RQ-026
+    - RQ-029
+  statistical_model:
+  - docx_source_refs:
+    - CON-004
+    - OUT-014
+    level: within_experiment_repeated_measures_primary
+    method: 'Linear mixed-effects model (statsmodels): mean theta coherence ~ depth
+      (categorical, 5 levels; fixed effect) with experiment as a random intercept.
+      Overall depth effect via likelihood-ratio test vs the intercept-only random-effects
+      model. Report chi-square, df, exact p. Effect size: range of estimated marginal
+      depth means + ICC / conditional-vs-marginal variance explained.'
+  - docx_source_refs:
+    - OUT-015
+    level: within_experiment_repeated_measures_confirmatory
+    method: Friedman test across the five depths with experiments as blocks. Report
+      statistic, df, exact p, Kendall's W as effect size.
+  - docx_source_refs:
+    - OUT-016
+    - OUT-013
+    level: post_hoc
+    method: 'Only if the omnibus (mixed-effects LRT or Friedman) is significant (p<0.05):
+      pairwise paired exact two-sided Wilcoxon signed-rank tests between depths, Holm-corrected
+      across the pairwise family; report matched-pairs rank-biserial r for each surviving
+      pair.'
+  status: mixed
+  task_id: NP-PAPER-1
+contract_version: 1
+figures:
+- axis_requirements:
+    log_scale: false
+    truncation_permitted: false
+    x_label: time (s)
+    y_label: SNF (a.u.) [top]; LFP amplitude per band, per depth (uV) [stacked rows]
+    zero_reference: true
+  caption_requirements:
+  - state the representative experiment (date) and segment window, and that both were
+    chosen by a fixed display convention (most retained windows; earliest-date tie-break)
+  - list the five depth channel indices + ycoords (um) shown, injected from RESULT-qc-counts
+    (never typed by hand)
+  - 'state band definitions: theta 2-12 Hz, beta 18-30 Hz, gamma 65-100 Hz + envelope;
+    inhalation = green, exhalation/pause = black'
+  docx_source_refs:
+  - OUT-019
+  - RQ-004
+  - RQ-069
+  figure_id: FIG-PAPER1-TRACES
+  panels: []
+  quality:
+    colorblind_review: true
+    min_font: 7
+    raster_dpi: 300
+    truncation_permitted: false
+    vector: true
+  required: true
+  scientific_purpose: 'For a representative experiment and a representative control
+    segment, show the SNF signal on top and, for each of the five depths, the LFP
+    shown unfiltered and band-filtered into theta (2-12 Hz), beta (18-30 Hz), and
+    gamma (65-100 Hz plus its amplitude envelope). Traces colored green during inhalation
+    and black during exhalation/pause; sniff-onset markers shown. DISPLAY CONVENTION
+    (reproducibility, non-scientific): the representative experiment is the session
+    with the greatest number of retained all-control all-valid-sniff windows (tie-break:
+    earliest recording date); the representative segment is the first qualifying contiguous
+    control span of fixed display length. This choice affects presentation only, not
+    any reported result.'
+  source_results:
+  - RESULT-example-traces
+  - RESULT-qc-counts
+  statistical_annotations:
+    exact_p_values: false
+    permitted_tests: []
+    significance_stars: false
+  title: 'Figure 1A analogue: example band-filtered LFP + sniff traces (per depth)'
+  visual_encoding:
+    condition_mapping:
+      bands:
+      - unfiltered
+      - theta_2_12
+      - beta_18_30
+      - gamma_65_100_plus_envelope
+      exhalation_or_pause: black
+      inhalation: green
+      sniff_onsets: markers
+    raw_data_also_available: true
+- axis_requirements:
+    log_scale: false
+    truncation_permitted: false
+    x_label: time (s)
+    y_label: frequency (Hz)
+    zero_reference: false
+  caption_requirements:
+  - colorbars labeled (LFP power, SNF power, coherence 0-1); sniff-rate overlay units
+    (Hz) stated
+  - 'state multitaper parameters: 4-s windows, 50% overlap, 7 Slepian tapers (NW=4),
+    freqs >= 0.25 Hz'
+  - depth channel indices + ycoords injected from RESULT-qc-counts; representative
+    experiment stated
+  docx_source_refs:
+  - OUT-020
+  - RQ-006
+  figure_id: FIG-PAPER1-SPECTRO
+  panels: []
+  quality:
+    colorblind_review: true
+    min_font: 7
+    raster_dpi: 300
+    truncation_permitted: false
+    vector: true
+  required: true
+  scientific_purpose: 'For the representative experiment (same display convention
+    as FIG-PAPER1-TRACES), a grid of multitaper spectrograms: rows = the five depths;
+    per depth the LFP-power and LFP-sniff-coherence spectrograms with the instantaneous
+    sniff-rate scatter overlaid; plus the depth-independent SNF-power spectrogram
+    shown once.'
+  source_results:
+  - RESULT-lfp-psd
+  - RESULT-coh-spectrum
+  - RESULT-snf-psd
+  - RESULT-sniff-rate
+  - RESULT-qc-counts
+  statistical_annotations:
+    exact_p_values: false
+    permitted_tests: []
+    significance_stars: false
+  title: 'Figure 1C analogue: multitaper spectrograms per depth with sniff-rate overlay'
+  visual_encoding:
+    condition_mapping:
+      colormap: viridis
+      heatmaps:
+      - lfp_power
+      - lfp_snf_coherence
+      - snf_power
+      overlay: instantaneous_sniff_rate_scatter
+    raw_data_also_available: true
+- axis_requirements:
+    log_scale: false
+    truncation_permitted: false
+    x_label: instantaneous sniff rate (Hz)
+    y_label: probability density / count
+    zero_reference: true
+  caption_requirements:
+  - state control-epochs-only restriction; median and IQR per experiment injected
+    from RESULT-sniff-rate
+  - n_sniffs retained per experiment injected from RESULT-qc-counts (never typed by
+    hand)
+  docx_source_refs:
+  - OUT-021
+  - RQ-007
+  - OUT-030
+  figure_id: FIG-PAPER1-SNIFFRATE
+  panels: []
+  quality:
+    colorblind_review: true
+    min_font: 7
+    raster_dpi: 300
+    truncation_permitted: false
+    vector: true
+  required: true
+  scientific_purpose: The distribution of instantaneous sniff rates over the control
+    epochs, per experiment (depth-independent), characterizing the sniff behavior
+    that backs the coherence estimates.
+  source_results:
+  - RESULT-sniff-rate
+  statistical_annotations:
+    exact_p_values: false
+    permitted_tests: []
+    significance_stars: false
+  title: 'Figure 1D analogue: instantaneous sniff-rate distribution (control epochs)'
+  visual_encoding:
+    condition_mapping:
+      iqr_marker: true
+      median_marker: true
+      per_experiment: histogram_or_kde
+    raw_data_also_available: true
+- axis_requirements:
+    log_scale: true
+    truncation_permitted: false
+    x_label: frequency (Hz)
+    y_label: LFP power spectral density
+    zero_reference: false
+  caption_requirements:
+  - grand mean +/- SEM computed across experiments; n_experiments stated (injected,
+    never typed by hand)
+  - 'band definitions marked: theta 2-12, beta 18-30, gamma 65-100 Hz; depth ordinals
+    1-5 (tip->surface) legended'
+  docx_source_refs:
+  - DATA-001
+  - OUT-023
+  - RQ-005
+  figure_id: FIG-PAPER1-PSD
+  panels: []
+  quality:
+    colorblind_review: true
+    min_font: 7
+    raster_dpi: 300
+    truncation_permitted: false
+    vector: true
+  required: true
+  scientific_purpose: LFP power spectral density overlaid for the five depths (grand
+    mean +/- SEM across experiments), with theta (2-12 Hz), beta (18-30 Hz), and gamma
+    (65-100 Hz) bands marked.
+  source_results:
+  - RESULT-lfp-psd
+  statistical_annotations:
+    exact_p_values: false
+    permitted_tests: []
+    significance_stars: false
+  title: 'Figure 1B analogue: LFP power spectral density overlaid across the five
+    depths'
+  visual_encoding:
+    condition_mapping:
+      band_shading:
+      - theta
+      - beta
+      - gamma
+      five_depths: distinct_colors_ordinal_1_to_5
+      uncertainty: sem_shaded_band
+    raw_data_also_available: true
+- axis_requirements:
+    log_scale: false
+    truncation_permitted: false
+    x_label: frequency (Hz)
+    y_label: LFP-sniff coherence (0-1)
+    zero_reference: true
+  caption_requirements:
+  - state 95% circular-shift null (>=1000 shifts, seed 5489) shown as red dotted line;
+    theta band 2-12 Hz shaded
+  - grand mean +/- SEM across experiments; n_experiments injected (never typed by
+    hand)
+  - depth ordinals 1-5 (tip->surface) with channel/ycoord legend injected from RESULT-qc-counts
+  docx_source_refs:
+  - OUT-024
+  - RQ-008
+  - OUT-023
+  figure_id: FIG-PAPER1-COH
+  panels: []
+  quality:
+    colorblind_review: true
+    min_font: 7
+    raster_dpi: 300
+    truncation_permitted: false
+    vector: true
+  required: true
+  scientific_purpose: The LFP-sniff coherence spectrum for each of the five depths
+    (grand mean +/- SEM across experiments), with the 95% circular-shift null threshold
+    drawn as a red dotted line and the theta band (2-12 Hz) shaded. Shows directly
+    which depth has the strongest theta coherence.
+  source_results:
+  - RESULT-coh-spectrum
+  - RESULT-null-threshold
+  - RESULT-theta-coh
+  statistical_annotations:
+    exact_p_values: false
+    permitted_tests:
+    - circular_shift_null_95pct
+    significance_stars: false
+  title: 'Figure 1C-bottom / 1E analogue (KEY): LFP-sniff coherence spectrum per depth
+    with null threshold'
+  visual_encoding:
+    condition_mapping:
+      five_depths: distinct_colors_ordinal_1_to_5
+      null_threshold: red_dotted_line
+      theta_band_shading: true
+      uncertainty: sem_shaded_band
+    raw_data_also_available: true
+- axis_requirements:
+    log_scale: false
+    truncation_permitted: false
+    x_label: depth (ordinal 1-5, tip->surface; ycoord um annotated)
+    y_label: mean theta coherence (2-12 Hz) [main]; significant-theta fraction [companion]
+    zero_reference: true
+  caption_requirements:
+  - annotate omnibus result (mixed-effects LRT chi-square/df/exact p and Friedman
+    stat/df/exact p + Kendall's W), injected from RESULT-depth-stat (never typed by
+    hand)
+  - identify the overall best-aligned depth and its per-ordinal consistency count,
+    injected from RESULT-best-depth
+  - grand mean +/- SEM across experiments; n_experiments (after >=30-window exclusion)
+    stated; exploratory/non-causal framing
+  docx_source_refs:
+  - OUT-025
+  - RQ-026
+  - RQ-029
+  - OUT-013
+  figure_id: FIG-PAPER1-DEPTH-SUMMARY
+  panels: []
+  quality:
+    colorblind_review: true
+    min_font: 7
+    raster_dpi: 300
+    truncation_permitted: false
+    vector: true
+  required: true
+  scientific_purpose: 'Sniff-alignment strength (mean theta coherence) as a function
+    of depth (ycoord um / ordinal 1-5): per-experiment points plus grand mean +/-
+    SEM, with the best-aligned depth marked. Annotate the omnibus depth-test result
+    (does alignment vary by depth) and identify the depth with the strongest coherence
+    to sniffing. A companion panel shows the significant-theta fraction by depth.
+    Framed as exploratory characterization (non-causal).'
+  source_results:
+  - RESULT-theta-coh
+  - RESULT-best-depth
+  - RESULT-depth-stat
+  statistical_annotations:
+    exact_p_values: true
+    permitted_tests:
+    - mixed_effects_LRT
+    - friedman
+    - holm_wilcoxon_posthoc
+    significance_stars: false
+  title: 'HEADLINE: sniff-alignment strength (mean theta coherence) as a function
+    of depth'
+  visual_encoding:
+    condition_mapping:
+      best_depth: highlighted_marker
+      companion_panel: significant_theta_fraction_by_depth
+      grand_mean: point_with_sem_error_bar
+      per_experiment_points: jitter_or_paired_lines
+    raw_data_also_available: true
+open_decisions: []
+reports:
+- appendices: []
+  docx_source_refs:
+  - OUT-017
+  - OUT-018
+  - OUT-033
+  intended_audience: 'lab (Deliverable A: Methods / QC document)'
+  output_filename: NP-PAPER-1_methods.docx
+  reporting_rules:
+    exact_N: true
+    prohibit_causal_language: true
+    prohibit_uncontracted_post_hoc: true
+    report_effect_sizes: false
+    report_exact_p: false
+    report_exclusions: true
+    separate_qc_document_required: true
+  required_figures:
+  - FIG-PAPER1-TRACES
+  - FIG-PAPER1-SPECTRO
+  - FIG-PAPER1-SNIFFRATE
+  required_sections:
+  - Methods
+  - Depth Selection
+  - Control-Epoch and Valid-Sniff Masking
+  - Spectral Estimation
+  - Per-Experiment QC Summary Table
+  - Discarded-Sections Log
+  required_tables:
+  - RESULT-qc-counts
+  - RESULT-qc-discards
+  - RESULT-sniff-rate
+  role: methods_report
+  scientific_status: qc_methods
+- appendices: []
+  docx_source_refs:
+  - OUT-022
+  - OUT-023
+  - OUT-034
+  intended_audience: 'lab (Deliverable B: Results document)'
+  output_filename: NP-PAPER-1_results.docx
+  reporting_rules:
+    exact_N: true
+    prohibit_causal_language: true
+    prohibit_uncontracted_post_hoc: true
+    report_effect_sizes: true
+    report_exact_p: true
+    report_exclusions: true
+    separate_qc_document_required: true
+  required_figures:
+  - FIG-PAPER1-PSD
+  - FIG-PAPER1-COH
+  - FIG-PAPER1-DEPTH-SUMMARY
+  required_sections:
+  - Results
+  - Per-Depth Theta Coherence
+  - Best Depth
+  - Does Alignment Vary by Depth
+  - Figures
+  required_tables:
+  - RESULT-theta-coh
+  - RESULT-best-depth
+  - RESULT-depth-stat
+  role: results_report
+  scientific_status: confirmatory_coherence_plus_exploratory_depth
+task_id: NP-PAPER-1

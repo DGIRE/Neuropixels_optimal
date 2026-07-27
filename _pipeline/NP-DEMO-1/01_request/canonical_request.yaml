@@ -1,0 +1,27 @@
+extracted_items:
+- item_id: PROH-001
+  source_location: para 1
+  text: Test whether ethanol changes how olfactory bulb single units lock their spikes
+    to the sniff phase vs. control. Provide a report as well as one population figure.
+    A rough sketch of the figure is included. Use the actual SNF signal rather than
+    the LFP to test the phase locking. Do not use any sections of the SNF signal that
+    are noise rather than sniffing.
+  type: prohibition
+- item_id: OUT-001
+  source_location: para 2
+  text: Provide interim figures from your analysis, showing examples of sniffing from
+    each experiment used in the analysis. For each experiment, report number of sniffs
+    detected, number of neurons recorded, and number of trials used. Also describe
+    any discarded sections of data from each animal and the reason that section was
+    discarded. Provide this information as another document in addition to the main
+    analysis document.
+  type: requested_output
+- item_id: DATA-001
+  source_location: para 3
+  text: 'Data location: pull data from multiple dated experiments under X:\GireLab
+    Data\Room 359\NPDATA\DATA, using the recording sessions dated 11/1/2021, 11/3/2021,
+    12/15/2021, 5/17/2022, 6/24/2022, and 9/14/2022.'
+  type: data_source
+request_id: REQ-NP-DEMO-1
+source_document: Demo_request.docx
+source_hash: 54f7656b843ce97918d3f35336c1e9a1e7fee65f146eacc7207e3f63a9672cbb

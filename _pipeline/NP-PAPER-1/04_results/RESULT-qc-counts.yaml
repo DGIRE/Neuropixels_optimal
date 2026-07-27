@@ -1,0 +1,181 @@
+- session: 11-01-2021
+  binfile_chosen: C:\Projects\Repos\Neuropixels\DATA\11-01-2021\NP8_Marvel11012021_RightBulb_g1\NP8_Marvel11012021_RightBulb_g1_imec0\NP8_Marvel11012021_RightBulb_g1_t0.imec0.ap.bin
+  binfile_duration_min: 49.57303111111111
+  binfile_labview_duration_min: 48.77253333333333
+  binfile_ratio: 1.0164128808382134
+  binfile_justification: Selected NP8_Marvel11012021_RightBulb_g1_t0.imec0.ap.bin
+    (implied duration 49.57 min) as the closest match to the LabView-derived session
+    duration (48.77 min, ratio=1.016) among 1 eligible whole-file candidate(s) out
+    of 21 total *.ap.bin file(s) found (20 excluded as chunk/excerpt-series members
+    per DEV-001 Resolution B).
+  length_min: 49.573033333333335
+  n_windows_used: 436
+  n_windows_excluded_ethanol: 423
+  n_windows_excluded_noise: 627
+  excluded_from_depth_stats: false
+  pct_usable_time: 38.125566924490535
+  n_sniffs_detected: 10949
+  n_sniffs_retained_isi: 10005
+  depth_channel_indices:
+  - 0
+  - 24
+  - 46
+  - 118
+  - 142
+  depth_ycoords_um:
+  - -15.0
+  - 165.0
+  - 330.0
+  - 510.0
+  - 690.0
+- session: 11-03-2021
+  binfile_chosen: C:\Projects\Repos\Neuropixels\DATA\11-03-2021\Np8_2ndCraniotomy_RightBulb_2ndReco_g0_imec0\Np8_2ndCraniotomy_RightBulb_2ndReco_g0_t0.imec0.ap.bin
+  binfile_duration_min: 51.90380833333334
+  binfile_labview_duration_min: 49.815333333333335
+  binfile_ratio: 1.041924340564485
+  binfile_justification: Selected Np8_2ndCraniotomy_RightBulb_2ndReco_g0_t0.imec0.ap.bin
+    (implied duration 51.90 min) as the closest match to the LabView-derived session
+    duration (49.82 min, ratio=1.042) among 1 eligible whole-file candidate(s) out
+    of 19 total *.ap.bin file(s) found (18 excluded as chunk/excerpt-series members
+    per DEV-001 Resolution B).
+  length_min: 51.903816666666664
+  n_windows_used: 404
+  n_windows_excluded_ethanol: 406
+  n_windows_excluded_noise: 746
+  excluded_from_depth_stats: false
+  pct_usable_time: 33.395103571381554
+  n_sniffs_detected: 9087
+  n_sniffs_retained_isi: 8222
+  depth_channel_indices:
+  - 0
+  - 24
+  - 46
+  - 118
+  - 142
+  depth_ycoords_um:
+  - -15.0
+  - 165.0
+  - 330.0
+  - 510.0
+  - 690.0
+- session: 12-15-2021
+  binfile_chosen: C:\Projects\Repos\Neuropixels\DATA\12-15-2021\Np10_1stCraniotomy_1stRecord_g0\CatNoGlbDmx\Np10_1stCraniotomy_1stRecord_g0_tcat.exported.imec0.ap.bin
+  binfile_duration_min: 55.48316666666666
+  binfile_labview_duration_min: 48.61346666666667
+  binfile_ratio: 1.1413126952476815
+  binfile_justification: 'Selected Np10_1stCraniotomy_1stRecord_g0_tcat.exported.imec0.ap.bin
+    (implied duration 55.48 min) as the closest match to the LabView-derived session
+    duration (48.61 min, ratio=1.141) among 3 eligible whole-file candidate(s) out
+    of 26 total *.ap.bin file(s) found (23 excluded as chunk/excerpt-series members
+    per DEV-001 Resolution B). WARNING: ratio deviates from 1.0 by more than 10% --
+    flagged for review, not hard-blocked.'
+  length_min: 55.48316666666666
+  n_windows_used: 154
+  n_windows_excluded_ethanol: 468
+  n_windows_excluded_noise: 1041
+  excluded_from_depth_stats: false
+  pct_usable_time: 13.757926578331565
+  n_sniffs_detected: 7005
+  n_sniffs_retained_isi: 6309
+  depth_channel_indices:
+  - 0
+  - 24
+  - 46
+  - 118
+  - 142
+  depth_ycoords_um:
+  - -15.0
+  - 165.0
+  - 330.0
+  - 510.0
+  - 690.0
+- session: 5-17-2022
+  binfile_chosen: C:\Projects\Repos\Neuropixels\DATA\5-17-2022\NP125172022FlowMarvel_2ndRecording_g0\NP125172022FlowMarvel_2ndRecording_g0_imec0\NP125172022FlowMarvel_2ndRecording_g0_t0.imec0.ap.bin
+  binfile_duration_min: 53.12846722222222
+  binfile_labview_duration_min: 49.0392
+  binfile_ratio: 1.0833877229282334
+  binfile_justification: Selected NP125172022FlowMarvel_2ndRecording_g0_t0.imec0.ap.bin
+    (implied duration 53.13 min) as the closest match to the LabView-derived session
+    duration (49.04 min, ratio=1.083) among 1 eligible whole-file candidate(s) out
+    of 1 total *.ap.bin file(s) found (0 excluded as chunk/excerpt-series members
+    per DEV-001 Resolution B).
+  length_min: 53.12848333333333
+  n_windows_used: 174
+  n_windows_excluded_ethanol: 439
+  n_windows_excluded_noise: 979
+  excluded_from_depth_stats: false
+  pct_usable_time: 16.940065733729146
+  n_sniffs_detected: 9422
+  n_sniffs_retained_isi: 8524
+  depth_channel_indices:
+  - 0
+  - 24
+  - 46
+  - 118
+  - 142
+  depth_ycoords_um:
+  - -15.0
+  - 165.0
+  - 330.0
+  - 510.0
+  - 690.0
+- session: 06-24-2022
+  binfile_chosen: C:\Projects\Repos\Neuropixels\DATA\06-24-2022\NP15_Cran1_06242022_g0\NP15_Cran1_06242022_g0_imec0\NP15_Cran1_06242022_g0_t0.imec0.ap.bin
+  binfile_duration_min: 50.23119666666666
+  binfile_labview_duration_min: 48.404133333333334
+  binfile_ratio: 1.037746018935022
+  binfile_justification: Selected NP15_Cran1_06242022_g0_t0.imec0.ap.bin (implied
+    duration 50.23 min) as the closest match to the LabView-derived session duration
+    (48.40 min, ratio=1.038) among 1 eligible whole-file candidate(s) out of 1 total
+    *.ap.bin file(s) found (0 excluded as chunk/excerpt-series members per DEV-001
+    Resolution B).
+  length_min: 50.231199999999994
+  n_windows_used: 573
+  n_windows_excluded_ethanol: 355
+  n_windows_excluded_noise: 577
+  excluded_from_depth_stats: false
+  pct_usable_time: 45.19103664654637
+  n_sniffs_detected: 9169
+  n_sniffs_retained_isi: 8302
+  depth_channel_indices:
+  - 0
+  - 24
+  - 46
+  - 118
+  - 142
+  depth_ycoords_um:
+  - -15.0
+  - 165.0
+  - 330.0
+  - 510.0
+  - 690.0
+- session: 09-14-2022
+  binfile_chosen: C:\Projects\Repos\Neuropixels\DATA\09-14-2022\NP22_09142022_C1_g0\NP22_09142022_C1_g0_imec0\NP21_08072022_C1_g0_t0.imec0.ap.bin
+  binfile_duration_min: 17.49992277777778
+  binfile_labview_duration_min: 17.993333333333332
+  binfile_ratio: 0.9725781462269978
+  binfile_justification: Selected NP21_08072022_C1_g0_t0.imec0.ap.bin (implied duration
+    17.50 min) as the closest match to the LabView-derived session duration (17.99
+    min, ratio=0.973) among 1 eligible whole-file candidate(s) out of 1 total *.ap.bin
+    file(s) found (0 excluded as chunk/excerpt-series members per DEV-001 Resolution
+    B).
+  length_min: 17.499933333333335
+  n_windows_used: 252
+  n_windows_excluded_ethanol: 140
+  n_windows_excluded_noise: 131
+  excluded_from_depth_stats: false
+  pct_usable_time: 55.23830566973589
+  n_sniffs_detected: 3852
+  n_sniffs_retained_isi: 3467
+  depth_channel_indices:
+  - 0
+  - 24
+  - 46
+  - 118
+  - 141
+  depth_ycoords_um:
+  - -15.0
+  - 165.0
+  - 330.0
+  - 510.0
+  - 690.0

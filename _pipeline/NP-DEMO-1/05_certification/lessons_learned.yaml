@@ -1,0 +1,112 @@
+task_id: NP-DEMO-1
+date: "2026-07-21"
+stage: P5_CLOSE
+
+# Durable lessons from this run — applicable to future rw-* pipeline tasks.
+
+lessons:
+
+  - id: L-01
+    title: "Orphan scan must run on the draft, not the injected output"
+    phase: P4 (rw-assemble-report)
+    what_happened: >-
+      inject_report.py initially called find_orphan_numbers(injected) — scanning
+      the text AFTER placeholders were replaced. Every injected numeric value
+      (p=0.0625, r=-1.00, n=5, etc.) appeared as an "orphan" because the scan
+      had no way to know they came from result objects.
+    rule: >-
+      Mask all {{...}} placeholders with a dummy token (e.g. "PLACEHOLDER") in
+      the DRAFT text, then scan the masked draft. Never scan the injected output.
+    applies_to: any future inject_report.py or equivalent injection + scan step
+
+  - id: L-02
+    title: "Prose scope must match the denominator of the cited source"
+    phase: P4 (report-auditor, B1 BLOCKER)
+    what_happened: >-
+      Report stated "Across the sessions retained for the paired comparison,
+      1603 ethanol units met inclusion criteria." But FIG_DEMO1_01_units.json —
+      the cited source — counts units from ALL 6 sessions (including 429 from
+      the excluded 2021-11-03 session). The number 1603 matched its evidence
+      artifact, but the prose qualifier ("retained sessions") did not.
+      The orphan scan and placeholder resolution both passed; only the
+      fresh-context report-auditor caught it.
+    rule: >-
+      After injection, verify that every prose scope qualifier (e.g. "sessions
+      retained for the paired comparison," "included animals") is consistent
+      with the actual denominator of the cited result object or figdata file.
+      A number matching its source is necessary but not sufficient — the
+      English scope must also match.
+    applies_to: any report prose that quantifies a subset of a larger dataset
+
+  - id: L-03
+    title: "Secondary contracted tests need a DEVIATION in result_manifest, not just vague Limitations prose"
+    phase: P3/P5 (traceability gap)
+    what_happened: >-
+      The contract specified "circular test for preferred-phase shift" alongside
+      the primary Wilcoxon MRL test. The circular test was not implemented in P3.
+      The P3 scientific auditor passed the run as NO MAJORS because the report
+      Limitations section said "per-unit values are descriptive only" — but this
+      phrasing did not name the missing circular test explicitly.
+      P5 traceability matrix caught the gap when cross-checking every
+      statistical_model clause against result objects.
+    rule: >-
+      When a contracted analysis step is not implemented, log it as a formal
+      DEVIATION in result_manifest.yaml at P3 freeze. Do not rely on vague
+      Limitations language to cover it implicitly. The P5 traceability matrix
+      checks every contracted requirement against a result object; undocumented
+      gaps surface there.
+    applies_to: any P3 run where a contracted secondary analysis is deferred
+
+  - id: L-04
+    title: "All-ethanol sessions: document the exclusion at every layer"
+    phase: P3/P4
+    what_happened: >-
+      Session 2021-11-03 had ETH_thr > 0.11 for the entire recording, producing
+      0 control-condition units. The session was correctly excluded from the
+      paired stat (reducing n from 6 to 5). The session date, reason, and
+      consequence had to be documented explicitly in:
+        result_manifest.yaml (run_record.excluded_from_paired_stat)
+        workflow_state.yaml (result_summary.note)
+        figure captions (★excluded from stat label in FIG-DEMO1-QC)
+        report Methods/Exclusions section
+        report Limitations section
+        figdata (FIG_DEMO1_01_animals.json — 2021-11-03 absent from animal-level rows)
+      Any layer that omits the exclusion creates an inconsistency the auditor
+      will flag (e.g. reporting 6 sessions and 6-animal counts).
+    rule: >-
+      When a session is excluded from the primary statistical comparison,
+      propagate the exclusion note to every downstream artifact in a single pass.
+      Use a checklist: result_manifest → workflow_state → figdata → figure captions
+      → report (Methods, Results, Limitations).
+    applies_to: any analysis with partial session exclusion
+
+  - id: L-05
+    title: "ksDir subdirectory fix required for multi-shank Kilosort sessions"
+    phase: P3/P4 (build_figdata.py)
+    what_happened: >-
+      Session 09-14-2022 has Kilosort output in a phy2.5PShank1 subdirectory
+      inside the session folder. or_validate_files requires the actual directory
+      containing spike_clusters.npy, not the parent. The _fix_ks_dir() helper
+      (same pattern used in run_session.py) checks for this subdirectory and
+      substitutes it when present. The fix was needed both in the P3 runner and
+      in the P4 build_figdata.py.
+    rule: >-
+      Any script that calls or_validate_files must include the _fix_ks_dir()
+      check. Copy the helper verbatim from run_session.py — it must not be
+      simplified or omitted.
+    applies_to: any analysis loading the 09-14-2022 session or any multi-shank probe session
+
+  - id: L-06
+    title: "Python executable: use full path (not 'python') in PowerShell on this machine"
+    phase: all
+    what_happened: >-
+      'python' is not on the system PATH in PowerShell sessions on this machine.
+      Must use the full path to the conda env executable.
+    executables:
+      analysis_p3: "C:\\Users\\david\\anaconda3\\python.exe  (Python 3.13.9, used for P3 run)"
+      p4_scripts:  "C:\\Users\\david\\anaconda3\\envs\\py312gpu\\python.exe  (used for P4 inject/render)"
+    rule: >-
+      Always call python by full path in PowerShell. For P3 analysis scripts,
+      use anaconda3\python.exe to match the frozen run environment.
+      For P4 utility scripts (inject, render), py312gpu works fine.
+    applies_to: all pipeline scripts on this machine

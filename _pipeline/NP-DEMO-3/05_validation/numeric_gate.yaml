@@ -1,0 +1,235 @@
+checks:
+- check: SNF_filt
+  detail: max_diff=1.07e-06, rtol=1e-06, atol=1e-09
+  status: PASS
+- check: SNF_z
+  detail: max_diff=3.11e-12, rtol=1e-06, atol=1e-09
+  status: PASS
+- check: SNF_PH
+  detail: max_diff=0.00e+00, rtol=1e-12, atol=1e-12
+  status: PASS
+- check: sniff_onsets
+  detail: max_diff=0.00e+00, rtol=0, atol=0
+  status: PASS
+- check: sniff_onsets_s
+  detail: max_diff=0.00e+00, rtol=1e-12, atol=1e-12
+  status: PASS
+- check: sniff_dur_s
+  detail: got=0.28000000, fixture=0.28000000
+  status: PASS
+- check: spike_SNF_PH
+  detail: max_diff=0.00e+00, rtol=1e-12, atol=1e-12
+  status: PASS
+- check: unitMeanSniffPhase
+  detail: max_diff=4.05e-15, rtol=1e-12, atol=1e-12
+  status: PASS
+- check: detect_eth_contact deterministic
+  detail: n_trials=187
+  status: PASS
+- check: ETH_ms == ETH - mean(ETH)
+  detail: max_diff=0.00e+00, rtol=1e-12, atol=1e-12
+  status: PASS
+- check: eth_contact_mask strictly-above
+  detail: n_ethanol_samples=7971, n_control=126979
+  status: PASS
+- check: n_trials >= 0
+  detail: n_trials=187
+  status: PASS
+- check: has_control
+  detail: control_samples=126979
+  status: PASS
+- check: eth_threshold stored
+  detail: got=0.05
+  status: PASS
+- check: eth-mask n_trials > 0 for >= 5 sessions
+  detail: sessions_with_eth=6/6
+  status: PASS
+- check: eth-mask all has_control
+  detail: sessions_with_control=6
+  status: PASS
+- check: eth-mask threshold all 0.05
+  detail: all 0.05
+  status: PASS
+- check: sniff-qc has 6 rows
+  detail: got 6
+  status: PASS
+- check: sniff-qc n_sniffs>0 2021-11-01
+  detail: n_sniffs=10949
+  status: PASS
+- check: sniff-qc n_neurons>0 2021-11-01
+  detail: n_neurons=232
+  status: PASS
+- check: sniff-qc n_trials>0 2021-11-01
+  detail: n_trials=2501
+  status: PASS
+- check: sniff-qc duration>0 2021-11-01
+  detail: duration_min=48.77
+  status: PASS
+- check: sniff-qc pct_usable [0,100] 2021-11-01
+  detail: pct=95.98%
+  status: PASS
+- check: sniff-qc n_sniffs>0 2021-11-03
+  detail: n_sniffs=9087
+  status: PASS
+- check: sniff-qc n_neurons>0 2021-11-03
+  detail: n_neurons=429
+  status: PASS
+- check: sniff-qc n_trials>0 2021-11-03
+  detail: n_trials=491
+  status: PASS
+- check: sniff-qc duration>0 2021-11-03
+  detail: duration_min=49.82
+  status: PASS
+- check: sniff-qc pct_usable [0,100] 2021-11-03
+  detail: pct=84.31%
+  status: PASS
+- check: sniff-qc n_sniffs>0 2021-12-15
+  detail: n_sniffs=7005
+  status: PASS
+- check: sniff-qc n_neurons>0 2021-12-15
+  detail: n_neurons=236
+  status: PASS
+- check: sniff-qc n_trials>0 2021-12-15
+  detail: n_trials=1180
+  status: PASS
+- check: sniff-qc duration>0 2021-12-15
+  detail: duration_min=48.61
+  status: PASS
+- check: sniff-qc pct_usable [0,100] 2021-12-15
+  detail: pct=62.00%
+  status: PASS
+- check: sniff-qc n_sniffs>0 2022-05-17
+  detail: n_sniffs=9422
+  status: PASS
+- check: sniff-qc n_neurons>0 2022-05-17
+  detail: n_neurons=109
+  status: PASS
+- check: sniff-qc n_trials>0 2022-05-17
+  detail: n_trials=1048
+  status: PASS
+- check: sniff-qc duration>0 2022-05-17
+  detail: duration_min=49.04
+  status: PASS
+- check: sniff-qc pct_usable [0,100] 2022-05-17
+  detail: pct=93.47%
+  status: PASS
+- check: sniff-qc n_sniffs>0 2022-06-24
+  detail: n_sniffs=9169
+  status: PASS
+- check: sniff-qc n_neurons>0 2022-06-24
+  detail: n_neurons=287
+  status: PASS
+- check: sniff-qc n_trials>0 2022-06-24
+  detail: n_trials=557
+  status: PASS
+- check: sniff-qc duration>0 2022-06-24
+  detail: duration_min=48.40
+  status: PASS
+- check: sniff-qc pct_usable [0,100] 2022-06-24
+  detail: pct=95.97%
+  status: PASS
+- check: sniff-qc n_sniffs>0 2022-09-14
+  detail: n_sniffs=3852
+  status: PASS
+- check: sniff-qc n_neurons>0 2022-09-14
+  detail: n_neurons=310
+  status: PASS
+- check: sniff-qc n_trials>0 2022-09-14
+  detail: n_trials=187
+  status: PASS
+- check: sniff-qc duration>0 2022-09-14
+  detail: duration_min=17.99
+  status: PASS
+- check: sniff-qc pct_usable [0,100] 2022-09-14
+  detail: pct=98.95%
+  status: PASS
+- check: discard-log non-empty
+  detail: n_intervals=1742
+  status: PASS
+- check: discard-log all entries have required fields
+  detail: experiment,start_s,end_s,reason
+  status: PASS
+- check: discard-log all reasons non-empty
+  detail: ''
+  status: PASS
+- check: discard-log start_s <= end_s
+  detail: ''
+  status: PASS
+- check: mrl-per-unit non-empty
+  detail: n_rows=1603
+  status: PASS
+- check: mrl-per-unit all finite MRL in [0,1]
+  detail: ''
+  status: PASS
+- check: mrl-per-unit all finite delta_MRL >= 0
+  detail: ''
+  status: PASS
+- check: mrl-per-unit delta_MRL formula correct (spot-check 5 rows)
+  detail: checked above
+  status: PASS
+- check: mrl-per-experiment has rows
+  detail: n=6
+  status: PASS
+- check: mrl-per-experiment all mean_MRL in [0,1]
+  detail: ''
+  status: PASS
+- check: lme has required fields
+  detail: '[''model_formula'', ''n_experiments'', ''n_units'', ''p_value'', ''standardized_fixed_effect'']'
+  status: PASS
+- check: lme p_value in [0,1]
+  detail: p=1.43e-60
+  status: PASS
+- check: lme significance decision (p < 0.05)
+  detail: p=1.43e-60, n_units=1601, n_exp=6
+  status: PASS
+- check: lme n_units > 0
+  detail: n_units=1601
+  status: PASS
+- check: lme n_experiments == 6
+  detail: n_experiments=6
+  status: PASS
+- check: wilcoxon has required fields
+  detail: '[''n_pairs'', ''p_value'', ''rank_biserial_r'', ''statistic'']'
+  status: PASS
+- check: wilcoxon p_value in [0,1]
+  detail: p=0.3125
+  status: PASS
+- check: wilcoxon n_pairs == 6
+  detail: n_pairs=6
+  status: PASS
+- check: wilcoxon |rank_biserial_r| <= 1
+  detail: r=0.5238
+  status: PASS
+- check: wilcoxon significance decision noted
+  detail: p=0.3125, sig=False
+  status: PASS
+- check: top5 has 0-5 rows
+  detail: n_rows=5
+  status: PASS
+- check: top5 ordering row 0 vs 1
+  detail: delta_MRL=[0.2633, 0.1784], unit_id=[278, 259]
+  status: PASS
+- check: top5 ordering row 1 vs 2
+  detail: delta_MRL=[0.1784, 0.1614], unit_id=[259, 148]
+  status: PASS
+- check: top5 ordering row 2 vs 3
+  detail: delta_MRL=[0.1614, 0.1612], unit_id=[148, 103]
+  status: PASS
+- check: top5 ordering row 3 vs 4
+  detail: delta_MRL=[0.1612, 0.1588], unit_id=[103, 141]
+  status: PASS
+- check: top5 all have required fields
+  detail: ''
+  status: PASS
+detect_eth_contact_fixture: 'self-bootstrapped (OPEN-001 resolution: no MATLAB reference)'
+fixture_root: C:\Projects\Repos\Neuropixels\Golden Fixtures
+fixture_session: '2022-09-14'
+gate: NUMERIC_OK
+kernel_stages_verified:
+- 08_sniff_phase
+- 10_spike_phase
+n_checks: 74
+n_fail: 0
+n_pass: 74
+passed: true
+task_id: NP-DEMO-3

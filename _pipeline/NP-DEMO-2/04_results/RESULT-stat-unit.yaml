@@ -1,0 +1,8 @@
+method: statsmodels MixedLM, condition fixed effect, animal (session) random intercept
+pvalue: 7.510670133683472e-220
+coefficient: -0.23671664033549536
+standardized_effect_size: -1.0263195327880161
+n_units: 1138
+n_animals: 6
+direction: control>ethanol
+group_var: 0.6509134681738052

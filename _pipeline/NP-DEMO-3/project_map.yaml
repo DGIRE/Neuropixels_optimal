@@ -1,0 +1,11 @@
+blocking: []
+golden_fixtures: C:\Projects\Repos\Neuropixels\Golden Fixtures
+grounded_ok: true
+hazard_catalog: null
+matlab_reference: C:\Projects\Repos\Neuropixels\MATLAB
+project_dir: C:\Projects\Repos\Neuropixels
+tolerance_file: null
+validated_kernel: C:\Projects\Repos\Neuropixels\Optimized Python
+warnings:
+- no HAZARD_CATALOG found — proceed with the standard neuroscience hazard checklist
+  (§8).

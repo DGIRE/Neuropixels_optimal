@@ -1,0 +1,74 @@
+per_animal_best_depth:
+- animal: NP8
+  sessions:
+  - 11-01-2021
+  - 11-03-2021
+  best_depth_ordinal: 4
+  best_mean_theta_coh: 0.02800710358513378
+- animal: Np10
+  sessions:
+  - 12-15-2021
+  best_depth_ordinal: 1
+  best_mean_theta_coh: 0.03347024412122515
+- animal: NP12
+  sessions:
+  - 5-17-2022
+  best_depth_ordinal: 5
+  best_mean_theta_coh: 0.029823909235401364
+- animal: NP15
+  sessions:
+  - 06-24-2022
+  best_depth_ordinal: 2
+  best_mean_theta_coh: 0.019344734017804108
+- animal: NP22
+  sessions:
+  - 09-14-2022
+  best_depth_ordinal: 2
+  best_mean_theta_coh: 0.03338572258857675
+overall_best_depth_ordinal: 5
+ranking_by_grand_mean_theta_coh:
+- 5
+- 3
+- 4
+- 2
+- 1
+per_ordinal_consistency_counts:
+  1: 1
+  2: 2
+  3: 0
+  4: 1
+  5: 1
+grand_mean_theta_coh_by_depth:
+  1:
+    mean: 0.02434825028642245
+    sem: 0.003947390955621131
+    n_animals: 5
+  2:
+    mean: 0.025008215774937316
+    sem: 0.0024614033874361964
+    n_animals: 5
+  3:
+    mean: 0.026023025147881747
+    sem: 0.0023373883731125544
+    n_animals: 5
+  4:
+    mean: 0.025581416371681105
+    sem: 0.0022414853262413582
+    n_animals: 5
+  5:
+    mean: 0.02650056610372863
+    sem: 0.002169149012375065
+    n_animals: 5
+n_animals: 5
+n_sessions: 6
+animal_session_map:
+  11-01-2021: NP8
+  11-03-2021: NP8
+  12-15-2021: Np10
+  5-17-2022: NP12
+  06-24-2022: NP15
+  09-14-2022: NP22
+note: 'DEV-002 (resolved 2026-07-25): 5 animals, 6 sessions total. NP8 contributes
+  2 sessions (2021-11-01, 2021-11-03), averaged into one animal-level mean_theta_coh
+  per depth before this aggregation so NP8 is not double-weighted. All other animals
+  contribute a single session each.'

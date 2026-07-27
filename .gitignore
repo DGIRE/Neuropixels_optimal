@@ -23,3 +23,8 @@ env/
 Thumbs.db
 *~
 ~$*
+
+# Large result/data blobs - keep local, exceed GitHub limits
+lfp_full.npy
+_pipeline/NP-PAPER-1/04_results/RESULT-example-spectrogram.npz
+MATLAB/Simplified Matlab Import/translation tests/MTLB-TEST.mat

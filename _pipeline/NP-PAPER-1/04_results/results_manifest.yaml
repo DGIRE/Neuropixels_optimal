@@ -1,0 +1,135 @@
+# NP-PAPER-1 04_results serialization manifest.
+#
+# Produced by the composing runner (03_software/np_paper1_analysis.py +
+# run_analysis_np_paper1.py), Blueprint v2 P3 / D7. This file documents WHERE
+# each contract RESULT-* object lives on disk and in what format, per the
+# task instruction to "document your choice in a short results_manifest.yaml".
+#
+# Layout:
+#   04_results/
+#     sessions/<session_dirname>/         -- per-session checkpoints (resumable)
+#       DONE.json                          -- completion marker (resume gate)
+#       summary.json / summary.yaml        -- QC + theta-coherence summary (small)
+#       lfp_full.npy                       -- (5, n_full) float64 full-duration LFP
+#                                              for the 5 selected depths -- RESULT-full-lfp
+#       snf_lfp.npy                        -- (n_full,) float64 raw SNF resampled to LFP clock
+#       control_valid_windows.npy          -- (n_windows_used,) int64 retained window
+#                                              START sample indices on the LFP clock
+#       spectral_depth{1..5}.npz           -- per depth: freqs, coherence, lfp_psd,
+#                                              snf_psd, null_threshold
+#                                              (RESULT-coh-spectrum / RESULT-lfp-psd /
+#                                              RESULT-snf-psd / RESULT-null-threshold)
+#       qc_discards.yaml                   -- per-session RESULT-qc-discards detail
+#                                              (start_s/end_s/reason spans)
+#
+#     RESULT-qc-counts.yaml                -- cross-session QC table (per experiment:
+#                                              length_min, n_windows_used/excluded,
+#                                              pct_usable_time, n_sniffs, 5 channel
+#                                              indices + ycoords)
+#     RESULT-sniff-rate.yaml               -- cross-session sniff-rate table (median/
+#                                              IQR/range, control epochs only)
+#     RESULT-qc-discards.yaml              -- index into each session's qc_discards.yaml
+#     RESULT-theta-coh.yaml                -- long-form per experiment x depth table
+#                                              (mean/peak theta coh, peak freq,
+#                                              sig-theta fraction, peak percentile)
+#     RESULT-best-depth.yaml               -- per-experiment best depth, overall
+#                                              ranking by grand-mean theta coherence,
+#                                              per-ordinal consistency counts
+#     RESULT-depth-stat.yaml               -- mixed-effects LRT + Friedman +
+#                                              Holm-Wilcoxon post-hoc (depth_statistics
+#                                              output), OR RESULT-depth-stat_BLOCKED.yaml
+#                                              if <3 sessions pass the >=30-window gate
+#     RESULT-grand-mean-spectra.npz        -- grand mean +/- SEM per depth across
+#                                              experiments for coherence, LFP PSD,
+#                                              null threshold, plus depth-independent
+#                                              SNF PSD grand mean (FIG-PAPER1-PSD/COH
+#                                              underlying data)
+#     RESULT-example-traces.npz            -- representative-segment band-filtered
+#                                              LFP (unfiltered/theta/beta/gamma+envelope)
+#                                              per depth + SNF segment + inhalation mask
+#                                              + sniff-onset markers (FIG-PAPER1-TRACES)
+#     RESULT-example-traces_meta.yaml      -- which session/segment was chosen + the
+#                                              display-convention note
+#     RESULT-example-spectrogram.npz       -- per-window time-resolved LFP-power,
+#                                              SNF-power, and coherence spectrograms
+#                                              (freq x window-time) for the SAME
+#                                              representative session as
+#                                              RESULT-example-traces (06-24-2022),
+#                                              plus window_center_s and the
+#                                              instantaneous sniff rate at each
+#                                              window center (OUT-009/010,
+#                                              FIG-PAPER1-SPECTRO). Added 2026-07-25
+#                                              (gap-fill, not a deviation -- see
+#                                              History below).
+#     RESULT-example-spectrogram_meta.yaml -- which session was used + provenance/
+#                                              verification note
+#     RESULT-sniff-rate-raw.npz            -- raw per-sniff instantaneous-rate
+#                                              arrays (1/ISI, Hz), control epochs
+#                                              only, one per session (key
+#                                              "<session>__inst_rate_hz") + a
+#                                              companion per-sniff ISI-trim-validity
+#                                              boolean array (key
+#                                              "<session>__isi_trim_valid"), for
+#                                              FIG-PAPER1-SNIFFRATE's histogram/KDE
+#                                              visual_encoding. Added 2026-07-25
+#                                              (gap-fill, not a deviation -- see
+#                                              History below).
+#     RESULT-sniff-rate-raw_meta.yaml      -- per-session schema/counts + provenance/
+#                                              verification note
+#
+# RESULT-methods-doc / RESULT-results-doc (the two .docx deliverables) are NOT
+# produced by this runner -- they are a separate report-writing step downstream
+# of these RESULT-* data objects (out of scope for "IMPLEMENTED": D7 produces
+# the RESULT-* data, not the certified prose documents).
+#
+# Format choice rationale: small per-experiment tables/scalars -> YAML (human-
+# readable, diffable, matches this repo's established convention in
+# NP-DEMO-1..4's 04_results). Large numeric arrays (full-duration LFP, per-
+# frequency spectra, band-filtered trace segments) -> .npy/.npz (avoids YAML's
+# poor fidelity/size for big float64 arrays, matches this repo's existing
+# checkpoint-array convention from load_experiment_data.py/extract_full_lfp.py).
+#
+# ---------------------------------------------------------------------------
+# History
+# ---------------------------------------------------------------------------
+# 2026-07-24: Initial P3 composing run (6 sessions), DEV-001 (or_validate_files
+#   alphabetical-first .bin picker) discovered, resolved (Resolution B,
+#   03_software/resolve_session_binfile.py), all 6 sessions re-run with the
+#   corrected files.
+# 2026-07-25: Scientific audit (05_validation/scientific_audit.md) filed
+#   DEV-002 (2021-11-01/2021-11-03 share animal NP8) and DEV-003 (09-14-2022
+#   file-identity mismatch, resolved as a benign stale run-name label, no
+#   change needed). DEV-002 resolved: RESULT-best-depth.yaml/RESULT-depth-
+#   stat.yaml/RESULT-grand-mean-spectra.npz recomputed at the ANIMAL level (5
+#   animals; NP8's 2 sessions averaged per depth). MINOR-2 (circular_shift_null
+#   rolling the held-constant SNF tail-pad into the recording) fixed via a new
+#   valid_length parameter (backward-compatible default) and all 30
+#   experiment x depth nulls recomputed. MINOR-3 (RESULT-sniff-rate.yaml
+#   min/max labeling) fixed (relabeled, no recomputation).
+# 2026-07-25 (later same day): report-author agent found two contract-required
+#   pieces of data were specified but never persisted during the P3 run --
+#   filled as a gap-fill (NOT a new deviation; no new scientific/data judgment,
+#   just completing already-specified work):
+#     Gap 1 (OUT-009/010, FIG-PAPER1-SPECTRO): per-window time-resolved
+#       LFP-power/SNF-power/coherence spectrograms for the representative
+#       session (06-24-2022) -> RESULT-example-spectrogram.npz. Reused cached
+#       lfp_full.npy/snf_lfp.npy/control_valid_windows.npy; no raw .bin
+#       reload. Verified (not merely asserted): per-window coherence from
+#       individual single-window multitaper_psd_coherence calls matches
+#       coh_per_window from one pooled call bit-for-bit; mean_over_windows of
+#       per-window LFP/SNF power matches the cached aggregate PSD in
+#       spectral_depth<N>.npz to floating-point precision.
+#     Gap 2 (FIG-PAPER1-SNIFFRATE histogram/KDE, all 6 sessions): raw
+#       per-sniff instantaneous-rate arrays -> RESULT-sniff-rate-raw.npz.
+#       Only needed the small LabView .dat (SNF/ETH/LV_Fs) via or_loaddat --
+#       no raw NP .bin/LFP reload, no Kilosort load. Verified (not merely
+#       asserted): median/Q1/Q3/min/max recomputed from each session's raw
+#       array reproduce the frozen RESULT-sniff-rate.yaml 5-number summary
+#       bit-for-bit (abs_tol=1e-9).
+#   03_software/fill_frozen_result_gaps.py is the driver; the underlying logic
+#   lives in np_paper1_analysis.py::build_example_spectrogram/build_sniff_rate_raw.
+#   Oracle suite (87/1/0) and 05_validation/numeric_gate_check.py (175/175)
+#   re-verified unaffected (neither of the 9 core functions' logic was
+#   touched -- only how their already-existing outputs are persisted).
+task_id: NP-PAPER-1
+contract_version: 1

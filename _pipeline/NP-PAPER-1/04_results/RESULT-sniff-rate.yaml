@@ -1,0 +1,57 @@
+rows:
+- session: 11-01-2021
+  median_hz: 3.9062499999986957
+  q1_hz: 3.2894736842095815
+  q3_hz: 4.999999999998863
+  iqr_hz: 1.7105263157892816
+  min_hz_untrimmed_control_epoch: 0.08234519104084317
+  max_hz_untrimmed_control_epoch: 17.857142857130096
+  n_sniffs_retained_isi: 10005
+- session: 11-03-2021
+  median_hz: 3.5714285714289193
+  q1_hz: 3.048780487805115
+  q3_hz: 4.629629629627018
+  iqr_hz: 1.5808491418219028
+  min_hz_untrimmed_control_epoch: 0.0946969696969661
+  max_hz_untrimmed_control_epoch: 20.833333333332543
+  n_sniffs_retained_isi: 8222
+- session: 12-15-2021
+  median_hz: 4.310344827586747
+  q1_hz: 2.906976744185616
+  q3_hz: 6.249999999996803
+  iqr_hz: 3.3430232558111865
+  min_hz_untrimmed_control_epoch: 0.7396449704142068
+  max_hz_untrimmed_control_epoch: 15.62500000000866
+  n_sniffs_retained_isi: 6309
+- session: 5-17-2022
+  median_hz: 3.6764705882354107
+  q1_hz: 2.6595744680852738
+  q3_hz: 5.43478260868985
+  iqr_hz: 2.775208140604576
+  min_hz_untrimmed_control_epoch: 0.14367816091953947
+  max_hz_untrimmed_control_epoch: 20.833333333332543
+  n_sniffs_retained_isi: 8524
+- session: 06-24-2022
+  median_hz: 3.1250000000006217
+  q1_hz: 2.6595744680852738
+  q3_hz: 4.310344827586747
+  iqr_hz: 1.6507703595014735
+  min_hz_untrimmed_control_epoch: 0.09920634920634992
+  max_hz_untrimmed_control_epoch: 20.83333333343123
+  n_sniffs_retained_isi: 8302
+- session: 09-14-2022
+  median_hz: 3.5714285714289193
+  q1_hz: 3.2894736842095815
+  q3_hz: 4.032258064517208
+  iqr_hz: 0.7427843803076266
+  min_hz_untrimmed_control_epoch: 0.6067961165048558
+  max_hz_untrimmed_control_epoch: 17.857142857130096
+  n_sniffs_retained_isi: 3467
+note: 'MINOR-3 (scientific-audit, approved 2026-07-25): min_hz_untrimmed_control_epoch
+  / max_hz_untrimmed_control_epoch are drawn from ALL control-epoch instantaneous
+  sniff rates, NOT the 5th/95th-percentile-ISI-trimmed set that actually gates the
+  coherence analysis windows (build_valid_sniff_mask). median_hz/q1_hz/q3_hz/iqr_hz
+  are unaffected by this note -- they characterize the same untrimmed control-epoch
+  distribution the contract''s RESULT-sniff-rate ''range'' field was always defined
+  over; this note exists so the Methods report does not imply those extremes entered
+  the coherence estimate.'

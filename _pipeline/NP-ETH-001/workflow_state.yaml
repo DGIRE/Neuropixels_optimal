@@ -1,0 +1,10 @@
+active_run_id: null
+approved_contract_version: null
+blocking_findings: []
+data:
+  project_dir: C:\Projects\Repos\Neuropixels
+next_permitted_actions:
+- REQUEST_PARSED
+risk: amber
+state: GROUNDED
+task_id: NP-ETH-001

@@ -1,0 +1,97 @@
+{
+  "permissions": {
+    "allow": [
+      "Read",
+      "Bash(research_workflow:*)",
+      "Bash(python -m research_workflow:*)",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "Bash(py:*)",
+      "Bash(pytest:*)",
+      "Bash(python -m pytest:*)",
+      "Bash(dir:*)",
+      "Bash(where:*)",
+      "Bash(type:*)",
+      "Bash(findstr:*)",
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Edit(_pipeline/**)",
+      "Write(_pipeline/**)",
+      "Edit(analyses/**)",
+      "Write(analyses/**)"
+    ],
+    "deny": [
+      "Edit(Optimized Python/**)",
+      "Write(Optimized Python/**)",
+      "Edit(Golden Fixtures/**)",
+      "Write(Golden Fixtures/**)",
+      "Read(**/.env)",
+      "Read(**/secrets/**)",
+      "Bash(rm:*)",
+      "Bash(rmdir:*)",
+      "Bash(sudo:*)",
+      "Bash(curl:*)",
+      "Bash(wget:*)",
+      "WebFetch",
+      "Bash(git push:*)",
+      "Bash(pip install:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${RW_PY:-python3}\" .claude/hooks/block-protected-paths.py"
+          },
+          {
+            "type": "command",
+            "command": "\"${RW_PY:-python3}\" .claude/hooks/block-contract-mutation.py"
+          },
+          {
+            "type": "command",
+            "command": "\"${RW_PY:-python3}\" .claude/hooks/block-uncontracted-analysis.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${RW_PY:-python3}\" .claude/hooks/block-dangerous-bash.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${RW_PY:-python3}\" .claude/hooks/require-approved-contract.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${RW_PY:-python3}\" .claude/hooks/verify-figure-sources.py"
+          },
+          {
+            "type": "command",
+            "command": "\"${RW_PY:-python3}\" .claude/hooks/require-report-evidence.py"
+          }
+        ]
+      }
+    ]
+  }
+}

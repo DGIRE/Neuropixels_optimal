@@ -1,0 +1,7 @@
+artifact: 06_figures/
+kind: agent
+note: ''
+recorded_by: renderer (render_figures.py)
+state: FIGURES_RENDERED
+timestamp: '2026-07-23T19:02:25Z'
+who: rw-build-figures

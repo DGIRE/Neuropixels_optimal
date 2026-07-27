@@ -1,0 +1,252 @@
+task_id: NP-DEMO-1
+contract_version: 1
+p5_date: "2026-07-21"
+status: CLOSED
+human_signoff_date: "2026-07-21"
+human_signoff_by: David Gire
+
+# ============================================================
+# GATE STATUSES
+# ============================================================
+gates:
+  gate_8_reproduction:
+    status: PASS
+    evidence: result_manifest.yaml:p3_steps_completed.8_freeze_results=DONE
+  gate_9_report_figures:
+    status: PASS
+    evidence:
+      - inject_report.py orphan_scan = CLEAN; unresolved_placeholders = []
+      - figure_manifest.yaml: FIG-DEMO1-01 NO_BLOCKERS; FIG-DEMO1-QC PASS
+      - report_audit: 1 BLOCKER (B1) found and resolved (unit-count scope fix)
+      - claim_evidence.yaml: 8 placeholders, all sourced
+
+# ============================================================
+# ANALYSIS REQUIREMENTS → RESULT OBJECTS
+# ============================================================
+analysis_traceability:
+
+  SNF_not_LFP:
+    contracted: "Phase from SNF (sniff sensor), never LFP"
+    evidence:
+      - np_demo1_analysis.py uses compute_sniff_phase(D) operating on D['SNF'] only
+      - HAZ-003 in cartography.yaml explicitly prohibits LFP use
+      - Fixture spike_SNF_PH validated bit-exact against golden fixture
+    result: PASS
+
+  sniff_segmentation:
+    contracted: "Detect valid sniff segments; reject noise/non-sniffing"
+    evidence:
+      - compute_sniff_phase run with GUI-default threshold_std=-0.5 (pinned)
+      - valid_sniff_mask built from SNF_PH >= 0 (sentinel -1 = outside cycle)
+      - RESULT_qc_discards.json: per-session discard log with reasons
+      - FIG-DEMO1-QC shows gray (non-sniffing) and orange-red (noise) shading
+    result: PASS
+
+  inclusion_criteria:
+    contracted: "Exclude units < 0.1 Hz or < 50 valid-sniff spikes per condition"
+    evidence:
+      - np_demo1_analysis.py:compute_unit_mrl applies both criteria
+      - Numeric gate (P3 step 4): 69/379 units excluded by rate < 0.1 Hz, matches golden unitFiringRate
+    result: PASS
+
+  per_unit_mrl_and_phase:
+    contracted: "Per-unit MRL and preferred phase by condition"
+    evidence:
+      - RESULT_mrl.json: 2247 rows (unit×condition level entries), includes mrl, n_valid_sniff_spikes, included flag
+      - RESULT_phase.json: matching per-unit preferred_phase_rad by condition
+      - Three-way rederivation: worst diff 2.7e-15 (tol 1e-12)
+    result: PASS
+
+  per_animal_mean_mrl:
+    contracted: "Animal-level mean MRL by condition (anti-pseudoreplication)"
+    evidence:
+      - RESULT_mrl.json includes level='animal' rows with animal-mean MRL per condition
+      - figdata/FIG_DEMO1_01_animals.json confirms 5 paired animals (2021-11-03 excluded)
+      - All 5 animals: control MRL > ethanol MRL (r=-1.0)
+    result: PASS
+
+  paired_wilcoxon:
+    contracted: "Paired animal-level Wilcoxon signed-rank test; exact p; effect size"
+    evidence:
+      - RESULT_stat.json: pvalue=0.0625, effect_size=-1.0 (rank-biserial r), statistic=0.0, n_animals=5
+      - scipy.stats.wilcoxon(alternative='two-sided', mode='exact')
+      - Report states p, r, W, n explicitly; correctly calls p=0.0625 non-significant
+    result: PASS
+
+  circular_test_phase_shift:
+    contracted: "Circular test for preferred-phase shift (ethanol vs control)"
+    evidence: NONE — no circular test implemented or stored in result objects
+    finding: >-
+      MAJOR-TRACEABILITY-1: The contract (statistical_model) specifies a
+      "circular test for preferred-phase shift." No such test was run in P3.
+      RESULT_stat.json contains only the Wilcoxon MRL test.
+      RESULT_phase.json stores preferred phases descriptively only.
+      The report limitation section states: "Per-unit phase-locking values reported
+      here are descriptive only; no additional confirmatory hypothesis tests beyond
+      the pre-registered animal-level paired comparison are reported."
+      This was NOT formally logged as a DEVIATION in result_manifest.yaml.
+    resolution_required: >-
+      Human sign-off required: (A) accept as documented limitation and close
+      as non-critical descriptive-only deviation, OR (B) require circular test
+      implementation before final approval.
+    result: GAP — AWAITING_HUMAN_DECISION
+
+  fdr_per_unit:
+    contracted: "Benjamini-Hochberg FDR across units for per-unit reporting only"
+    evidence: NONE — no B-H FDR computed; RESULT_mrl/RESULT_phase contain raw descriptive values only
+    finding: >-
+      MINOR-TRACEABILITY-1: The contract specifies B-H FDR correction for per-unit
+      reporting. Per-unit MRL and preferred phase are reported as descriptive values
+      only; no per-unit hypothesis tests were run, so B-H FDR was not applied.
+      Not documented as a limitation in the report.
+      Assessment: Since no per-unit test was performed, the FDR clause is vacuous
+      in this run (nothing to correct). However the contract intended to enable
+      per-unit inference, and that was not delivered.
+    result: MINOR GAP — documented here; does not block approval
+
+  qc_counts:
+    contracted: "Per-experiment n_sniffs / n_neurons / n_trials"
+    evidence:
+      - RESULT_qc_counts.json: all 6 sessions with n_sniffs, n_neurons, n_trials
+      - FIG-DEMO1-QC captions display these values per panel
+    result: PASS
+
+  qc_discards:
+    contracted: "Per-experiment discarded SNF sections + reason"
+    evidence:
+      - RESULT_qc_discards.json: per-session discard log (start_s, end_s, reason)
+      - FIG-DEMO1-QC shading distinguishes non-sniffing vs noise/short
+    result: PASS
+
+  exclusion_reporting:
+    contracted: "report_exclusions: true"
+    evidence:
+      - report_injected.md: 2021-11-03 exclusion documented with reason (ETH_thr>0.11, zero control units)
+      - Report states "6 sessions loaded" and "5 animals (5 sessions) in the paired comparison"
+    result: PASS
+
+# ============================================================
+# FIGURE REQUIREMENTS → FIGURE STATUS
+# ============================================================
+figure_traceability:
+
+  FIG-DEMO1-01:
+    contracted:
+      - x_label: "SNF sniff phase (rad)" → PASS
+      - y_label: "spike rate (norm.) / MRL" → DEVIATION: y_label shows "MRL (mean resultant length)" only
+        (per-spike phase histograms for normalized spike rate not in frozen result objects;
+        documented in figure_manifest.yaml as MAJOR-1 limitation)
+      - visual_encoding: ethanol=solid, control=dashed → ADAPTED: ethanol=filled circles, control=open circles
+        (scatter context; documented MAJOR-2 resolution in figure_manifest.yaml)
+      - caption: n_animals, n_units per condition, exact p, effect size → PASS (all sourced from result objects)
+      - vector PDF + 300 dpi PNG → PASS
+      - colorblind palette (Okabe-Ito) → PASS (#0072B2 blue, #D55E00 vermillion)
+    audit_result: NO_BLOCKERS (figure_manifest.yaml)
+
+  FIG-DEMO1-QC:
+    contracted:
+      - one panel per experiment, labeled by session date → PASS (6 panels, chronological)
+      - n_sniffs / n_neurons / n_trials per panel → PASS
+      - valid sniff vs discarded shading → PASS
+      - vector PDF + 300 dpi PNG → PASS
+    audit_result: PASS_NO_BLOCKERS_NO_MAJORS (figure_manifest.yaml)
+
+# ============================================================
+# REPORT REQUIREMENTS → SECTION STATUS
+# ============================================================
+report_traceability:
+
+  required_sections:
+    Question: PRESENT
+    Methods: PRESENT
+    Results: PRESENT
+    Figure: PRESENT (caption for FIG-DEMO1-01)
+    Limitations: PRESENT
+
+  required_figures:
+    FIG-DEMO1-01: PRESENT in report (Fig. 1 caption in report_injected.md; PDF in output/)
+
+  required_tables:
+    RESULT-mrl: >-
+      Referenced in report prose ("reported in RESULT-mrl") but not embedded as a
+      formatted table in the docx. Result object (RESULT_mrl.json) IS the table.
+      NOTE: Contract says required_tables:[RESULT-mrl, RESULT-phase] under report.
+      If the intent was a formatted table in the docx body, this is a gap.
+      Assessment: MINOR — result objects are the authoritative data; prose reference
+      is sufficient for a lab + demo audience. Flag for human sign-off.
+    RESULT-phase: Same as RESULT-mrl above.
+
+  reporting_rules:
+    exact_N: PASS — n=5 animals stated explicitly
+    report_exclusions: PASS — 2021-11-03 documented with mechanism
+    report_effect_sizes: PASS — rank-biserial r=-1.00 reported
+    report_exact_p: PASS — p=0.0625 reported
+    prohibit_uncontracted_post_hoc: PASS — no post-hoc tests reported
+    separate_qc_document: PASS — FIG-DEMO1-QC serves as QC document (RESULT-qc-doc)
+
+  output_filename:
+    contracted: NP-DEMO-1_ethanol_sniff_phase_locking.docx
+    delivered: output/NP-DEMO-1_ethanol_sniff_phase_locking.docx
+    result: PASS
+
+  claim_evidence:
+    orphan_scan: CLEAN
+    unresolved_placeholders: 0
+    placeholders_resolved: 8/8
+    provenance: claim_evidence.yaml
+
+# ============================================================
+# SUMMARY OF FINDINGS FOR HUMAN SIGN-OFF
+# ============================================================
+findings_for_human_signoff:
+
+  MAJOR-TRACEABILITY-1:
+    description: >-
+      Contracted "circular test for preferred-phase shift" not performed.
+    resolution: >-
+      Option A accepted by David Gire (2026-07-21). Report Limitations section
+      updated to explicitly state: circular test deferred to future work;
+      preferred phase stored in RESULT-phase; no per-unit tests run;
+      B-H FDR not applied. report_draft.md updated; report re-injected and
+      re-rendered. Orphan scan CLEAN.
+    status: RESOLVED
+
+  MINOR-TRACEABILITY-1:
+    description: >-
+      Benjamini-Hochberg FDR not applied (no per-unit tests run; vacuous).
+    resolution: >-
+      Covered in MAJOR-TRACEABILITY-1 Limitations update.
+    status: RESOLVED
+
+  MINOR-TRACEABILITY-2:
+    description: >-
+      required_tables: [RESULT-mrl, RESULT-phase] in report section of contract.
+      These are not embedded as formatted tables in the docx; they are referenced
+      by name ("reported in RESULT-mrl and RESULT-phase respectively").
+    recommendation: >-
+      Accept for lab + demo audience. The JSON result objects are the
+      authoritative, queryable tables. If submission to journal or formal
+      data package requires embedded tables, add a render step in P4.
+
+# ============================================================
+# REPRODUCER RECORD (to be updated when agent completes)
+# ============================================================
+reproducer_record:
+  status: PASS
+  git_commit: "236d8dbdda98e079e44398e21f2bc3b6ec01b3ce"
+  branch: main
+  python: "3.13.9 (C:\\Users\\david\\anaconda3\\python.exe)"
+  packages: "numpy==2.0.2, scipy==1.14.1, matplotlib==3.9.2, h5py>=3.13,<4"
+  os: "Windows 11 Pro 10.0.26200"
+  date: "2026-07-21"
+  hand_added_prerequisites: NONE
+  result_confirmed:
+    pvalue: 0.0625
+    effect_size: -1.0
+    statistic: 0.0
+    n_animals: 5
+  validation:
+    oracle: "13/13 PASS"
+    numeric_gates: "5/5 PASS"
+    rederive_three_way: "4/4 stages PASS (worst diff 2.7e-15)"
+    prohibited_changes: "all 5 prohibitions verified NOT violated"

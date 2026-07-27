@@ -1,0 +1,38 @@
+{
+  "C:\\Projects\\Repos\\Neuropixels\\DATA\\11-01-2021": {
+    "n_sniffs": 10949,
+    "n_neurons": 232,
+    "n_trials": 117,
+    "session_date": "2021-11-01"
+  },
+  "C:\\Projects\\Repos\\Neuropixels\\DATA\\11-03-2021": {
+    "n_sniffs": 9087,
+    "n_neurons": 429,
+    "n_trials": 123,
+    "session_date": "2021-11-03"
+  },
+  "C:\\Projects\\Repos\\Neuropixels\\DATA\\12-15-2021": {
+    "n_sniffs": 7005,
+    "n_neurons": 236,
+    "n_trials": 119,
+    "session_date": "2021-12-15"
+  },
+  "C:\\Projects\\Repos\\Neuropixels\\DATA\\5-17-2022": {
+    "n_sniffs": 9422,
+    "n_neurons": 109,
+    "n_trials": 119,
+    "session_date": "2022-05-17"
+  },
+  "C:\\Projects\\Repos\\Neuropixels\\DATA\\06-24-2022": {
+    "n_sniffs": 9169,
+    "n_neurons": 287,
+    "n_trials": 119,
+    "session_date": "2022-06-24"
+  },
+  "C:\\Projects\\Repos\\Neuropixels\\DATA\\09-14-2022": {
+    "n_sniffs": 3852,
+    "n_neurons": 310,
+    "n_trials": 45,
+    "session_date": "2022-09-14"
+  }
+}

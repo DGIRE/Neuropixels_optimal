@@ -1,0 +1,44 @@
+alpha: 0.05
+checks:
+- check: lme p_value < 0.05
+  detail: p=1.4339e-60
+  status: PASS
+- check: lme standardized_fixed_effect finite
+  detail: est=0.5803
+  status: PASS
+- check: lme n_units matches expected
+  detail: n_units=1601
+  status: PASS
+- check: lme n_experiments == 6
+  detail: n_exp=6
+  status: PASS
+- check: n_pairs from mrl-per-experiment == 6
+  detail: n_pairs=6
+  status: PASS
+- check: wilcoxon p re-derived within 1e-6 of stored
+  detail: stored=0.312500, re-derived=0.312500
+  status: PASS
+- check: wilcoxon statistic re-derived within 1e-4 of stored
+  detail: stored=5.0000, re-derived=5.0000
+  status: PASS
+- check: wilcoxon rank-biserial r re-derived within 1e-4 of stored
+  detail: stored=0.5238, re-derived=0.5238
+  status: PASS
+- check: wilcoxon significance decision noted (non-significant primary result)
+  detail: 'p=0.3125, sig=False (primary test: non-significant)'
+  status: PASS
+- check: 'per-experiment direction: majority eth > ctrl'
+  detail: 5/6 experiments have MRL_eth > MRL_ctrl
+  status: PASS
+gate: STAT_OK
+lme_p: 1.4338748925498535e-60
+lme_significant: true
+n_checks: 10
+n_fail: 0
+n_pass: 10
+passed: true
+task_id: NP-DEMO-3
+wilcoxon_p: 0.3125
+wilcoxon_p_rederived: 0.3125
+wilcoxon_r_rederived: 0.5238095238095238
+wilcoxon_significant: false

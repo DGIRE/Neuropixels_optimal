@@ -1,0 +1,9 @@
+approval_id: APR-NP-DEMO-2-v001-225c184a
+approver: David Gire
+conditions: []
+contract_docx_sha256: 83c7a84f4d8891d7dfed0852ef9a43a05b8a9fcad6836bbd4d69fce538930e0f
+contract_version: 1
+contract_yaml_sha256: 225c184a76e27541b96d5f62baac1dc3e772a86ad2be4a75c6db338a4e0babca
+decision: approved
+task_id: NP-DEMO-2
+timestamp: '2026-07-22T20:47:26Z'

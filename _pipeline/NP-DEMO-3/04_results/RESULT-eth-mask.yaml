@@ -1,0 +1,36 @@
+'2021-11-01':
+  eth_threshold: 0.05
+  has_control: true
+  n_control_samples: 315438
+  n_ethanol_samples: 50356
+  n_trials: 2501
+'2021-11-03':
+  eth_threshold: 0.05
+  has_control: true
+  n_control_samples: 329437
+  n_ethanol_samples: 44178
+  n_trials: 491
+'2021-12-15':
+  eth_threshold: 0.05
+  has_control: true
+  n_control_samples: 319873
+  n_ethanol_samples: 44728
+  n_trials: 1180
+'2022-05-17':
+  eth_threshold: 0.05
+  has_control: true
+  n_control_samples: 336234
+  n_ethanol_samples: 31560
+  n_trials: 1048
+'2022-06-24':
+  eth_threshold: 0.05
+  has_control: true
+  n_control_samples: 337405
+  n_ethanol_samples: 25626
+  n_trials: 557
+'2022-09-14':
+  eth_threshold: 0.05
+  has_control: true
+  n_control_samples: 126979
+  n_ethanol_samples: 7971
+  n_trials: 187

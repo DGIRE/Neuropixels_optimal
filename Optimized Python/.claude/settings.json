@@ -1,0 +1,47 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/block-protected-paths.py"
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/block-contract-mutation.py"
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/block-uncontracted-analysis.py"
+          }
+        ]
+      },
+      {
+        "matcher": "Bash|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/require-approved-contract.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python .claude/hooks/verify-figure-sources.py"
+          },
+          {
+            "type": "command",
+            "command": "python .claude/hooks/require-report-evidence.py"
+          }
+        ]
+      }
+    ]
+  }
+}

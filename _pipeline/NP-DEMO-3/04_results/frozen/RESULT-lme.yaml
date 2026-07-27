@@ -1,0 +1,5 @@
+model_formula: MRL ~ condition_code
+n_experiments: 6
+n_units: 1601
+p_value: 1.4338748925498535e-60
+standardized_fixed_effect: 0.5802644521550333

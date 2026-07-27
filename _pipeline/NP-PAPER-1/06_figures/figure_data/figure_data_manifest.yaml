@@ -1,0 +1,266 @@
+task_id: NP-PAPER-1
+contract_version: 1
+generated_by: build_figure_data.py + build_figure_data_gapfill.py (scratchpad scripts, read-only against
+  04_results/frozen/)
+note: 'NP-PAPER-1 06_figures/figure_data manifest -- Blueprint v2 P4, state FIGURES_DATA_OK. Every number
+  below traces to a file under 04_results/frozen/ (D11: never raw session data, never independently re-derived
+  statistics). D5: full per-array provenance below. Source freeze: all frozen/*.yaml and frozen/*.npz
+  files read here correspond to the files listed with hashes in 04_results/frozen/freeze_manifest.yaml;
+  no frozen file was modified. UPDATE (2026-07-25): the two gaps originally flagged for FIG-PAPER1-SPECTRO
+  and FIG-PAPER1-SNIFFRATE have been filled by two newly frozen files (RESULT-example-spectrogram.npz,
+  RESULT-sniff-rate-raw.npz) and both figures now have complete derived data; see gaps_summary for the
+  resolution record and each figure entry for details. No gaps remain for any of the 6 figures.'
+figures:
+  FIG-PAPER1-TRACES:
+    status: ok
+    files:
+    - fig_traces_data.npz
+    - fig_traces_qc_channel_indices.npy
+    - fig_traces_qc_depth_ycoords_um.npy
+    source_results:
+    - RESULT-example-traces.npz (frozen) -- byte-identical pass-through; every key copied verbatim (sha256
+      of fig_traces_data.npz == 3a2b8fb43922d9b503017d88e83189511a1efa3a9bc93762d0ff491e14599c5b, matching
+      the frozen source exactly, confirming zero transformation).
+    - RESULT-example-traces_meta.yaml (frozen) -- representative session/segment + display-convention
+      note (caption_requirements item 1).
+    - RESULT-qc-counts.yaml (frozen) -- depth_channel_indices / depth_ycoords_um for the representative
+      session (06-24-2022), cross-checked byte-for-byte identical to the copies embedded in RESULT-example-traces.npz
+      (caption_requirements item 2, 'never typed by hand').
+    npz_keys:
+      t_s: time axis (s), (10000,) float64, @ LFP rate (~1000 Hz), 10-s segment
+      snf_segment: SNF (raw, resampled to LFP rate) over the segment, (10000,)
+      inhalation_mask_lv_rate: boolean inhalation mask, (1250,) bool, @ LV_Fs (~125 Hz) -- NOTE sample-rate
+        mismatch vs t_s/snf_segment/LFP traces (1000 Hz); the renderer must align these two time bases
+        itself, no resampled/upsampled version of this mask exists in any frozen file so none was fabricated
+        here
+      sniff_onset_markers_s: sniff-onset times within the segment (s), (29,)
+      depth_channel_indices / depth_ycoords_um: (5,) -- the 5 selected channels for the representative
+        session
+      depth{1..5}_{unfiltered,theta_2_12,beta_18_30,gamma_65_100,gamma_65_100_envelope}: '(10000,) float64
+        each, 5 depths x 5 bands = 25 arrays, band-filtered LFP traces ready to plot per the visual_encoding
+        (bands: unfiltered/theta/beta/gamma+envelope)'
+    representative_session: 06-24-2022
+    segment_window_s:
+    - 80.0
+    - 90.0
+    display_convention_note: Representative experiment = most retained all-control/all-valid-sniff 4-s
+      windows, tie-break earliest date. Representative segment = first qualifying contiguous control-valid
+      span of fixed length 10.0 s. Non-scientific, presentation-only choice (verbatim from frozen meta).
+    caveat: 'Scientific audit MINOR-5 (05_validation/scientific_audit.md): the inhalation-vs-exhalation
+      coloring convention (SNF_PH in [0, 0.5) = inhalation) used to build inhalation_mask_lv_rate is not
+      pinned anywhere in the contract/repo_map. This affects display coloring only (no statistic depends
+      on it) but should be human-confirmed before the caption asserts ''inhalation = green'' as if it
+      were a validated physiological convention rather than a display choice.'
+  FIG-PAPER1-SPECTRO:
+    status: ok (gap resolved 2026-07-25)
+    files:
+    - fig_spectro_data.npz
+    source_results:
+    - RESULT-example-spectrogram.npz (frozen, NEW 2026-07-25) -- byte-identical pass-through; sha256 of
+      fig_spectro_data.npz == fecf1c0969d945a85e588affd898a51377371b8a31a7ec8c6e5b44e67fd68c04, matching
+      the frozen source exactly (zero transformation).
+    - RESULT-example-spectrogram_meta.yaml (frozen, NEW) -- representative session (06-24-2022, SAME session
+      as FIG-PAPER1-TRACES, verified programmatically to match), n_windows=573, depth channel indices/ycoords,
+      and the gap-fill provenance note (per-window coherence reuses multitaper_psd_coherence's own coh_per_window
+      field verified bit-for-bit; per-window PSDs verified to average to the cached aggregate spectral_depth<N>.npz
+      PSD to floating-point precision).
+    - 'RESULT-qc-counts.yaml (frozen) -- depth_channel_indices/depth_ycoords_um cross-check for the representative
+      session (06-24-2022): OK.'
+    - 'RESULT-grand-mean-spectra.npz (frozen) -- freqs grid cross-checked identical to fig_spectro_data.npz''s
+      freqs (both (2000,), same multitaper parameters): OK.'
+    npz_keys:
+      freqs: (2000,) float64, same grid as RESULT-grand-mean-spectra.npz
+      window_center_s: (573,) float64 -- time axis (x-axis) for all heatmaps; one center-time per retained
+        4-s/50%-overlap window across the FULL representative-session recording (not restricted to the
+        10-s FIG-PAPER1-TRACES segment)
+      sniff_rate_at_window_hz: (573,) float64 -- the instantaneous-sniff-rate scatter OVERLAY data required
+        by the contract's visual_encoding, already present in this frozen file tied 1:1 to window_center_s.
+        RESULT-sniff-rate-raw.npz was NOT needed for this overlay (its raw per-sniff arrays are a different,
+        unaligned time base used only for FIG-PAPER1-SNIFFRATE).
+      depth_channel_indices / depth_ycoords_um: (5,) -- representative session's 5 selected channels
+      snf_psd_spectrogram: (573, 2000) float64 -- depth-independent SNF power spectrogram (time x freq),
+        shown once per contract
+      lfp_psd_spectrogram_depth{1..5}: (573, 2000) float64 each -- per-depth LFP power spectrogram (time
+        x freq)
+      coh_spectrogram_depth{1..5}: (573, 2000) float64 each -- per-depth LFP-sniff coherence spectrogram
+        (time x freq)
+    representative_session: 06-24-2022
+    gap_resolution_note: 'Originally flagged as a full gap: neither the frozen RESULT-grand-mean-spectra.npz
+      nor the unfrozen per-session checkpoint files contained any time-resolved/per-window spectral data,
+      only window-AGGREGATED 1-D spectra. This is now filled by RESULT-example-spectrogram.npz (frozen
+      2026-07-25), which persists the per-window LFP-power, SNF-power, and coherence spectrograms that
+      multitaper_psd_coherence already computed internally for the representative session but had not
+      previously been saved. Per the frozen meta note, this was verified (not merely asserted) to be consistent
+      with already-frozen aggregates: per-window coherence matches the function''s own coh_per_window
+      field bit-for-bit, and the mean over windows of the per-window PSD matches the cached aggregate
+      PSD (spectral_depth<N>.npz) to floating-point precision.'
+    caption_note: Multitaper parameters to state in the caption (4-s windows, 50% overlap, 7 Slepian tapers
+      NW=4, freqs >= 0.25 Hz) are PINNED contract constants (prohibited_changes), not values computed
+      into any RESULT object -- stating them is not an 'orphan number' in the same sense as an injected
+      statistic, since they are fixed method parameters documented in contract_v001.yaml itself.
+  FIG-PAPER1-SNIFFRATE:
+    status: ok (histogram/KDE gap resolved 2026-07-25)
+    files:
+    - fig_sniffrate_data.npz
+    source_results:
+    - 'RESULT-sniff-rate-raw.npz (frozen, NEW 2026-07-25) -- one raw per-sniff instantaneous-rate (1/ISI,
+      Hz) float64 array per session (key ''<session>__inst_rate_hz'', control epochs only, SAME restriction
+      as the frozen 5-number summary) plus a companion boolean ISI-trim-validity array (''<session>__isi_trim_valid'').
+      BIT-FOR-BIT VERIFIED (assertions in script, atol 1e-6): median/Q1/Q3/min/max recomputed here from
+      each session''s raw array exactly reproduce RESULT-sniff-rate.yaml''s frozen summary for that session,
+      for all 6 sessions, before the raw arrays were trusted/used.'
+    - RESULT-sniff-rate.yaml (frozen) -- median_hz/q1_hz/q3_hz/iqr_hz/min_hz_untrimmed_control_epoch/max_hz_untrimmed_control_epoch
+      per session, retained alongside the raw arrays for the median/IQR markers the contract also requires.
+    - RESULT-qc-counts.yaml (frozen) -- n_sniffs_retained_isi per session, sourced from this file specifically
+      per caption_requirements ('never typed by hand'); cross-checked identical to the redundant copy
+      in RESULT-sniff-rate.yaml.
+    npz_keys:
+      <session>__inst_rate_hz (session key with '-' replaced by '_'): '1-D float64, raw per-sniff instantaneous
+        rate (Hz), length = n_raw_sniffs for that session (varies per session, e.g. 11-01-2021: 9015).
+        This is the histogram/KDE-ready dataset the contract''s visual_encoding calls for.'
+      <session>__isi_trim_valid: 1-D bool, same length/order as the paired inst_rate_hz array; marks which
+        raw sniffs additionally pass the 5th/95th ISI-percentile trim that gates the coherence-analysis
+        windows. Provided for optional overlay/filtering ONLY -- the primary histogram/KDE and the frozen
+        summary stats it backs are both defined over the UNTRIMMED control-epoch distribution (MINOR-3),
+        so do not silently filter by this mask when rendering the main histogram or the figure will stop
+        matching its own caption's median/IQR/range numbers.
+      session: (6,) str, session order matches RESULT-sniff-rate-raw_meta.yaml's schema order
+      median_hz, q1_hz, q3_hz, iqr_hz: (6,) float64 -- retained from the original derivation, unchanged
+      min_hz_untrimmed_control_epoch, max_hz_untrimmed_control_epoch: (6,) float64 -- retained, unchanged
+        (MINOR-3 labeling applies)
+      n_sniffs_retained_isi: (6,) int64, from RESULT-qc-counts.yaml -- retained, unchanged
+      n_raw_sniffs: (6,) int64, from RESULT-sniff-rate-raw_meta.yaml -- length of each session's raw inst_rate_hz
+        array (NEW)
+      n_isi_trim_valid: (6,) int64, from RESULT-sniff-rate-raw_meta.yaml -- count of True in each isi_trim_valid
+        mask (NEW)
+    gap_resolution_note: 'Originally flagged as a partial gap: only the 5-number summary (median/Q1/Q3/IQR/min/max)
+      was frozen, no per-sniff raw sample array existed for a true histogram/KDE. This is now filled by
+      RESULT-sniff-rate-raw.npz (frozen 2026-07-25). fig_sniffrate_data.npz was OVERWRITTEN (not just
+      extended) to add the raw arrays; the previously-derived summary-stat arrays were kept unchanged
+      alongside them so both the distribution shape AND the median/IQR/range markers the contract requires
+      are available from one file.'
+  FIG-PAPER1-PSD:
+    status: ok
+    files:
+    - fig_psd_data.npz
+    source_results:
+    - RESULT-grand-mean-spectra.npz (frozen) -- freqs, psd_depth{1..5}_mean, psd_depth{1..5}_sem.
+    - RESULT-qc-counts.yaml (frozen) -- depth_ycoords_um (fixed column, same across all sessions) for
+      the depth-ordinal legend.
+    - RESULT-best-depth.yaml (frozen) -- n_animals (=5) used for the 'n_experiments stated (injected,
+      never typed by hand)' caption requirement; the npz itself embeds no n_animals/n_experiments scalar,
+      so this was cross-sourced from the frozen YAML that documents the same animal-level aggregation.
+    npz_keys:
+      freqs: (2000,) float64
+      psd_depth{1..5}_mean / psd_depth{1..5}_sem: (2000,) float64 each
+      n_experiments: scalar int, = 5
+      depth_ycoords_um: (5,) float64, [-15, 165, 330, 510, 690]
+    aggregation_level_verification: 'Per the task''s explicit instruction to verify (not assume) whether
+      this spectrum was recomputed at animal level after DEV-002: confirmed YES by reading 03_software/np_paper1_analysis.py''s
+      build_grand_mean_spectra() / _animal_average_stack(), which averages each animal''s session(s) into
+      ONE curve per animal BEFORE the across-animal grand mean/SEM (same function family and same ANIMAL_MAP
+      as build_best_depth_and_grand_means(), which produces the already-frozen, DEV-002-resolved RESULT-best-depth.yaml
+      n_animals=5). RESULT-grand-mean-spectra.npz was written by the same run_analysis_np_paper1.py pass
+      that produced the current (animal-level) RESULT-best-depth.yaml/RESULT-depth-stat.yaml (all frozen
+      together, per freeze_manifest.yaml), so it is NOT the stale 6-session-level spectrum. No frozen
+      artifact directly states an n_animals scalar for this specific npz, which is why the n_experiments
+      value used for the caption is cross-sourced from RESULT-best-depth.yaml rather than read out of
+      the npz''s own arrays -- noted here for full traceability.'
+  FIG-PAPER1-COH:
+    status: ok
+    files:
+    - fig_coh_data.npz
+    source_results:
+    - RESULT-grand-mean-spectra.npz (frozen) -- freqs, coh_depth{1..5}_mean/sem, null_depth{1..5}_mean/sem
+      (95% circular-shift null threshold, grand mean +/- SEM across animals).
+    - RESULT-qc-counts.yaml (frozen) -- depth_ycoords_um (legend) and per-session depth_channel_indices
+      (verbatim table, all 6 sessions).
+    - RESULT-theta-coh.yaml (frozen) -- FULL 30-row (6 session x 5 depth) table passed through verbatim
+      (session, depth_ordinal, mean_theta_coh, peak_theta_coh, peak_theta_freq, sig_theta_fraction, peak_coh_percentile),
+      so the render/report step can honestly annotate the null-floor finding.
+    - RESULT-best-depth.yaml (frozen) -- n_animals (=5) for the 'n_experiments injected' caption requirement,
+      same cross-sourcing rationale as FIG-PAPER1-PSD above (same animal-level aggregation run).
+    npz_keys:
+      freqs, coh_depth{1..5}_mean/sem, null_depth{1..5}_mean/sem: (2000,) float64 each
+      n_experiments: scalar int, = 5
+      depth_ycoords_um: (5,) float64
+      depth_channel_indices_by_session: (6, 6) str array (session label + 5 channel indices as strings),
+        verbatim from RESULT-qc-counts.yaml
+      ? theta_coh_session, theta_coh_depth_ordinal, theta_coh_mean_theta_coh, theta_coh_peak_theta_coh,
+        theta_coh_peak_theta_freq, theta_coh_sig_theta_fraction, theta_coh_peak_coh_percentile
+      : (30,) each, verbatim RESULT-theta-coh.yaml table
+    scientific_honesty_requirement: 'MAJOR-1 (scientific_audit.md): across all 30 experiment x depth cells,
+      max(theta_coh_peak_coh_percentile) = 90.4 -- no cell anywhere reaches the contracted 95% circular-shift-null
+      threshold. The null_depth*_mean curves and the coh_depth*_mean curves are both included here exactly
+      as computed (unmodified, unsuppressed) so the rendered figure shows the observed coherence sitting
+      at/below its own null threshold across the full frequency range, including the theta band. This
+      must NOT be reframed or partially rendered to obscure the null result at FIGURES_RENDERED / report-drafting
+      time.'
+  FIG-PAPER1-DEPTH-SUMMARY:
+    status: ok (HEADLINE figure -- see derivation notes)
+    files:
+    - fig_depth_summary_data.npz
+    source_results:
+    - RESULT-best-depth.yaml (frozen) -- direct pass-through of grand_mean_theta_coh_by_depth (mean/sem/n_animals
+      per depth), overall_best_depth_ordinal, per_ordinal_consistency_counts, ranking_by_grand_mean_theta_coh.
+    - 'RESULT-depth-stat.yaml (frozen) -- direct pass-through of the omnibus annotation: LMM chisq/df/pvalue/marginal_mean_range/icc,
+      Friedman statistic/df/pvalue/kendalls_w, omnibus_significant (=false), n_animals/n_sessions.'
+    - RESULT-theta-coh.yaml (frozen) -- source table for the two MECHANICALLY DERIVED (flagged, see below)
+      per-animal-per-depth matrices.
+    npz_keys:
+      depth_ordinal: '[1,2,3,4,5]'
+      grand_mean_theta_coh / grand_sem_theta_coh / grand_n_animals_theta_coh: (5,) -- direct pass-through,
+        no computation
+      per_ordinal_consistency_counts: (5,) int -- direct pass-through
+      ranking_by_grand_mean_theta_coh: (5,) int -- direct pass-through
+      overall_best_depth_ordinal: scalar int (=5) -- direct pass-through
+      ? lmm_chisq, lmm_df, lmm_pvalue, lmm_marginal_mean_range, lmm_icc, friedman_statistic, friedman_df,
+        friedman_pvalue, kendalls_w, omnibus_significant, n_animals_stat, n_sessions_stat
+      : all scalar, direct pass-through from RESULT-depth-stat.yaml
+      animal_labels: (5,) str, ['NP8','Np10','NP12','NP15','NP22'] (frozen order from RESULT-best-depth.yaml)
+      per_animal_mean_theta_coh_by_depth: (5 animals, 5 depths) -- MECHANICALLY DERIVED, see below
+      per_animal_sig_theta_fraction_by_depth: (5 animals, 5 depths) -- MECHANICALLY DERIVED, see below
+      grand_mean_sig_theta_fraction_by_depth / grand_sem_sig_theta_fraction_by_depth: (5,) -- MECHANICALLY
+        DERIVED (mean/SEM across the 5 per-animal rows above), see below
+    mechanically_derived_fields_flagged: 'RESOLVED 2026-07-25 (post-FIGURE_AUDIT_OK): the figure-auditor
+      correctly flagged that these per-animal x per-depth matrices had no frozen P3 source object, only
+      a P4-time mechanical derivation (sanity-checked, but not independently frozen). This gap is now
+      closed: RESULT-theta-coh-by-animal.yaml has been frozen (04_results/frozen/, see freeze_manifest.yaml)
+      with its own acceptance note, re-deriving the identical 5-animal x 5-depth mean_theta_coh and
+      sig_theta_fraction tables independently from RESULT-theta-coh.yaml (own copy of the DEV-002
+      ANIMAL_MAP, not imported from the P4 build script). The values are BIT-FOR-BIT IDENTICAL to what
+      was already plotted (verified: fig_depth_summary_data.npz''s per_animal_mean_theta_coh_by_depth
+      matches RESULT-theta-coh-by-animal.yaml''s mean_theta_coh_by_animal_depth exactly, all 25 cells,
+      atol 1e-9) -- no re-rendering was needed, only the provenance trail was closed. Original description
+      of the derivation retained below for history.
+      ---
+      RESULT-best-depth.yaml stores, per animal, only that animal''s BEST depth and its value -- not the
+      full 5-depth row per animal. RESULT-theta-coh.yaml stores the full 5-depth row but at SESSION level
+      (6 rows: NP8 appears twice, as 2021-11-01 and 2021-11-03). Both matrices were built by applying the
+      exact animal-averaging rule that already produced RESULT-best-depth.yaml/RESULT-depth-stat.yaml --
+      a simple unweighted mean of NP8''s two session rows per depth -- to (a) all 5 depths (not just the
+      best) for mean_theta_coh, and (b) sig_theta_fraction. No new statistic, model, or test was computed.'
+    non_causal_framing_reminder: omnibus_significant = false for BOTH tests (LMM p=0.768, Friedman p=0.780,
+      Kendall's W=0.088). RESULT-depth-stat.yaml's posthoc field is null (no uncontracted post-hoc was
+      run, per PROH-006/OUT-016). Any caption/report text built from this data must state this as a non-significant,
+      exploratory finding (no depth-dependence detected) -- never as evidence of 'no effect' (absence
+      of evidence is not evidence of absence) and never with causal language, per PROH-006 and the contract's
+      exploratory framing requirement for this figure.
+gaps_summary:
+- figure: FIG-PAPER1-SPECTRO
+  status: RESOLVED 2026-07-25
+  original_severity: full (no data derivable)
+  original_reason: No time-resolved/per-window spectral data in any frozen (or even unfrozen checkpoint)
+    result file; only window-aggregated 1-D spectra existed.
+  resolution: RESULT-example-spectrogram.npz + _meta.yaml frozen 2026-07-25, supplying per-window LFP-power,
+    SNF-power, and coherence spectrograms (plus window center-times and sniff-rate-at-window overlay)
+    for the representative session. fig_spectro_data.npz written as a byte-identical pass-through.
+- figure: FIG-PAPER1-SNIFFRATE
+  status: RESOLVED 2026-07-25
+  original_severity: partial (summary stats only)
+  original_reason: Only 5-number summary (median/Q1/Q3/IQR/min/max) + n retained in frozen results; no
+    per-sniff raw sample array for a true histogram/KDE.
+  resolution: RESULT-sniff-rate-raw.npz + _meta.yaml frozen 2026-07-25, supplying one raw per-sniff instantaneous-rate
+    array per session (+ ISI-trim-validity companion mask). fig_sniffrate_data.npz overwritten to include
+    these raw arrays alongside the retained summary-stat arrays; bit-for-bit verified against the original
+    frozen summary before use.

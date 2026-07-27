@@ -1,0 +1,7 @@
+artifact: 05_validation/numeric_gate.yaml
+kind: deterministic
+note: ''
+recorded_by: numeric-gate
+state: NUMERIC_OK
+timestamp: '2026-07-24T00:34:54Z'
+who: numeric gate (gate 4)

@@ -1,0 +1,42 @@
+deviations:
+- deviation_id: DEV-001
+  date: '2026-07-23'
+  filed_by: analysis-implementer
+  state: open
+  severity: major
+  title: Trial segmentation uses TS reset within TR values, not just odd TR selection
+  description: >
+    The initial implementation of _segment_odd_tr_trials selected all samples with
+    odd TR values and applied a TS 0-40s filter. However, examination of the actual
+    data reveals that each odd TR value spans multiple sub-periods: a brief pre-trial
+    prefix (TS not starting at 0, ~6s), followed by a TS reset to near-0, then the
+    actual trial period (TS 0-43411ms, ~43s). The contract text states "correct
+    corrupted first TS per trial to 0" which refers to the first sample AFTER the
+    TS reset, not the very first sample under that TR value. The initial implementation
+    treated the entire TR=1 period (15809 samples = 126.5s) as one trial, causing
+    the per-trial matrices to be ~3x too long.
+  contract_clause: >
+    contract_v001.yaml preprocessing step 3: "Segment LabView trials: contiguous
+    samples sharing the same odd TR value define one trial (0-40 s per TS).
+    Correct corrupted first TS per trial to 0." The "trial" is the sub-period
+    starting after the TS reset within the odd TR block.
+  resolution_plan: >
+    Fix _segment_odd_tr_trials to detect TS resets (negative TS diff) within
+    each odd TR period, and use only the sub-period starting at the reset
+    (correcting its first TS sample to 0) as the actual LabView trial.
+    The pre-reset prefix is discarded. Re-run the analysis and update all results.
+  impact: >
+    RESULT-sniff-rate-matrix, RESULT-fr-per-trial, RESULT-eth-per-trial per-trial
+    matrices were ~3x too long (including pre-trial prefix). The CON-003 analysis
+    (sniff rate during contact vs control) uses per-trial data and may be affected.
+    RESULT-methods-table avg_sniffs_per_labview_trial may be over-counted.
+    RESULT-sniff-stat (W, p, r) may change after re-run.
+  status: resolved
+  resolution: >
+    Fixed _segment_odd_tr_trials to: (1) detect TS resets within each odd TR
+    period using a -100ms threshold, select the sub-period after the last reset
+    as the actual trial; (2) deduplicate samples with repeated TS values (startup
+    artifact in TR=1 of session 2021-11-01 had ~2.5x TS duplication). After fix,
+    all trials are ~5100-5200 samples (41s at 125 Hz), consistent with the 0-40s
+    TS window. Updated results: W=7, p=0.5625, r=0.333, n=6, not significant.
+    The qualitative conclusion (not significant at alpha=0.05) is unchanged.

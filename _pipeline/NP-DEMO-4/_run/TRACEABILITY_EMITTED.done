@@ -1,0 +1,7 @@
+artifact: 08_traceability/contract_traceability.csv
+kind: deterministic
+note: ''
+recorded_by: unspecified
+state: TRACEABILITY_EMITTED
+timestamp: '2026-07-24T02:09:32Z'
+who: '`research_workflow trace`'

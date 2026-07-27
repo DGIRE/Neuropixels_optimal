@@ -1,0 +1,24 @@
+session: 06-24-2022
+n_windows: 573
+n_freqs: 2000
+depth_channel_indices:
+- 0
+- 24
+- 46
+- 118
+- 142
+depth_ycoords_um:
+- -15.0
+- 165.0
+- 330.0
+- 510.0
+- 690.0
+note: OUT-009/010 gap-fill (2026-07-25, not a deviation -- see results_manifest.yaml
+  history). Representative session is the SAME one chosen for RESULT-example-traces
+  (most retained windows). coh_spectrogram_depth<N> reuses multitaper_psd_coherence's
+  own coh_per_window field (already computed internally, just not previously persisted);
+  lfp_psd_spectrogram_depth<N> / snf_psd_spectrogram are per-window single-window
+  calls to the SAME unmodified function (n_windows=1 in its own scale formula) --
+  verified (not merely asserted) that per-window coherence matches coh_per_window
+  bit-for-bit and that mean_over_windows(per-window PSD) matches the cached aggregate
+  PSD in spectral_depth<N>.npz to floating-point precision.

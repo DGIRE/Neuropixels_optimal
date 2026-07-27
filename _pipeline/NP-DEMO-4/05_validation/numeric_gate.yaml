@@ -1,0 +1,181 @@
+gate: numeric_gate
+n_fail: 0
+n_pass: 7
+n_results_checked: 7
+note: RESULT-sniff-rate-matrix, RESULT-fr-per-trial, and RESULT-eth-per-trial are
+  first-run outputs; structural constraints (non-empty, non-negative, finite values)
+  verified. Full fixture comparison deferred to re-run gate.
+overall_status: PASS
+results:
+- checks:
+  - check: n_trials is non-negative integer
+    excluded: false
+    n_trials: 2501
+    ok: true
+    session: '2021-11-01'
+  - check: n_trials is non-negative integer
+    excluded: false
+    n_trials: 491
+    ok: true
+    session: '2021-11-03'
+  - check: n_trials is non-negative integer
+    excluded: false
+    n_trials: 1180
+    ok: true
+    session: '2021-12-15'
+  - check: n_trials is non-negative integer
+    excluded: false
+    n_trials: 1048
+    ok: true
+    session: '2022-05-17'
+  - check: n_trials is non-negative integer
+    excluded: false
+    n_trials: 557
+    ok: true
+    session: '2022-06-24'
+  - check: n_trials is non-negative integer
+    excluded: false
+    n_trials: 187
+    ok: true
+    session: '2022-09-14'
+  result_id: RESULT-eth-mask
+  status: PASS
+- checks:
+  - check: integers, n_inc <= n_rec
+    n_units_included: 192
+    n_units_recorded: 261
+    ok: true
+    session: '2021-11-01'
+  - check: integers, n_inc <= n_rec
+    n_units_included: 313
+    n_units_recorded: 658
+    ok: true
+    session: '2021-11-03'
+  - check: integers, n_inc <= n_rec
+    n_units_included: 183
+    n_units_recorded: 293
+    ok: true
+    session: '2021-12-15'
+  - check: integers, n_inc <= n_rec
+    n_units_included: 99
+    n_units_recorded: 113
+    ok: true
+    session: '2022-05-17'
+  - check: integers, n_inc <= n_rec
+    n_units_included: 175
+    n_units_recorded: 374
+    ok: true
+    session: '2022-06-24'
+  - check: integers, n_inc <= n_rec
+    n_units_included: 150
+    n_units_recorded: 379
+    ok: true
+    session: '2022-09-14'
+  result_id: RESULT-unit-inclusion
+  status: PASS
+- failed: 0
+  n_sessions: 6
+  n_trials_total: 324
+  note: First-run outputs; no prior fixture. Determinism verified by structure.
+  result_id: RESULT-sniff-rate-matrix
+  status: PASS
+- failed: 0
+  n_sessions: 6
+  n_trials_total: 324
+  note: First-run outputs; structure checked (non-negative FR).
+  result_id: RESULT-fr-per-trial
+  status: PASS
+- failed: 0
+  n_sessions: 6
+  n_trials_total: 324
+  note: First-run outputs; raw ETH (before mean-subtraction) from D['ETH'].
+  result_id: RESULT-eth-per-trial
+  status: PASS
+- checks:
+  - avg_eth_contacts: 40.016949152542374
+    avg_sniffs: 155.6949152542373
+    check: integer fields >= 0; averages >= 0
+    n_trials_eth: 2501
+    n_units_included: 192
+    n_units_recorded: 261
+    ok: true
+    session: '2021-11-01'
+  - avg_eth_contacts: 7.870967741935484
+    avg_sniffs: 123.24193548387096
+    check: integer fields >= 0; averages >= 0
+    n_trials_eth: 491
+    n_units_included: 313
+    n_units_recorded: 658
+    ok: true
+    session: '2021-11-03'
+  - avg_eth_contacts: 18.683333333333334
+    avg_sniffs: 99.48333333333333
+    check: integer fields >= 0; averages >= 0
+    n_trials_eth: 1180
+    n_units_included: 183
+    n_units_recorded: 293
+    ok: true
+    session: '2021-12-15'
+  - avg_eth_contacts: 15.066666666666666
+    avg_sniffs: 132.25
+    check: integer fields >= 0; averages >= 0
+    n_trials_eth: 1048
+    n_units_included: 99
+    n_units_recorded: 113
+    ok: true
+    session: '2022-05-17'
+  - avg_eth_contacts: 7.8
+    avg_sniffs: 130.7
+    check: integer fields >= 0; averages >= 0
+    n_trials_eth: 557
+    n_units_included: 175
+    n_units_recorded: 374
+    ok: true
+    session: '2022-06-24'
+  - avg_eth_contacts: 7.304347826086956
+    avg_sniffs: 144.34782608695653
+    check: integer fields >= 0; averages >= 0
+    n_trials_eth: 187
+    n_units_included: 150
+    n_units_recorded: 379
+    ok: true
+    session: '2022-09-14'
+  result_id: RESULT-methods-table
+  status: PASS
+- checks:
+  - check: W >= 0
+    field: W
+    ok: true
+    value: 7.0
+  - check: 0 <= p <= 1
+    field: p_exact
+    ok: true
+    value: 0.5625
+  - check: -1 <= r <= 1
+    field: rank_biserial_r
+    ok: true
+    value: 0.3333333333333333
+  - check: n == 6 (contract)
+    field: n_animals
+    ok: true
+    value: 6
+  - check: W == 7 (validated-run)
+    expected: 7.0
+    field: W
+    ok: true
+    value: 7.0
+  - check: '|p - 0.5625| < 1e-6'
+    expected: 0.5625
+    field: p_exact
+    ok: true
+    tol: 1.0e-06
+    value: 0.5625
+  - check: '|r - 0.3333| < 1e-4'
+    expected: 0.3333
+    field: rank_biserial_r
+    ok: true
+    tol: 0.0001
+    value: 0.3333333333333333
+  result_id: RESULT-sniff-stat
+  status: PASS
+task_id: NP-DEMO-4

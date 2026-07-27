@@ -1,0 +1,95 @@
+session_dirname: 11-01-2021
+binfile_chosen: C:\Projects\Repos\Neuropixels\DATA\11-01-2021\NP8_Marvel11012021_RightBulb_g1\NP8_Marvel11012021_RightBulb_g1_imec0\NP8_Marvel11012021_RightBulb_g1_t0.imec0.ap.bin
+binfile_duration_min: 49.57303111111111
+binfile_labview_duration_min: 48.77253333333333
+binfile_ratio: 1.0164128808382134
+binfile_within_tol: true
+binfile_warn: false
+binfile_justification: Selected NP8_Marvel11012021_RightBulb_g1_t0.imec0.ap.bin (implied
+  duration 49.57 min) as the closest match to the LabView-derived session duration
+  (48.77 min, ratio=1.016) among 1 eligible whole-file candidate(s) out of 21 total
+  *.ap.bin file(s) found (20 excluded as chunk/excerpt-series members per DEV-001
+  Resolution B).
+n_lfp_full: 2974382
+LFP_Fs: 1000.0
+LV_Fs: 125.0
+length_min: 49.573033333333335
+depth_channel_indices:
+- 0
+- 24
+- 46
+- 118
+- 142
+depth_ycoords_um:
+- -15.0
+- 165.0
+- 330.0
+- 510.0
+- 690.0
+ymin_um: -15.0
+ymax_um: 690.0
+n_candidate_windows: 1486
+n_windows_used: 436
+n_windows_excluded_ethanol: 423
+n_windows_excluded_noise: 627
+excluded_from_depth_stats: false
+pct_usable_time: 38.125566924490535
+n_sniffs_detected: 10949
+n_sniffs_retained_isi: 10005
+sniff_rate_median_hz: 3.9062499999986957
+sniff_rate_q1_hz: 3.2894736842095815
+sniff_rate_q3_hz: 4.999999999998863
+sniff_rate_iqr_hz: 1.7105263157892816
+sniff_rate_min_hz: 0.08234519104084317
+sniff_rate_max_hz: 17.857142857130096
+n_eth_spans: 2501
+n_isi_outlier_spans: 641
+n_noise_spans: 47
+depth_theta:
+- depth_ordinal: 1
+  channel_index: 0
+  ycoord_um: -15.0
+  mean_theta_coh: 0.021543477545488618
+  peak_theta_coh: 0.047517096035180964
+  peak_theta_freq: 11.0
+  sig_theta_fraction: 0.024390243902439025
+  peak_coh_percentile: 76.7
+- depth_ordinal: 2
+  channel_index: 24
+  ycoord_um: 165.0
+  mean_theta_coh: 0.019751668758908804
+  peak_theta_coh: 0.03705298428137965
+  peak_theta_freq: 9.5
+  sig_theta_fraction: 0.0
+  peak_coh_percentile: 33.1
+- depth_ordinal: 3
+  channel_index: 46
+  ycoord_um: 330.0
+  mean_theta_coh: 0.028845766933829235
+  peak_theta_coh: 0.0453921921263101
+  peak_theta_freq: 8.25
+  sig_theta_fraction: 0.17073170731707318
+  peak_coh_percentile: 69.0
+- depth_ordinal: 4
+  channel_index: 118
+  ycoord_um: 510.0
+  mean_theta_coh: 0.02869131193160753
+  peak_theta_coh: 0.04711550608680329
+  peak_theta_freq: 8.25
+  sig_theta_fraction: 0.1951219512195122
+  peak_coh_percentile: 75.9
+- depth_ordinal: 5
+  channel_index: 142
+  ycoord_um: 690.0
+  mean_theta_coh: 0.02729301503945466
+  peak_theta_coh: 0.045629501089267326
+  peak_theta_freq: 8.25
+  sig_theta_fraction: 0.14634146341463414
+  peak_coh_percentile: 71.4
+control_valid_windows_count: 436
+total_processing_time_s: 734.251846075058
+extract_full_lfp_time_s: 199.24662446975708
+oob_regression_anchor_pass: true
+valid_snf_length: 2926352
+snf_padded_fraction: 0.01614789223442048
+minor2_null_recomputed: true

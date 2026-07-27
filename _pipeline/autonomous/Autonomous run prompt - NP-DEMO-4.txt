@@ -1,0 +1,53 @@
+------------------------------ PROMPT ------------------------------
+
+Drive the approved NP-DEMO-4 contract through its build using research_workflow
+run/step only -- do not fast-forward, do not invent folders, do not approve or sign off.
+Provide all reports to the user as docx files.
+
+LOOP MECHANICS. Repeat until the state reaches AWAITING_FINAL_HUMAN_APPROVAL:
+(1) run:  research_workflow --project C:\Projects\Repos\Neuropixels run NP-DEMO-4
+    -- it prints the next state, who to dispatch, and the artifact to produce.
+(2) Do exactly that state's work, writing outputs ONLY into the canonical
+    _pipeline\NP-DEMO-4\ subdirs (03_software, 04_results, 05_validation, 06_figures,
+    07_report, 08_traceability).
+(3) Record it:  research_workflow --project C:\Projects\Repos\Neuropixels step
+    NP-DEMO-4 --state <STATE> --by <agent>
+Only step a state whose artifact you actually produced. After EACH artifact,
+immediately step it and run again; keep looping -- do not end your turn until run
+reports AWAITING_FINAL_HUMAN_APPROVAL. If run prints a dispatch for a state whose
+artifact you already wrote, you forgot to step it -- record it and continue. For the
+OPTIONAL OPTIMIZED state, skip it with step --state RESULTS_FROZEN.
+
+INTERPRETER (do this or the run will use the wrong python). Run EVERY python invocation
+as "$RW_PY" -- e.g.  "$RW_PY" 03_software\my_analysis.py  or  "$RW_PY" -m pytest ... .
+"$RW_PY" is the vras venv python; it has scipy / statsmodels / pandas + research_workflow.
+Do NOT use bare `python`, `py`, `python3`, or any anaconda path: in Claude's subshell a
+bare `python` resolves to anaconda (vras is outside this project and not on that shell's
+PATH). If "$RW_PY" is empty, STOP and tell the user to set it -- do not fall back to
+`python`.
+
+COMMAND STYLE (keeps the run smooth / avoids approval prompts). Use ONE interpreter:
+always "$RW_PY" (above). WRITE analysis code to a .py FILE under 03_software\ (or
+analyses\) and run it as `python 03_software\<name>.py` -- do NOT use `python -c` with
+long inline heredocs or `#` comments (that trips the path-validation heuristic), and do
+NOT paste multi-hundred-line scripts inline (that trips the over-length parser). Prefer
+simple, single commands over compound `cd "..." && ... 2>&1 | tail` chains (the "cd with
+output redirection" heuristic forces approval); rely on research_workflow's --project
+flag and absolute paths instead of `cd`. Keep paths quoted but avoid gratuitous
+backslash escaping. Never search the whole C:\ drive (`find / -path ...`); the venv +
+kernel are at known locations. Never pip install during the build (set the env up first).
+
+HARD RULES (the hooks enforce these; do not fight them). Phase-lock spikes to the SNF
+sniff-sensor signal, NEVER the LFP (PROH-001). Reuse the validated kernel functions --
+load_experiment_data, compute_sniff_phase, threshold_eth, compute_spike_phase,
+compute_sniff_psth, plot_unit_locations -- and NEVER write to anything under
+Optimized Python\ or Golden Fixtures\, or any tolerance config; new code goes in
+analyses\ beside the kernel or in 03_software\. Read raw data ONLY from
+C:\Projects\Repos\Neuropixels\DATA for the six dated sessions. Include only valid-sniff
+spikes (spike_SNF_PH >= 0.0); discard and LOG every -1/noise section (experiment,
+start_s, end_s, reason). If you cannot follow any contract clause exactly, STOP and file
+a deviation to 08_traceability\deviations.yaml -- do not improvise.
+
+
+When run reports AWAITING_FINAL_HUMAN_APPROVAL, STOP and summarize what was produced.
+Do not sign off.

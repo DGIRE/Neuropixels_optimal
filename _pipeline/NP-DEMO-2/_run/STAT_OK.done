@@ -1,0 +1,7 @@
+artifact: 05_validation/stat_gate.yaml
+kind: deterministic
+note: ''
+recorded_by: analysis-implementer
+state: STAT_OK
+timestamp: '2026-07-22T22:46:36Z'
+who: statistical-decision gate

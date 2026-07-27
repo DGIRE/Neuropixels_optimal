@@ -1,0 +1,7 @@
+artifact: 06_figures/figure_audit.md
+kind: agent
+note: ''
+recorded_by: figure-auditor
+state: FIGURE_AUDIT_OK
+timestamp: '2026-07-23T00:37:28Z'
+who: figure-auditor

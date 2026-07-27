@@ -1,0 +1,56 @@
+deviations:
+  - id: DEV-001
+    state_recorded_at: IMPLEMENTED
+    severity: MAJOR
+    status: OPEN
+    title: >-
+      PROH-002 SD-based flag rule does not catch 2021-11-03 degenerate (all-ethanol) session
+    description: >-
+      The contracted PROH-002 algorithm (Pass 1: flag sessions outside +/-1 SD of
+      cross-session mean contact count) failed to flag session 2021-11-03 on the real
+      data. Pass-1 stats: mean_contacts=371.3, sd_contacts=672.1, which places the +/-1 SD
+      window at approximately [-301, 1044]. Session 2021-11-03 had only 3 contacts at the
+      default eth_threshold=0.11, but 3 > -301 so it passed the SD test.
+      Root cause: session 2021-11-01 has a very large contact count at the default
+      threshold (far above the others), which inflates the SD to the point where any
+      session with near-zero contacts is still "within 1 SD of the mean."
+    evidence:
+      session_2021_11_03_pass1_contacts: 3
+      mean_contacts_pass1: 371.3
+      sd_contacts_pass1: 672.1
+      n_units_zero_ctrl_spikes: 374   # out of 429 included units (87%)
+      n_units_degenerate_ctrl_mrl_lt5_spikes: 55
+    downstream_impact: >-
+      2021-11-03 is included in all result objects with degenerate control-condition
+      MRL values (374/429 units have MRL_control=NaN from 0 control spikes; 55 units
+      have MRL_control=1.0 from 1-4 control spikes, which is a meaningless single-spike
+      MRL). This session's units dominate RESULT-delta-mrl's top-5 |delta_MRL| ranking
+      and therefore also RESULT-psth-examples and RESULT-unit-locations.
+      The animal-level stat is less affected (n_animals=6, 2021-11-03 shows
+      mean_mrl_control=~0.914 vs ~0.12-0.39 for other sessions).
+    contracted_behavior: >-
+      Contract clause inclusion_exclusion (PROH-002): "ONLY THEN, for those flagged
+      experiments, adjust eth_threshold per-experiment..." The contract also states
+      "2021-11-03 was excluded in NP-DEMO-1 as all-ethanol (no control epochs) --
+      whether the PROH-002 adjustment protocol can rescue it, or whether it must be
+      excluded again, is OD-3." OD-3 was nominally resolved by the user's hard rules
+      that said PROH-002 should "raise the threshold until control epochs appear."
+    what_was_not_done: >-
+      The implementation did NOT alter the contracted proh_002_adjustment() function
+      to add an explicit degenerate-session catch (e.g., "if n_units_zero_ctrl > X%,
+      flag regardless of SD"). That would be an improvisation not present in the
+      approved contract. No silent correction was made.
+    resolution_options:
+      - >-
+        A: Human/contract-designer re-contracts PROH-002 to add an explicit
+        "OR n_units_zero_ctrl_spikes > 50% of included units" clause, independent
+        of the SD test. Then re-run analysis.
+      - >-
+        B: Human approves excluding 2021-11-03 post-hoc as a documented
+        deviation/limitation in the methods report, noting PROH-002 did not rescue it.
+      - >-
+        C: Human confirms that 2021-11-03 should be included AS-IS, with degenerate
+        MRL values, and that the downstream artifacts are acceptable (a scientific
+        decision, not a code decision).
+    blocks_certification: true
+    requires_human_decision: true

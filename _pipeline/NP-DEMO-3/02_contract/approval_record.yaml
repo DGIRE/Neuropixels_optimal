@@ -1,0 +1,9 @@
+approval_id: APR-NP-DEMO-3-v001-85d1a804
+approver: Davd Gire
+conditions: []
+contract_docx_sha256: 939fc94b5d4aab721c1beedba14dcb50b23fb0f201792ba87fa6e417b78ded59
+contract_version: 1
+contract_yaml_sha256: 85d1a804e9d76be7239e3549dc179768571990cdd9a75ec8c33eb551f87808e8
+decision: approved
+task_id: NP-DEMO-3
+timestamp: '2026-07-23T22:12:11Z'

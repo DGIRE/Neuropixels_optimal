@@ -1,0 +1,73 @@
+gate: stat_gate
+task_id: NP-PAPER-1
+overall_status: PASS
+n_checks: 12
+n_pass: 12
+n_fail: 0
+alpha: 0.05
+n_animals: 5
+n_sessions: 6
+lmm_chisq: 1.8220444473567454
+lmm_pvalue: 0.7684468115431163
+friedman_statistic: 1.7600000000000051
+friedman_pvalue: 0.7797918739613721
+kendalls_w: 0.08800000000000026
+omnibus_significant: false
+significance_decision: >-
+  Not significant on either omnibus test at alpha=0.05 (LMM likelihood-ratio
+  chi2=1.822, df=4, p=0.768; Friedman chi2=1.760, df=4, p=0.780, Kendall's
+  W=0.088). The two methods AGREE (neither rejects), so the null conclusion
+  is robust to the choice of test, not an artifact of one method. No post-hoc
+  pairwise comparisons are run, per PROH-006/OUT-016 (post-hoc is contracted
+  to run only if the omnibus is significant).
+full_workload_confirmed: >-
+  Re-derived from scratch on the FULL corrected workload: 5 animals x 5
+  depths (25 observations), rebuilt independently from RESULT-theta-coh.yaml
+  (session-level, unchanged) via this gate's own copy of the DEV-002
+  animal->session map -- not a subset, not imported from the runner's
+  aggregation code. The re-derived Friedman statistic/p/Kendall's W
+  reproduce RESULT-depth-stat.yaml to machine precision (rtol 1e-9).
+note: >-
+  This is the STAT_OK gate (gate 5): confirms the significance decision holds
+  on the full (post-DEV-002, animal-level) workload, distinct from NUMERIC_OK
+  (gate 4, which checked numeric correctness of individual RESULT-* objects)
+  and the earlier 6-session-level check superseded by DEV-002's resolution.
+  Caveat carried forward honestly, not hidden: statsmodels MixedLM raised 2
+  "MLE may be on the boundary of the parameter space" convergence warnings
+  fitting n=25 with only 5 random-effect groups (RESULT-depth-stat.yaml's
+  lmm_convergence_note) -- the convergence-warning-free Friedman test agrees
+  with the LMM's non-significant conclusion, which is why the decision is
+  reported as robust rather than resting on the LMM alone.
+checks:
+- check: n_animals == 5 (post-DEV-002 resolution; contract originally said 6, corrected)
+  ok: true
+- check: full workload used -- all 5 animals x all 5 depths present, no subsetting
+  ok: true
+- check: re-derived Friedman statistic matches RESULT-depth-stat.yaml (rtol 1e-9)
+  ok: true
+  detail: 're-derived=1.7600000000000051 stored=1.7600000000000051'
+- check: re-derived Friedman p matches RESULT-depth-stat.yaml (rtol 1e-9)
+  ok: true
+  detail: 're-derived=0.7797918739613721 stored=0.7797918739613721'
+- check: re-derived Kendall's W matches RESULT-depth-stat.yaml (rtol 1e-9)
+  ok: true
+  detail: 're-derived=0.08800000000000026 stored=0.08800000000000026'
+- check: 'LMM significance decision (alpha=0.05): p=0.7684 < 0.05 == False'
+  ok: true
+- check: 'Friedman significance decision (alpha=0.05): p=0.7798 < 0.05 == False'
+  ok: true
+- check: omnibus_significant flag matches (lmm_sig OR friedman_sig)
+  ok: true
+- check: 'post-hoc correctly withheld (PROH-006/OUT-016): posthoc is null because
+    omnibus is not significant'
+  ok: true
+- check: LMM and Friedman decisions AGREE (both non-significant) -- decision is
+    robust across methods
+  ok: true
+- check: LMM convergence caveat is present and non-empty (not silently hidden)
+  ok: true
+- check: overall_best_depth_ordinal is a valid depth (1-5) despite non-significant
+    omnibus (descriptive only)
+  ok: true
+  detail: overall_best_depth_ordinal=5
+script: _pipeline/NP-PAPER-1/05_validation/stat_gate_check.py

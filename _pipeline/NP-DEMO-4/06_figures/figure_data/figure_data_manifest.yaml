@@ -1,0 +1,86 @@
+figures:
+  FIG_DEMO4_1_SNIFF:
+    caption_injections:
+      ci_description: 95% CI computed as mean ± 1.96*SEM across all trials
+      colorbar_label: sniff rate (Hz)
+      n_sessions: 6
+      n_trials: 324
+    ci_method: mean +/- 1.96*SEM across all trials (pooled)
+    colormap: jet
+    files:
+    - fig1_sniff_matrix.npy
+    - fig1_time_axis.npy
+    - fig1_sniff_mean.npy
+    - fig1_sniff_ci_lower.npy
+    - fig1_sniff_ci_upper.npy
+    matrix_shape:
+    - 324
+    - 5211
+    n_sessions: 6
+    n_total_trials: 324
+    time_range_s:
+    - 0.0
+    - 41.68
+  FIG_DEMO4_2_FR:
+    caption_injections:
+      ci_description: 95% CI computed as mean ± 1.96*SEM across all trials
+      colorbar_label: firing rate (Hz)
+      inclusion_criteria: overall FR >= 0.1 Hz AND >= 5000 total spikes
+      n_units_per_session:
+        '2021-11-01': 192
+        '2021-11-03': 313
+        '2021-12-15': 183
+        '2022-05-17': 99
+        '2022-06-24': 175
+        '2022-09-14': 150
+    ci_method: mean +/- 1.96*SEM across all trials (pooled)
+    colormap: jet
+    files:
+    - fig2_fr_matrix.npy
+    - fig2_time_axis.npy
+    - fig2_fr_mean.npy
+    - fig2_fr_ci_lower.npy
+    - fig2_fr_ci_upper.npy
+    matrix_shape:
+    - 324
+    - 5211
+    n_sessions: 6
+    n_total_trials: 324
+    time_range_s:
+    - 0.0
+    - 41.68
+  FIG_DEMO4_3_ETH:
+    caption_injections:
+      ci_description: 95% CI computed as mean ± 1.96*SEM across all trials
+      colorbar_label: ETH sensor value (a.u., normalized 0-1)
+      eth_description: raw (pre-mean-subtraction) ETH sensor value (CON-002)
+    ci_method: mean +/- 1.96*SEM across all trials (pooled)
+    colormap: jet
+    files:
+    - fig3_eth_matrix.npy
+    - fig3_time_axis.npy
+    - fig3_eth_mean.npy
+    - fig3_eth_ci_lower.npy
+    - fig3_eth_ci_upper.npy
+    matrix_shape:
+    - 324
+    - 5211
+    n_sessions: 6
+    n_total_trials: 324
+    time_range_s:
+    - 0.0
+    - 41.68
+source_results:
+- RESULT-sniff-rate-matrix
+- RESULT-fr-per-trial
+- RESULT-eth-per-trial
+- RESULT-methods-table
+- RESULT-unit-inclusion
+- RESULT-sniff-stat
+stat_for_caption:
+  W: 7.0
+  n_animals: 6
+  p_exact: 0.5625
+  rank_biserial_r: 0.3333333333333333
+  significant: false
+task_id: NP-DEMO-4

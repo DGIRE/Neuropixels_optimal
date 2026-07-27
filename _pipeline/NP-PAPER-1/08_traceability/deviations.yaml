@@ -1,0 +1,469 @@
+deviations:
+- deviation_id: DEV-001
+  date: '2026-07-24'
+  filed_by: analysis-implementer
+  state_recorded_at: IMPLEMENTED
+  status: resolved
+  severity: critical
+  blocks_certification: false
+  requires_human_decision: false
+  resolution_chosen: B
+  resolved_by: David Gire
+  resolution_date: '2026-07-24'
+  resolution_summary: >-
+    Approved Resolution Option B: a documented duration-matching .bin-file
+    override implemented entirely in this task's own additive code
+    (03_software/resolve_session_binfile.py::resolve_full_lfp_binfile),
+    never touching or_validate_files.py (kernel, PROH-010). Algorithm:
+    enumerate all *.ap.bin candidates under the session folder; exclude any
+    that are members of a same-directory numbered chunk/excerpt series
+    (siblings differing only by a trailing `_t<digits>`, e.g. the
+    Spliced/Cropped t1..tN sets) from individual selection -- never picked
+    alone, never synthetically concatenated either; among the remaining
+    whole-file candidates (including single `_t0` raw files and single
+    `_tcat` CatGT-concatenated files), pick the one whose implied duration
+    is closest to the independent LabView .dat duration, warning (not
+    hard-blocking) if the best match still deviates by >10%. David Gire
+    explicitly acknowledged this resolution leaves downstream_impact (3)
+    (the chunk-boundary/shared-recording-clock discontinuity concern for a
+    session with ONLY chunk-series candidates and no whole-file alternative)
+    open -- the implementer was instructed NOT to invent a synthetic
+    concatenation to solve it, and to file a fresh, separate deviation
+    (DEV-002+) if any session actually hits that scenario rather than guess.
+  resolution_verification: >-
+    Re-derived implied duration vs LabView duration for ALL 6 sessions with
+    the corrected (chunk-series-excluded) candidate set, not just the 2
+    originally flagged sessions (see per_session_final_binfile_choice
+    below). All 6 sessions had at least one eligible whole-file candidate --
+    no session hit the DEV-001 impact (3) unresolvable scenario, so no
+    DEV-002 was needed. The previously-completed, provisional 2021-11-01
+    result (based on the wrong 13.16-min chunk) was deleted and
+    recomputed against the corrected file. OUT-026 regression anchor
+    re-verified PASS (rtol<=1e-9/atol<=1e-12) for all 6 sessions against
+    their newly-selected binFile. All 6 sessions were then run to
+    completion (previously only 2021-11-01 had been run, under DEV-001);
+    total wall-clock for all 6 sessions + cross-session aggregation was
+    3628.0 s (60.5 min).
+  per_session_final_binfile_choice:
+    11-01-2021:
+      binfile: NP8_Marvel11012021_RightBulb_g1_imec0\NP8_Marvel11012021_RightBulb_g1_t0.imec0.ap.bin
+      duration_min: 49.57
+      labview_duration_min: 48.77
+      ratio: 1.016
+      note: >-
+        CHANGED from the original wrong pick (13.16-min Spliced chunk t1,
+        ratio 0.270). The single unspliced raw t0 file was the only eligible
+        (non-chunk-series) candidate.
+    11-03-2021:
+      binfile: Np8_2ndCraniotomy_RightBulb_2ndReco_g0_imec0\Np8_2ndCraniotomy_RightBulb_2ndReco_g0_t0.imec0.ap.bin
+      duration_min: 51.90
+      labview_duration_min: 49.82
+      ratio: 1.042
+      note: Unchanged from the original pick (no defect here; only eligible candidate).
+    12-15-2021:
+      binfile: Np10_1stCraniotomy_1stRecord_g0\CatNoGlbDmx\Np10_1stCraniotomy_1stRecord_g0_tcat.exported.imec0.ap.bin
+      duration_min: 55.48
+      labview_duration_min: 48.61
+      ratio: 1.141
+      warn: true
+      note: >-
+        CHANGED from the original wrong pick ("GroundedSnipforcomparision",
+        1.37-min unrelated snippet, ratio 0.028). Three eligible whole-file
+        candidates existed after chunk-series exclusion (GroundedSnip's own
+        t0, the CatNoGlbDmx tcat file, and the Np10_1stCraniotomy_1stRecord_g0
+        unspliced t0 file); tcat (55.483 min) and the unspliced t0
+        (55.508 min) were both closest and nearly tied, tcat won by the
+        deterministic closest-duration rule. Ratio 1.141 exceeds the 10%
+        warn threshold (flagged, not hard-blocked per instructions) -- the
+        ~7-minute excess over the LabView duration is unexplained (possibly
+        a longer pre/post-experiment neural recording buffer) and is a
+        residual, lower-severity item worth a human look but did not block
+        this run.
+    5-17-2022:
+      binfile: NP125172022FlowMarvel_2ndRecording_g0_imec0\NP125172022FlowMarvel_2ndRecording_g0_t0.imec0.ap.bin
+      duration_min: 53.13
+      labview_duration_min: 49.04
+      ratio: 1.083
+      note: >-
+        Unchanged from the original pick. Re-verified after chunk-series
+        exclusion logic: only 1 *.ap.bin candidate exists for this session
+        at all (no chunk/excerpt series present), so the mild 1.083 ratio is
+        NOT a file-selection defect, confirming the original DEV-001
+        evidence-table categorization ("mild, likely benign").
+    06-24-2022:
+      binfile: NP15_Cran1_06242022_g0_imec0\NP15_Cran1_06242022_g0_t0.imec0.ap.bin
+      duration_min: 50.23
+      labview_duration_min: 48.40
+      ratio: 1.038
+      note: Unchanged; only 1 candidate exists, no chunk series.
+    09-14-2022:
+      binfile: NP22_09142022_C1_g0_imec0\NP21_08072022_C1_g0_t0.imec0.ap.bin
+      duration_min: 17.50
+      labview_duration_min: 17.99
+      ratio: 0.973
+      note: Unchanged; only 1 candidate exists, no chunk series.
+  title: >-
+    or_validate_files' "first alphabetical match" .bin-file picker silently
+    selects the WRONG or a drastically TRUNCATED raw AP recording for at
+    least 2 of the 6 contracted sessions, breaking the OUT-005/OUT-026
+    full-duration requirement and (for spliced/concatenated sessions)
+    potentially breaking the shared-recording-clock assumption the entire
+    window-masking pipeline (PROH-005, control/valid-sniff masks) depends on.
+  discovered_during: >-
+    Running the composing runner (np_paper1_analysis.py) end-to-end on the
+    first session (2021-11-01) per the task brief's "run one session first,
+    report back" instruction. Sanity-checking n_sniffs_detected (10,949) and
+    n_snf_samples (365,794 @ 125 Hz = 48.77 min) against the just-extracted
+    "full-duration" LFP (789,479 samples @ 1000 Hz = 13.16 min) revealed the
+    LabView (behavioral) recording is ~3.7x longer than the "full-duration"
+    LFP extract_full_lfp produced for that same session.
+  root_cause: >-
+    `Optimized Python/lib/or_validate_files.py::_pick_one` (and the .bin-file
+    glob it wraps) has no domain logic to disambiguate multiple candidate
+    raw AP recordings within one session folder: it globs `**/*.bin`
+    recursively, filters out `*.lf.bin`, sorts the remaining paths
+    alphabetically, and silently takes the first one (emitting only a
+    UserWarning). When a session folder contains MULTIPLE plausible AP
+    recordings -- e.g. a full/unspliced raw file, a set of "Spliced"/"Cropped"
+    excerpt chunks (t1, t2, t3, ... -- CatGT-style artifact-segment removal),
+    and/or an unrelated short calibration/comparison recording -- the
+    alphabetically-first path wins regardless of which one is scientifically
+    the "full duration" recording the contract requires (OUT-005/OUT-026).
+    This is a pre-existing kernel-adjacent behavior (or_validate_files is a
+    validated, do-not-edit kernel file per PROH-010) that was presumably
+    benign for prior tasks (NP-DEMO-1..4) that only ever needed the fixed
+    first-10-s LFP slice -- if the alphabetically-first candidate happens to
+    start at the true session t=0 (plausible for a "first chunk" naming
+    convention), the first 10 s can still be correct even though the FULL
+    file is wrong/truncated. NP-PAPER-1 is the first task to need genuinely
+    full-duration LFP, which exposes the defect.
+  evidence:
+    method: >-
+      For each of the 6 sessions, compared the picked binFile's implied
+      duration (fileSizeBytes / (2*nSavedChans) / NP_Fs) against the
+      LabView .dat file's implied duration (len(SNF) / LV_Fs) -- these two
+      independent recording systems should span essentially the same
+      session duration (small head/tail slack expected, not a >5% ratio
+      deviation).
+    per_session_duration_ratio_bin_over_labview:
+      11-01-2021:
+        binFile_picked: NP8_Marvel11012021_RightBulb_g1_t1.exported.imec0.ap.bin
+        binFile_picked_dir: ConcatenatedCatGT_NoGlbdmx\Spliced
+        bin_duration_min: 13.16
+        labview_duration_min: 48.77
+        ratio: 0.270
+        verdict: >-
+          WRONG FILE. This session folder contains an UNSPLICED raw file
+          (NP8_Marvel11012021_RightBulb_g1_imec0\..._t0.imec0.ap.bin,
+          49.57 min, matches LabView duration to <2%) plus a
+          "Spliced"/"ConcatenatedCatGT_NoGlbdmx" set of 10 excerpt chunks
+          (t1..t10, individual durations 13.16/8.94/11.19/0.79/0.05/0.03/
+          0.02/2.60/2.30/10.05 min, summing to ~49.13 min -- i.e. ~0.44 min
+          of the raw recording was excised across what looks like MULTIPLE
+          separate short bad-artifact spans scattered through the session,
+          not one head/tail trim, given several chunks are only 1-3 s long).
+          The picked file is just chunk t1 (13.16 min), ~27% of the true
+          session.
+      11-03-2021:
+        ratio: 1.042
+        verdict: OK (within normal head/tail slack)
+      12-15-2021:
+        binFile_picked: Np10_GroundedSnip_g0_t0.imec0.ap.bin
+        binFile_picked_dir: GroundedSnipforcomparision\Np10_GroundedSnip_g0_imec0
+        bin_duration_min: 1.37
+        labview_duration_min: 48.61
+        ratio: 0.028
+        verdict: >-
+          WRONG FILE, more severe. "GroundedSnipforcomparision" reads as a
+          short grounding-check/comparison recording, not the actual ~48-49
+          min craniotomy experiment. The real experiment almost certainly
+          lives under the sibling "Np10_1stCraniotomy_1stRecord_g0" folder
+          (which itself has an unspliced t0 .bin PLUS a "Cropped" t1..t23
+          chunk set -- the same excerpt-chunking pattern as 2021-11-01).
+          or_validate_files' ksDir search independently also picked
+          "GroundedSnipforcomparision" as the Kilosort output directory (same
+          alphabetical-first defect), meaning BOTH the raw AP data AND the
+          channel-position geometry for this session may currently be drawn
+          from the wrong recording entirely.
+      5-17-2022:
+        ratio: 1.083
+        verdict: >-
+          Flagged by the >5% threshold but bin is LONGER than LabView (not
+          truncated) -- consistent with an early neural-recording start
+          relative to behavioral logging, not a wrong-file selection. Lower
+          confidence concern than the two above; did not investigate further
+          given the higher-severity findings.
+      06-24-2022:
+        ratio: 1.038
+        verdict: OK
+      09-14-2022:
+        ratio: 0.973
+        verdict: OK
+  downstream_impact: >-
+    (1) For 2021-11-01 and 2021-12-15, `extract_full_lfp`'s OUT-026
+    regression anchor "passes" only because it is self-consistent with
+    `load_experiment_data`'s OWN (equally wrong) 10-s slice of the SAME
+    mis-picked file -- the anchor cannot detect a wrong FILE choice, only a
+    wrong COMPUTATION on whatever file was given to it. The already-completed
+    2021-11-01 run (04_results/sessions/11-01-2021/) is very likely analyzing
+    only ~27% of the true session (a possibly non-representative 13-minute
+    excerpt) and should be treated as PROVISIONAL, not final.
+    (2) 2021-12-15 has not yet been run; running it against
+    "GroundedSnipforcomparision" would almost certainly produce a
+    scientifically meaningless per-depth coherence result (a 1.4-minute
+    recording yields far too few 4-s control/valid-sniff windows to pass the
+    PROH-002/CON-008 >=30-window gate in any case, but worse, may not even be
+    the right experiment).
+    (3) DEEPER CONCERN, not yet resolved either way: if the true
+    "full-duration" source for a spliced/chunked session is the
+    CONCATENATION of all good excerpt chunks (matching what Kilosort
+    actually sorted, per the "ConcatenatedCatGT" ksDir naming) rather than
+    the single unspliced raw file (which would include the deliberately
+    excised bad/artifact spans) or a single chunk, then each concatenated
+    chunk boundary represents a REAL-TIME DISCONTINUITY relative to the
+    LabView (SNF/ETH) clock. The contract's shared-recording-clock
+    assumption (PROH-005: "SNF/ETH/LFP share the recording clock") that this
+    task's ENTIRE window-masking pipeline (ethanol-window / valid-sniff-window
+    / resample_snf_to_lfp alignment) depends on would be VIOLATED for any
+    such session unless per-chunk time offsets (mapping each chunk back to
+    its true acquisition time on the LabView clock) are available and
+    applied -- no such offset metadata was located during this investigation,
+    and reconstructing it is beyond what extract_full_lfp (which reads a
+    single binFile) or this runner can safely infer on its own.
+  contracted_behavior: >-
+    contract_v001.yaml required_validated_functions/load_experiment_data
+    "usage": "Standard D-dict loader ... Reused as-is; NOT edited." and
+    data_provenance: "All six DATA folders confirmed present" (David Gire,
+    2026-07-23). The contract did not anticipate that a "confirmed present"
+    session folder could contain multiple candidate raw recordings of very
+    different scientific validity/completeness, nor that or_validate_files'
+    file-picking heuristic is naive (first-alphabetical-match) rather than
+    duration/provenance-aware.
+  what_was_not_done: >-
+    Did NOT silently substitute a different .bin file (e.g. the unspliced t0
+    file, or a hand-picked "Cropped"/"Np10_1stCraniotomy..." folder) into the
+    `files` dict passed to extract_full_lfp/load_experiment_data. Did NOT
+    modify or_validate_files (kernel, PROH-010) or add per-task
+    duration-matching override logic without sign-off, since (a) it is not
+    established which candidate is scientifically authoritative for the
+    affected sessions, and (b) for chunked/spliced sessions the correct
+    answer may require chunk-offset metadata this investigation did not
+    locate, not just "read a different single file." Did NOT proceed to run
+    the remaining sessions (2021-12-15 in particular) against a
+    likely-wrong-experiment recording.
+  resolution_options:
+  - >-
+    A: Human (David Gire) identifies, per affected session, which raw
+    recording is the authoritative full-duration source: for 2021-11-01,
+    confirm whether the unspliced t0 file (49.57 min, includes excised bad
+    spans) or the concatenated Spliced t1-t10 chunks (~49.13 min, matches
+    what Kilosort sorted) is correct, and supply/confirm any chunk-to-real-time
+    offset mapping needed to keep the LFP and SNF/ETH clocks aligned if the
+    latter. For 2021-12-15, confirm the "Np10_1stCraniotomy_1stRecord_g0"
+    folder (not "GroundedSnipforcomparision") is the intended experiment, and
+    similarly resolve its Cropped t1..t23 chunk structure and Kilosort ksDir.
+  - >-
+    B: Human approves a documented, duration-matching override rule in this
+    task's OWN additive code (never touching or_validate_files itself): among
+    all *.ap.bin candidates found under a session folder, prefer the one
+    whose implied duration is closest to the LabView .dat duration, WITH an
+    explicit exclusion of any candidate that is a "chunk-set" split across
+    multiple similarly-named files (since a single chunk's duration
+    understates the true session and must not be silently accepted as
+    "closest full duration" by accident of one chunk being large). This
+    still leaves the internal-discontinuity concern (impact 3) unresolved for
+    genuinely multi-chunk sessions and would need explicit sign-off before
+    use.
+  - >-
+    C: Human confirms 2021-11-01 should be analyzed AS-IS on the already-
+    completed 13.16-minute excerpt (chunk t1) and 2021-12-15 excluded
+    entirely from NP-PAPER-1 (documented limitation), accepting a 5-session
+    (not 6-session) analysis. This is a scientific/scope decision, not a code
+    decision.
+  status_of_remaining_work: >-
+    Per this deviation, the analysis-implementer STOPPED after completing
+    session 2021-11-01 (successfully, mechanically -- see
+    04_results/sessions/11-01-2021/summary.yaml; runtime 198.3 s) and did NOT
+    run sessions 2021-11-03, 2021-12-15, 2022-05-17, 2022-06-24, 2022-09-14.
+    2021-11-03/2022-06-24/2022-09-14 show no evidence of this defect
+    (duration ratios 0.97-1.04) and are very likely safe to run once this
+    deviation is triaged; 2022-05-17's mild 1.08 ratio and both flagged
+    sessions should be re-checked once a resolution is chosen.
+
+- deviation_id: DEV-002
+  date: '2026-07-25'
+  filed_by: scientific-auditor
+  state_recorded_at: SCI_AUDITED
+  status: resolved
+  resolution_chosen: A (animal->session nesting; 5 animals, 6 sessions)
+  resolved_by: David Gire
+  resolution_date: '2026-07-25'
+  resolution_note: >-
+    Confirmed: 2021-11-01 and 2021-11-03 are both animal NP8. Resolved as
+    5 independent animals (NP8, Np10, NP12, NP15, NP22), 6 sessions total
+    (NP8 contributes 2). Because scipy's Friedman test requires exactly one
+    observation per block per condition (a strict 5-animal x 5-depth design),
+    the practical implementation of "nest sessions within animal" is to
+    average NP8's two per-depth mean_theta_coh values into a single
+    animal-level observation BEFORE the inferential stage (LMM, Friedman,
+    post-hoc, and the grand-mean/best-depth aggregation), rather than attempt
+    an unbalanced/hierarchical Friedman variant. This collapses the true
+    pseudo-replicate rather than silently double-counting it. No change to
+    depth_statistics.py itself is required -- only to how the runner
+    aggregates its input table. Per-session RESULT-theta-coh /
+    RESULT-qc-counts rows for both NP8 sessions remain in 04_results/
+    unchanged (they are valid per-session descriptive results); only the
+    CROSS-SESSION/animal aggregation (RESULT-best-depth, RESULT-depth-stat,
+    grand-mean spectra) is recomputed at the animal level (n=5).
+  severity: critical
+  blocks_certification: true
+  requires_human_decision: true
+  title: >-
+    Two of the six sessions treated as independent "one animal each"
+    experiments are the SAME animal (NP8 "Marvel"), contradicting the
+    contract's data_provenance assertion and triggering DATA-003's
+    animal-grouping contingency without applying it.
+  discovered_during: >-
+    Fresh-context scientific audit (SCI_AUDITED) of the approved contract
+    against the raw LabView .dat filenames on disk, independently confirmed
+    by the orchestrator via direct filesystem listing.
+  evidence:
+    session_11_01_2021: 'DATA\11-01-2021\11-1-2021-3-45 PM-Suzanne-NP-8_Marvel.dat'
+    session_11_03_2021: >-
+      DATA\11-03-2021\11-3-2021-9-44 AM-Suzanne-NP8_Marvel_RoightBulb_2ndcraniotomy_2ndREcording.dat
+      (filename explicitly states "2nd craniotomy, 2nd recording" for the
+      same animal, NP8/Marvel)
+  root_cause: >-
+    contract_v001.yaml's data_provenance section asserted "each of the six
+    sessions is from a distinct animal" citing a prior NP-DEMO-4 resolution
+    (OPEN-007, confirmed by David Gire 2026-07-23) for the SAME six calendar
+    dates. That prior confirmation was carried over into this contract
+    without independently re-verifying it against these specific raw
+    filenames, which directly contradict it for the 2021-11-01 /
+    2021-11-03 pair.
+  downstream_impact: >-
+    depth_statistics.py uses `groups="experiment"` (i.e. session) as the
+    mixed-effects random-intercept grouping variable, treating the two NP8
+    sessions as independent draws when they are two recordings from one
+    animal (a repeated-measures / nesting structure DATA-003 itself
+    anticipated but which was not applied). RESULT-best-depth.yaml's
+    grand-mean SEM is computed with ddof=1 over n=6 "experiments" rather than
+    accounting for only 5 independent animals. The omnibus depth tests are
+    both non-significant in the current run (LMM p=0.425, Friedman p=0.663),
+    so this defect does not currently reverse any positive finding, but the
+    "6 independent experiments" framing, the SEM/error-bar magnitudes, and
+    any future re-run with a different (significant) outcome would be
+    directly affected.
+  what_was_not_done: >-
+    Did NOT reassign the random-effect grouping to animal, did NOT collapse
+    or average the two NP8 sessions, and did NOT alter any reported number to
+    "fix" this silently. Did NOT re-verify whether Np10 (12-15-2021),
+    NP12 (5-17-2022), NP15 (6-24-2022), or NP22 (9-14-2022) might also share
+    an animal with each other or with NP8 beyond what the filenames already
+    rule out -- only the NP8 pair was positively identified by both dated
+    filenames explicitly naming the same animal.
+  resolution_options:
+  - >-
+    A: David Gire confirms the true animal->session mapping for all 6
+    sessions (using lab notebooks / animal IDs, not just filenames) and states
+    whether 11-01-2021 and 11-03-2021 should be (a) treated as a single
+    animal with sessions nested within it (random intercept for animal, with
+    session or an animal:session interaction as needed), (b) averaged into one
+    animal-level observation before the depth analysis, or (c) one of the two
+    sessions excluded from the depth-statistics unit of analysis to preserve
+    strict one-animal-per-observation independence (5 animals, not 6, in that
+    case).
+  - >-
+    B: David Gire confirms the filenames are correct (same animal, two
+    sessions) AND approves re-running depth_statistics.py with animal (not
+    session) as the mixed-effects grouping variable, refitting on the actual
+    6-session x 5-depth table with the corrected grouping, and updating all
+    downstream RESULT-* / figure captions to report "5 animals (6 sessions,
+    2 from one animal)" rather than "6 experiments."
+  status_of_remaining_work: >-
+    No code has been changed and no RESULT-* file has been altered in
+    response to this deviation. All 6 sessions' existing results stand as
+    computed; only the INTERPRETATION of "n_experiments=6 independent
+    animals" and the depth_statistics grouping variable are in question.
+
+- deviation_id: DEV-003
+  date: '2026-07-25'
+  filed_by: scientific-auditor
+  state_recorded_at: SCI_AUDITED
+  status: resolved
+  resolution_chosen: >-
+    A(i): confirmed correct data, stale/reused SpikeGLX run-name label
+  resolved_by: David Gire
+  resolution_date: '2026-07-25'
+  resolution_note: >-
+    Confirmed: NP21_08072022_C1_g0_t0.imec0.ap.bin is the correct raw AP
+    recording for the 2022-09-14 / NP22 session; the run-name is a known
+    labeling artifact (copied/reused SpikeGLX acquisition run name), not
+    evidence of a misfiled or cross-animal recording. No exclusion or re-run
+    needed. Session 09-14-2022's existing results stand as computed and
+    correct.
+  severity: critical
+  blocks_certification: true
+  requires_human_decision: true
+  title: >-
+    The 2022-09-14 session's only raw AP (.ap.bin) file is named for a
+    DIFFERENT animal and date (NP21, 2022-08-07) than its own containing
+    folder and LabView behavioral file (NP22, 2022-09-14) -- a file-identity
+    mismatch DEV-001's duration-matching override cannot detect, since it
+    only checks duration, not identity.
+  discovered_during: >-
+    Fresh-context scientific audit (SCI_AUDITED), independently confirmed by
+    the orchestrator via direct filesystem listing.
+  evidence:
+    ap_bin_path: >-
+      DATA\09-14-2022\NP22_09142022_C1_g0\NP22_09142022_C1_g0_imec0\NP21_08072022_C1_g0_t0.imec0.ap.bin
+      (filename: animal NP21, date 2022-08-07)
+    containing_folder: 'NP22_09142022_C1_g0 (animal NP22, date 2022-09-14)'
+    labview_dat_path: 'DATA\09-14-2022\9-14-2022-1-43 PM-Suzanne-09142022NP22.dat (animal NP22, date 2022-09-14)'
+    candidate_count: >-
+      Only 1 *.ap.bin file exists under this session folder -- DEV-001's
+      Resolution B override had nothing to choose between and accepted it
+      at ratio=0.973 (well within tolerance), since duration-matching alone
+      cannot detect a same-duration WRONG-IDENTITY file.
+  root_cause: >-
+    Unknown -- could be (a) a stale/reused SpikeGLX acquisition run-name
+    label on an actually-correct NP22/2022-09-14 recording (run names are
+    sometimes copied from a template and not renamed), in which case the
+    data is fine and only the filename is misleading, or (b) a genuine
+    file-organization error where an unrelated NP21/2022-08-07 recording's
+    raw AP file was placed in the wrong session folder, in which case the
+    LFP and SNF/ETH signals paired for this session's coherence analysis
+    come from two different animals/days entirely and the result is
+    scientifically meaningless.
+  downstream_impact: >-
+    If root cause (b), RESULT-theta-coh / RESULT-best-depth / RESULT-qc-counts
+    rows for session 09-14-2022 are invalid and must be excluded from all
+    aggregate statistics (dropping to 5 sessions, compounding with DEV-002's
+    animal-count question). The session's coherence values (mean theta
+    0.030-0.033, not obviously collapsed to noise) are not dispositive either
+    way -- a real but weak/absent coupling and a garbage cross-animal pairing
+    can both produce low, non-significant coherence.
+  what_was_not_done: >-
+    Did NOT exclude or flag session 09-14-2022's results as invalid pending
+    confirmation (they remain in 04_results/ and count toward n=6 in
+    RESULT-best-depth.yaml / RESULT-depth-stat.yaml as of this filing). Did
+    NOT attempt to independently verify animal identity via any other
+    metadata (e.g. cross-referencing recording start times in the .ap.meta
+    against lab notebooks) -- no such cross-reference was available to this
+    audit.
+  resolution_options:
+  - >-
+    A: David Gire confirms, via lab notebooks or direct knowledge, whether
+    NP21_08072022_C1_g0_t0.imec0.ap.bin is (i) a misnamed but correct
+    recording for the 2022-09-14 NP22 session (safe to proceed as-is,
+    filename noted as a known labeling quirk), or (ii) genuinely a different
+    animal/day's recording that was misfiled (in which case 2022-09-14 must
+    be excluded from NP-PAPER-1 entirely, dropping to a 5-session analysis,
+    compounding with whatever DEV-002 resolution is chosen).
+  - >-
+    B: If the true 2022-09-14/NP22 raw AP recording exists elsewhere on the
+    lab's storage (not yet copied into this DATA/ tree), David Gire supplies
+    its location so the session can be re-run against the correct file.
+  status_of_remaining_work: >-
+    Session 09-14-2022's results stand as computed pending this
+    confirmation; not yet excluded or re-run.

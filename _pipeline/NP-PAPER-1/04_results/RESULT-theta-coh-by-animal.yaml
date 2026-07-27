@@ -1,0 +1,98 @@
+task_id: NP-PAPER-1
+result_id: RESULT-theta-coh-by-animal
+description: Per-animal x per-depth mean_theta_coh and sig_theta_fraction (5 animals
+  x 5 depths), derived from the frozen RESULT-theta-coh.yaml by applying the DEV-002
+  animal-averaging rule (NP8's 2 sessions averaged per depth) to EVERY depth, not
+  just each animal's best depth. Backs FIG-PAPER1-DEPTH-SUMMARY's per-animal lines
+  and its significant-theta-fraction companion panel.
+derivation: Same rule, same ANIMAL_MAP, as already produced the frozen RESULT-best-depth.yaml
+  (best-per-animal) and RESULT-depth-stat.yaml (omnibus tests) -- no new statistic,
+  no new model, purely an unweighted mean of session-level RESULT-theta-coh.yaml rows
+  within each animal.
+acceptance:
+  level: 1
+  tolerance: exact (deterministic mean of already-validated frozen inputs)
+  verification: Row-max of mean_theta_coh_by_animal_depth reproduces each animal's
+    frozen best_mean_theta_coh/best_depth_ordinal (RESULT-best-depth.yaml) exactly;
+    column-mean reproduces the frozen grand_mean_theta_coh_by_depth exactly (both
+    checked to rel_tol=1e-9 in this script, assertions passed before this file was
+    written).
+animal_labels:
+- NP12
+- NP15
+- NP22
+- NP8
+- Np10
+depth_ordinals:
+- 1
+- 2
+- 3
+- 4
+- 5
+mean_theta_coh_by_animal_depth:
+  NP12:
+    1: 0.023970578262137106
+    2: 0.023657170469383457
+    3: 0.024510060814612575
+    4: 0.023143366679691094
+    5: 0.029823909235401364
+  NP15:
+    1: 0.010753234358533318
+    2: 0.019344734017804108
+    3: 0.018585179731478496
+    4: 0.0185234725925995
+    5: 0.018432462601784865
+  NP22:
+    1: 0.030754515873574608
+    2: 0.03338572258857675
+    3: 0.03305630652422105
+    4: 0.031747909360718314
+    5: 0.030597351852941716
+  NP8:
+    1: 0.022792678816642053
+    2: 0.021484340776955775
+    3: 0.02740106142588613
+    4: 0.02800710358513378
+    5: 0.027521567057997028
+  Np10:
+    1: 0.03347024412122515
+    2: 0.0271691110219665
+    3: 0.026562517243210477
+    4: 0.026485229640262842
+    5: 0.026127539770518175
+sig_theta_fraction_by_animal_depth:
+  NP12:
+    1: 0.0
+    2: 0.0
+    3: 0.0
+    4: 0.0
+    5: 0.07317073170731707
+  NP15:
+    1: 0.0
+    2: 0.04878048780487805
+    3: 0.04878048780487805
+    4: 0.07317073170731707
+    5: 0.07317073170731707
+  NP22:
+    1: 0.07317073170731707
+    2: 0.12195121951219512
+    3: 0.0975609756097561
+    4: 0.0975609756097561
+    5: 0.07317073170731707
+  NP8:
+    1: 0.012195121951219513
+    2: 0.036585365853658534
+    3: 0.17073170731707318
+    4: 0.17073170731707316
+    5: 0.15853658536585366
+  Np10:
+    1: 0.17073170731707318
+    2: 0.04878048780487805
+    3: 0.04878048780487805
+    4: 0.04878048780487805
+    5: 0.04878048780487805
+provenance_note: 'Filed 2026-07-25 in response to a figure-auditor FIGURE_AUDIT_OK
+  finding (MAJOR: D11 provenance gap -- this matrix was previously computed only at
+  P4 figure-data-build time). Frozen here to close that gap; FIG-PAPER1-DEPTH-SUMMARY''s
+  rendered numbers are UNCHANGED (this is the same arithmetic, now properly sourced
+  from a frozen P3-equivalent object instead of an ad-hoc P4 computation).'

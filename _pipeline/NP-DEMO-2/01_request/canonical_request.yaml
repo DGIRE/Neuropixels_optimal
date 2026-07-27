@@ -1,0 +1,59 @@
+extracted_items:
+- item_id: PROH-001
+  source_location: para 1
+  text: 'Test whether ethanol changes how olfactory bulb single units lock their spikes
+    to the sniff phase vs. control (use SNF signal from the data for sniffs). Use
+    the actual SNF signal rather than the LFP to test the phase locking. Do not use
+    any sections of the SNF signal that are noise rather than sniffing. Produce two
+    reports and sets of figures for this task: Methods and Results.'
+  type: prohibition
+- item_id: PROH-002
+  source_location: para 2
+  text: In your analysis, if you find that an experiment is not providing a reasonable
+    amount of ethanol contacts and thus not giving you the correct number of trials,
+    adjust the ethanol threshold for that experiment until it provides approximately
+    the average number of ethanol contacts and trials as the rest of the useable experiments.
+    This is not an exact number, just make it comparable (within plus or minus one
+    standard deviation is fine). Try to reach the average as well as you can, and
+    do not accept the first crossing of one standard deviation away from the mean.
+    Do not make this adjustment on your first pass on an experiment, rather wait until
+    you have tried all experiments at the same threshold and have identified experiment(s)
+    with threshold behavior problematic enough such that they would not be useable
+    in analysis. Be sure to include this adjustment in the methods report.
+  type: prohibition
+- item_id: OUT-001
+  source_location: para 3
+  text: Provide interim figures from your analysis as “Methods” figures, showing examples
+    of sniffing and the concurrent ethanol signal from each experiment used in the
+    analysis. On these figures include the thresholds used to mark sniff onset as
+    well as ethanol contact as red dashed lines on the appropriate figure panel. Also
+    show sniff-locked PSTH examples of units that had the strongest phase locking
+    to sniffs as well as those that had the weakest locking. These should be selected
+    as the strongest and weakest across all experiments and not shown for each experiment.
+    For each experiment, the methods report includes the number of sniffs detected,
+    number of neurons recorded, and number of trials used as well as the length (in
+    minutes) of the experiment and the percentage of time with useable sniffs during
+    that experiment. Include these exact numbers in the methods report. Also describe
+    any discarded sections of data from each animal and the reason that section was
+    discarded. Provide this information into the methods report.
+  type: requested_output
+- item_id: OUT-002
+  source_location: para 4
+  text: Finally, provide a results report as well as figures. A rough sketch of the
+    structure of the results figure is included. In the results report include statistics
+    across all units as well as statistics across all used experiments. Provide two
+    results figures – one for the experiment level analysis and one for the unit level
+    analysis. Also include an “examples” results figure that shows sniff locked PSTHs
+    of the units that showed the strongest change in their phase locking to sniffing.
+    For each example unit, this figure should also show a map of where the unit was
+    recorded on the Neuropixels array.
+  type: requested_output
+- item_id: DATA-001
+  source_location: para 5
+  text: 'Data location: pull data from multiple dated experiments under C:\Projects\Repos\Neuropixels\DATA,
+    using the recording sessions dated 11/1/2021, 11/3/2021, 12/15/2021, 5/17/2022,
+    6/24/2022, and 9/14/2022.'
+  type: data_source
+request_id: REQ-NP-DEMO-2
+source_document: NP-DEMO-2_request.docx
+source_hash: bf02394847807a54a81ddb276d6d9e7a287758ed6eb23dbefb270363b042a618

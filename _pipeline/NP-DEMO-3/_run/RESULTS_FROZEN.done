@@ -1,0 +1,7 @@
+artifact: 04_results/frozen/
+kind: deterministic
+note: ''
+recorded_by: freeze step
+state: RESULTS_FROZEN
+timestamp: '2026-07-23T18:47:26Z'
+who: freeze step

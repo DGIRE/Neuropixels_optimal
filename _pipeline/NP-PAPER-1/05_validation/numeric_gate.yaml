@@ -1,0 +1,255 @@
+gate: numeric_gate
+task_id: NP-PAPER-1
+overall_status: PASS
+n_pass: 265
+n_fail: 0
+n_results_checked: 15
+note: 'UPDATED 2026-07-25 for DEV-002 (shared-animal pseudoreplication, resolved by David Gire 2026-07-25)
+  and the MINOR-2 circular_shift_null fix (same approval). Two independent verification passes, both re-run
+  directly by the gate (not transcribed from the analysis-implementer''s own summary): (1) the full 9-function
+  oracle suite re-run with NP_PAPER1_RUN_HEAVY=1 against the DEV-001-corrected real session files, AFTER
+  the MINOR-2 circular_shift_null.py fix and the (comment-only) MINOR-1 documentation note in extract_full_lfp.py
+  -- 87 passed, 1 skipped (same known, documented adapter-key limitation as before, unrelated to correctness),
+  0 failed, confirming the MINOR-2 fix is fully backward-compatible (its valid_length parameter defaults
+  to the prior behavior and every existing oracle test still passes bit-for-bit); (2) a from-scratch cross-consistency
+  script (05_validation/numeric_gate_check.py, updated this pass) that independently re-derives best-depth,
+  grand-mean/SEM, ranking, per-ordinal consistency counts at the ANIMAL level (its own transcription of
+  DEV-002''s animal->session map, not imported from the runner), re-runs the actual depth_statistics()
+  function from scratch on an independently-rebuilt 5-animal x 5-depth table and confirms it reproduces
+  RESULT-depth-stat.yaml bit-for-bit, spot-checks NP8''s animal-level averaging arithmetic against its
+  2 raw sessions, and re-checks QC-window/discard-span arithmetic and theta-coherence bounds straight
+  from the RESULT-*.yaml artifacts -- 175 passed, 0 failed. 87 + 175 = 262; +3 for the three gate-level
+  summary judgments below (oracle suite overall PASS, cross-check overall PASS, MINOR-2 backward-compatibility
+  PASS) = 265.'
+oracle_suite:
+  command: NP_PAPER1_RUN_HEAVY=1 "<vras>/python.exe" -m pytest _pipeline/NP-PAPER-1/03_software/oracles
+    -q
+  n_passed: 87
+  n_skipped: 1
+  n_failed: 0
+  skip_reason: test_per_window_null_coherence_matches_beta_bias_floor self-skips because the oracle's
+    call_real_multitaper adapter deliberately forwards only freqs/coherence/lfp_psd/snf_psd (not coh_per_window)
+    per spectral_oracle_ref.py's own pick() allowlist -- documented, anticipated by the oracle designer,
+    not a correctness gap in multitaper_psd_coherence.py (which does compute and return coh_per_window
+    internally).
+  status: PASS
+  minor2_regression_check: Re-run in full (not just the circular_shift_null test file) AFTER the MINOR-2
+    fix to confirm the new optional valid_length parameter (default None -> whole-array shift, bit-for-bit
+    identical to the pre-fix behavior) does not change any existing test's result. test_oracle_circular_shift_null.py's
+    7 tests (bit-for-bit reproducibility, RNG-independence, 95th-percentile threshold definition, false-positive
+    calibration, true-positive detection, floor sanity, seed-sensitivity) all pass unchanged.
+cross_consistency_check:
+  script: _pipeline/NP-PAPER-1/05_validation/numeric_gate_check.py
+  n_passed: 175
+  n_failed: 0
+  status: PASS
+  updated_for_dev002: 'Replaced the prior 6-session best-depth/grand-mean/ranking checks with 5-ANIMAL
+    versions (own independent ANIMAL_MAP transcribed from deviations.yaml DEV-002, not imported from the
+    runner). Added: (a) an explicit check that RESULT-best-depth carries n_animals==5/n_sessions==6 and
+    a 5-entry per_animal_best_depth list; (b) a spot-check that NP8''s animal-level mean_theta_coh at
+    each of the 5 depths exactly equals the mean of its 2 raw sessions'' (2021-11-01, 2021-11-03) RESULT-theta-coh
+    rows; (c) a full from-scratch re-run of depth_statistics() on an independently-rebuilt 5-animal x
+    5-depth (n=25) table, confirmed bit-for-bit identical (chisq/pvalue/marginal_mean_range/icc and Friedman
+    statistic/pvalue/Kendall''s W) to RESULT-depth-stat.yaml. Per-session RESULT-theta-coh checks (bounds,
+    5-rows-per-session) are UNCHANGED -- that result stays session-level, as instructed (DEV-002 only
+    touches cross-session/animal aggregation).'
+  updated_for_minor3: 'RESULT-sniff-rate.yaml''s schema changed from a bare list to {rows: [...], note:
+    "..."} (min_hz/max_hz renamed to min_hz_untrimmed_control_epoch/max_hz_untrimmed_control_epoch, a
+    labeling fix only, no recomputation) -- the gate script now reads sniff_doc[''rows''] and all per-session
+    sniff-rate checks continue to pass unchanged.'
+results:
+- result_id: RESULT-full-lfp
+  status: PASS
+  checks:
+  - check: OUT-026 regression anchor (first 10 s == current load_experiment_data 10-s output, rtol<=1e-9/atol<=1e-12)
+      -- re-verified live via test_first10s_equals_current_loader_regression_anchor for all 6 DEV-001-corrected
+      files
+    ok: true
+  - check: first 10 s also matches Golden Fixtures 04_lfp/LFP.npy on the provenance session (test_first10s_matches_golden_lfp_fixture)
+    ok: true
+  - check: full-duration length matches the corrected binfile's implied duration for all 6 sessions (49.6/51.9/55.5/53.1/50.2/17.5
+      min) -- unaffected by DEV-002/MINOR-2 (neither touches extract_full_lfp)
+    ok: true
+- result_id: five-depth-selection
+  status: PASS
+  checks:
+  - check: five distinct channel indices per session, ycoords strictly ascending (tip->surface), identical
+      channel set across 5 of 6 sessions (09-14-2022 differs only at depth 5, channel 141 vs 142 -- consistent
+      with that session's own probe geometry, not an error)
+    ok: true
+  - check: oracle test_real_geometry_range_and_selection against Golden Fixtures 05_spikes_ks/xcoords.npy,ycoords.npy
+      at zero tolerance
+    ok: true
+- result_id: RESULT-coh-spectrum / RESULT-lfp-psd / RESULT-snf-psd
+  status: PASS
+  checks:
+  - check: multitaper_psd_coherence vs independent scipy-dpss+fft reference on synthetic fixture, rtol
+      1e-6/atol 1e-9 (test_implementation_matches_reference_coherence_on_fixture / _psd_on_fixture)
+    ok: true
+  - check: magnitude (not squared) coherence form confirmed (test_coherence_is_magnitude_form_not_squared)
+    ok: true
+  - check: coherence bounded [0,1] and PSD non-negative on all 30 experiment x depth real-data combinations
+      (no NaNs found) -- these values are UNCHANGED by MINOR-2/DEV-002 (observed coherence depends only
+      on the unshifted signals, never the null)
+    ok: true
+- result_id: RESULT-null-threshold
+  status: PASS
+  checks:
+  - check: circular_shift_null bit-for-bit reproducible given seed=5489 (test_null_threshold_bit_for_bit_reproducible_same_seed),
+      independent of global RNG state (test_null_independent_of_global_rng_state) -- re-verified AFTER
+      the MINOR-2 valid_length fix
+    ok: true
+  - check: '>=1000 shifts used for every one of the 30 experiment x depth null computations (confirmed
+      in composing-runner/recompute log, n_shifts=1000 throughout, both the original run and the MINOR-2
+      recompute)'
+    ok: true
+  - check: MINOR-2 fix re-verified session-by-session -- for the 5 sessions with a held-constant SNF pad
+      (11-01-2021 1.61%, 11-03-2021 4.02%, 12-15-2021 12.38%, 5-17-2022 7.70%, 06-24-2022 3.64%) the shift
+      is now confined to the non-padded prefix (valid_length < n_lfp_samples); 09-14-2022 has 0% padding
+      (valid_length == n_lfp_samples) and its recomputed null is bit-for-bit IDENTICAL to the pre-fix
+      null, exactly as expected for the no-padding case
+    ok: true
+  - check: recompute_null_minor2_fix's internal invariance assertions (observed coherence and mean/peak
+      theta coherence/peak frequency must be mathematically unchanged by a null-only fix) held for all
+      30 experiment x depth cells -- no RuntimeError raised (would have stopped the run rather than silently
+      accept a violation)
+    ok: true
+- result_id: RESULT-theta-coh
+  status: PASS
+  checks:
+  - checks_per_session_per_depth: 30
+    check: mean/peak theta coherence in [0,1]; peak_theta_freq in [2,12] Hz (closed band); sig_theta_fraction
+      in [0,1]; peak_coh_percentile in [0,100]; peak >= mean -- all 30 rows pass, 0 NaNs. sig_theta_fraction/peak_coh_percentile
+      reflect the MINOR-2-corrected null (mostly decreased vs the pre-fix values, consistent with removing
+      an anti-conservative bias; mean_theta_coh/peak_theta_coh/peak_theta_freq unchanged, verified not
+      merely asserted)
+    ok: true
+- result_id: RESULT-best-depth
+  status: PASS
+  checks:
+  - check: 'DEV-002 (resolved 2026-07-25) -- now ANIMAL-level (5 entries: NP8, Np10, NP12, NP15, NP22;
+      NP8 = 2021-11-01 + 2021-11-03 averaged per depth). n_animals=5, n_sessions=6 fields present.'
+    ok: true
+  - check: per-animal best_depth_ordinal independently re-derived as argmax(mean_theta_coh) over the 5
+      depths on the animal-averaged table -- matches reported value for all 5 animals (NP8->D4, Np10->D1,
+      NP12->D5, NP15->D2, NP22->D2)
+    ok: true
+  - check: NP8's animal-level mean_theta_coh at each of the 5 depths independently verified equal to the
+      mean of its 2 sessions' RESULT-theta-coh rows (rtol 1e-9), for all 5 depths
+    ok: true
+  - check: grand-mean and SEM per depth ordinal independently recomputed across the 5 ANIMALS (not 6 sessions)
+      from the animal-averaged table -- matches reported values to machine precision (rtol 1e-9) for all
+      5 depths
+    ok: true
+  - check: overall_best_depth_ordinal and ranking_by_grand_mean_theta_coh independently recomputed from
+      the 5-animal grand means -- exact match (overall best = depth 5, ranking [5,3,4,2,1] -- UNCHANGED
+      from the pre-DEV-002 6-session ranking, though the underlying numbers differ)
+    ok: true
+  - check: per_ordinal_consistency_counts independently recomputed from the 5 per-animal winners, sums
+      to 5 -- exact match ({1:1, 2:2, 3:0, 4:1, 5:1})
+    ok: true
+- result_id: RESULT-depth-stat
+  status: PASS
+  checks:
+  - check: DEV-002 (resolved 2026-07-25) -- fit on the animal-level 5x5 (n=25) table (groups='experiment'
+      is now 5 animals, not 6 sessions); n_animals=5/n_sessions=6 provenance fields present; lmm.df==4,
+      friedman.df==4 (5 depths - 1, unchanged by the animal-count change); 0<=p<=1 for both; 0<=icc<=1;
+      0<=kendalls_w<=1; friedman.statistic and lmm.chisq non-negative
+    ok: true
+  - check: depth_statistics() re-run FROM SCRATCH on an independently-rebuilt 5-animal x 5-depth table
+      (own ANIMAL_MAP, not imported from the runner) reproduces RESULT-depth-stat.yaml's LMM (chisq/pvalue/marginal_mean_range/icc)
+      and Friedman (statistic/pvalue/kendalls_w) bit-for-bit -- the strongest available cross-check, re-running
+      the actual validated function, not just re-checking bounds
+    ok: true
+  - check: omnibus_significant flag consistent with (lmm.p<0.05 OR friedman.p<0.05) -- both p-values (0.768,
+      0.780) are >=0.05, flag is correctly False
+    ok: true
+  - check: posthoc is null exactly because omnibus_significant is False, per PROH-006/OUT-016 (no uncontracted
+      post-hoc when the omnibus does not reject)
+    ok: true
+  - note: 'Real-data result, RE-VERIFIED at the animal level: no significant depth effect was detected
+      (LMM LRT chi2=1.822, df=4, p=0.768; Friedman chi2=1.760, df=4, p=0.780, Kendall''s W=0.088). This
+      is a slightly WEAKER non-significant result than the pre-DEV-002 6-session numbers (chi2=3.86/p=0.425;
+      chi2=2.40/p=0.663) -- the qualitative conclusion (no significant depth effect) is UNCHANGED and,
+      if anything, more robustly non-significant once NP8''s pseudo-replication is corrected. MixedLM
+      raised 2 ''MLE may be on the boundary of the parameter space'' ConvergenceWarnings when fitting
+      the 5-animal table (reported in RESULT-depth-stat.yaml''s lmm_convergence_note per explicit instruction,
+      not hidden) -- plausible with only 5 random-effect groups and low between-animal variance; interpret
+      the LMM alongside the convergence-warning-free Friedman result, which agrees qualitatively. Both
+      the oracle suite (synthetic planted-effect and null-effect cases) and this cross-check confirm the
+      statistical machinery itself is implemented correctly; it simply did not find a significant depth
+      effect in the real recordings, now or before DEV-002. Per PROH-006 this is reported as exploratory
+      characterization, not a confirmed null result.'
+- result_id: RESULT-sniff-rate
+  status: PASS
+  checks:
+  - check: median instantaneous sniff rate within the physiological rodent range (0.5-15 Hz) for all 6
+      sessions (range 3.1-4.3 Hz) -- unaffected by MINOR-3 (labeling fix only)
+    ok: true
+  - check: n_sniffs_retained_isi <= n_sniffs_detected for all 6 sessions (5th/95th percentile ISI trim
+      can only remove sniffs)
+    ok: true
+  - check: MINOR-3 (scientific-audit, approved 2026-07-25) -- min_hz/max_hz relabeled to min_hz_untrimmed_control_epoch/max_hz_untrimmed_control_epoch
+      with an explicit note clarifying these are drawn from the untrimmed control-epoch sniff-rate distribution,
+      not the ISI-trimmed set that gates the coherence windows; median/IQR unaffected; no recomputation,
+      values identical to before, only the field names/note changed
+    ok: true
+- result_id: RESULT-qc-counts
+  status: PASS
+  checks:
+  - check: n_windows_used + n_windows_excluded_ethanol + n_windows_excluded_noise == the candidate-window
+      count independently re-derived from length_min (floor((n_lfp_samples-4000)/2000)+1) for all 6 sessions
+    ok: true
+  - check: n_windows_used >= 30 for all 6 sessions (PROH-002/CON-008 gate); excluded_from_depth_stats
+      correctly False for all 6
+    ok: true
+  - check: pct_usable_time in [0,100] for all 6 sessions
+    ok: true
+  - check: binfile_ratio (chosen file duration / LabView duration) within [0.5, 1.5] sanity band for all
+      6 sessions post-DEV-001; 12-15-2021's 1.141 ratio is flagged in its own justification string for
+      human review but is not a gate-blocking failure (within the documented DEV-001 Resolution-B tolerance
+      policy)
+    ok: true
+- result_id: RESULT-qc-discards
+  status: PASS
+  checks:
+  - check: per-session index (n_eth_spans/n_isi_outlier_spans/n_noise_spans) matches an independent count
+      of the referenced detail file's actual span-level (start_s, end_s, reason) log for all 6 sessions;
+      every span has end_s>=start_s and a valid reason
+    ok: true
+  - check: index covers all 6 contracted sessions
+    ok: true
+- result_id: RESULT-example-traces
+  status: PASS
+  checks:
+  - check: representative-experiment display convention applied correctly -- 06-24-2022 selected (573
+      retained windows, the maximum across all 6 sessions), matching the documented 'most retained windows'
+      rule -- unaffected by DEV-002 (session-level display convention, not animal-level)
+    ok: true
+- result_id: RESULT-methods-doc / RESULT-results-doc
+  status: DEFERRED
+  checks:
+  - check: not yet produced -- these are P4 (REPORT_DRAFTED) deliverables, out of scope for the P3 numeric
+      gate. When drafted, MUST reflect '5 animals (NP8 contributes 2 sessions, averaged)' per DEV-002,
+      not '6 experiments'; MUST NOT frame the coherence replication as successful per the scientific-audit
+      MAJOR-1 finding (non-deviation, informs report framing only).
+    ok: true
+  note: Listed here only for completeness against the contract's required_outputs; not part of this gate's
+    pass/fail count.
+deviations_open: []
+deviations_resolved:
+- 'DEV-001 (raw-file provenance, or_validate_files alphabetical-first .bin picker) -- resolved by David
+  Gire 2026-07-24, Resolution B (duration-matching override in NP-PAPER-1''s own additive code, chunk-series-exclusion
+  safeguard). Re-verified independently by this gate: all 6 sessions'' chosen binfiles pass the OUT-026
+  regression anchor and produce sane, bounded, NaN-free results.'
+- 'DEV-002 (scientific-audit BLOCKER-1, shared-animal pseudoreplication: 2021-11-01 and 2021-11-03 are
+  both animal NP8) -- resolved by David Gire 2026-07-25, Resolution A (5-animal x 5-depth balanced design;
+  NP8''s 2 sessions averaged per depth into one animal-level observation before depth_statistics/best-depth
+  aggregation). Re-verified independently by this gate via a full from-scratch depth_statistics() re-run
+  on an independently-rebuilt animal table (bit-for-bit match) plus an explicit NP8-averaging arithmetic
+  spot-check. Omnibus remains non-significant (LMM p=0.768, Friedman p=0.780), slightly more so than the
+  pre-resolution 6-session numbers.'
+- 'DEV-003 (scientific-audit BLOCKER-2, 09-14-2022 file-identity mismatch: raw .ap.bin filename references
+  a different animal/date, NP21/2022-08-07) -- resolved by David Gire 2026-07-25 as a confirmed stale/reused
+  SpikeGLX run-name label on otherwise-correct data; no code or result change needed; session 09-14-2022''s
+  results stand as computed.'

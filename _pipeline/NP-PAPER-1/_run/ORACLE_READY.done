@@ -1,0 +1,7 @@
+artifact: 03_software/oracles/
+kind: agent
+note: ''
+recorded_by: oracle-designer
+state: ORACLE_READY
+timestamp: '2026-07-25T03:10:24Z'
+who: oracle-designer

@@ -1,0 +1,1304 @@
+session: 09-14-2022
+discards:
+- start_s: 11.584
+  end_s: 13.288
+  reason: ethanol
+- start_s: 13.544
+  end_s: 13.552
+  reason: ethanol
+- start_s: 13.56
+  end_s: 14.296
+  reason: ethanol
+- start_s: 20.4
+  end_s: 20.712
+  reason: ethanol
+- start_s: 62.08
+  end_s: 62.696
+  reason: ethanol
+- start_s: 62.704
+  end_s: 62.712
+  reason: ethanol
+- start_s: 62.888
+  end_s: 63.104
+  reason: ethanol
+- start_s: 63.112
+  end_s: 63.12
+  reason: ethanol
+- start_s: 63.144
+  end_s: 63.184
+  reason: ethanol
+- start_s: 63.2
+  end_s: 63.208
+  reason: ethanol
+- start_s: 63.408
+  end_s: 63.472
+  reason: ethanol
+- start_s: 63.48
+  end_s: 63.496
+  reason: ethanol
+- start_s: 63.504
+  end_s: 63.512
+  reason: ethanol
+- start_s: 64.136
+  end_s: 64.288
+  reason: ethanol
+- start_s: 65.008
+  end_s: 65.68
+  reason: ethanol
+- start_s: 66.664
+  end_s: 66.928
+  reason: ethanol
+- start_s: 66.936
+  end_s: 67.208
+  reason: ethanol
+- start_s: 67.984
+  end_s: 68.416
+  reason: ethanol
+- start_s: 69.008
+  end_s: 69.104
+  reason: ethanol
+- start_s: 113.224
+  end_s: 113.288
+  reason: ethanol
+- start_s: 113.416
+  end_s: 113.696
+  reason: ethanol
+- start_s: 113.936
+  end_s: 114.072
+  reason: ethanol
+- start_s: 114.408
+  end_s: 114.472
+  reason: ethanol
+- start_s: 114.536
+  end_s: 114.912
+  reason: ethanol
+- start_s: 114.92
+  end_s: 115.072
+  reason: ethanol
+- start_s: 115.256
+  end_s: 115.376
+  reason: ethanol
+- start_s: 115.496
+  end_s: 115.72
+  reason: ethanol
+- start_s: 115.744
+  end_s: 116.608
+  reason: ethanol
+- start_s: 116.848
+  end_s: 116.896
+  reason: ethanol
+- start_s: 117.056
+  end_s: 117.168
+  reason: ethanol
+- start_s: 117.176
+  end_s: 117.32
+  reason: ethanol
+- start_s: 117.584
+  end_s: 118.08
+  reason: ethanol
+- start_s: 119.304
+  end_s: 119.368
+  reason: ethanol
+- start_s: 119.6
+  end_s: 119.608
+  reason: ethanol
+- start_s: 119.632
+  end_s: 119.64
+  reason: ethanol
+- start_s: 161.984
+  end_s: 162.096
+  reason: ethanol
+- start_s: 162.104
+  end_s: 162.272
+  reason: ethanol
+- start_s: 163.2
+  end_s: 163.864
+  reason: ethanol
+- start_s: 163.872
+  end_s: 163.888
+  reason: ethanol
+- start_s: 164.08
+  end_s: 164.12
+  reason: ethanol
+- start_s: 165.488
+  end_s: 165.544
+  reason: ethanol
+- start_s: 166.728
+  end_s: 166.76
+  reason: ethanol
+- start_s: 166.768
+  end_s: 166.912
+  reason: ethanol
+- start_s: 167.712
+  end_s: 167.72
+  reason: ethanol
+- start_s: 168.0
+  end_s: 168.136
+  reason: ethanol
+- start_s: 169.888
+  end_s: 169.944
+  reason: ethanol
+- start_s: 169.952
+  end_s: 169.96
+  reason: ethanol
+- start_s: 170.328
+  end_s: 170.4
+  reason: ethanol
+- start_s: 170.824
+  end_s: 170.832
+  reason: ethanol
+- start_s: 209.968
+  end_s: 211.28
+  reason: ethanol
+- start_s: 211.288
+  end_s: 211.296
+  reason: ethanol
+- start_s: 211.512
+  end_s: 211.64
+  reason: ethanol
+- start_s: 211.744
+  end_s: 212.32
+  reason: ethanol
+- start_s: 215.808
+  end_s: 216.128
+  reason: ethanol
+- start_s: 217.992
+  end_s: 218.024
+  reason: ethanol
+- start_s: 218.04
+  end_s: 218.472
+  reason: ethanol
+- start_s: 261.6
+  end_s: 261.608
+  reason: ethanol
+- start_s: 261.616
+  end_s: 261.84
+  reason: ethanol
+- start_s: 261.848
+  end_s: 261.856
+  reason: ethanol
+- start_s: 262.296
+  end_s: 262.848
+  reason: ethanol
+- start_s: 265.328
+  end_s: 265.36
+  reason: ethanol
+- start_s: 266.336
+  end_s: 266.512
+  reason: ethanol
+- start_s: 304.92
+  end_s: 304.928
+  reason: ethanol
+- start_s: 304.944
+  end_s: 307.208
+  reason: ethanol
+- start_s: 311.872
+  end_s: 312.832
+  reason: ethanol
+- start_s: 312.84
+  end_s: 312.856
+  reason: ethanol
+- start_s: 312.872
+  end_s: 312.88
+  reason: ethanol
+- start_s: 312.968
+  end_s: 313.344
+  reason: ethanol
+- start_s: 313.352
+  end_s: 313.432
+  reason: ethanol
+- start_s: 313.856
+  end_s: 314.04
+  reason: ethanol
+- start_s: 314.432
+  end_s: 314.48
+  reason: ethanol
+- start_s: 354.4
+  end_s: 356.984
+  reason: ethanol
+- start_s: 356.992
+  end_s: 357.04
+  reason: ethanol
+- start_s: 360.456
+  end_s: 360.784
+  reason: ethanol
+- start_s: 361.432
+  end_s: 362.024
+  reason: ethanol
+- start_s: 403.448
+  end_s: 403.672
+  reason: ethanol
+- start_s: 403.72
+  end_s: 403.728
+  reason: ethanol
+- start_s: 407.736
+  end_s: 408.128
+  reason: ethanol
+- start_s: 408.176
+  end_s: 408.368
+  reason: ethanol
+- start_s: 408.472
+  end_s: 408.704
+  reason: ethanol
+- start_s: 409.024
+  end_s: 409.16
+  reason: ethanol
+- start_s: 411.112
+  end_s: 411.248
+  reason: ethanol
+- start_s: 458.4
+  end_s: 458.672
+  reason: ethanol
+- start_s: 458.68
+  end_s: 458.776
+  reason: ethanol
+- start_s: 458.784
+  end_s: 458.8
+  reason: ethanol
+- start_s: 458.808
+  end_s: 458.816
+  reason: ethanol
+- start_s: 458.824
+  end_s: 458.832
+  reason: ethanol
+- start_s: 459.416
+  end_s: 459.968
+  reason: ethanol
+- start_s: 465.48
+  end_s: 465.6
+  reason: ethanol
+- start_s: 489.176
+  end_s: 489.2
+  reason: ethanol
+- start_s: 489.208
+  end_s: 489.232
+  reason: ethanol
+- start_s: 489.24
+  end_s: 489.248
+  reason: ethanol
+- start_s: 489.272
+  end_s: 489.28
+  reason: ethanol
+- start_s: 489.296
+  end_s: 489.304
+  reason: ethanol
+- start_s: 489.312
+  end_s: 489.32
+  reason: ethanol
+- start_s: 489.328
+  end_s: 489.384
+  reason: ethanol
+- start_s: 489.408
+  end_s: 489.432
+  reason: ethanol
+- start_s: 489.44
+  end_s: 489.456
+  reason: ethanol
+- start_s: 489.464
+  end_s: 489.48
+  reason: ethanol
+- start_s: 489.496
+  end_s: 489.504
+  reason: ethanol
+- start_s: 489.528
+  end_s: 489.56
+  reason: ethanol
+- start_s: 489.584
+  end_s: 489.616
+  reason: ethanol
+- start_s: 489.632
+  end_s: 489.76
+  reason: ethanol
+- start_s: 489.768
+  end_s: 489.864
+  reason: ethanol
+- start_s: 489.872
+  end_s: 489.896
+  reason: ethanol
+- start_s: 489.92
+  end_s: 489.936
+  reason: ethanol
+- start_s: 489.952
+  end_s: 489.984
+  reason: ethanol
+- start_s: 490.064
+  end_s: 490.072
+  reason: ethanol
+- start_s: 505.024
+  end_s: 507.304
+  reason: ethanol
+- start_s: 508.816
+  end_s: 509.328
+  reason: ethanol
+- start_s: 509.648
+  end_s: 510.384
+  reason: ethanol
+- start_s: 510.616
+  end_s: 511.168
+  reason: ethanol
+- start_s: 511.272
+  end_s: 511.728
+  reason: ethanol
+- start_s: 511.736
+  end_s: 511.744
+  reason: ethanol
+- start_s: 512.952
+  end_s: 513.248
+  reason: ethanol
+- start_s: 513.6
+  end_s: 513.784
+  reason: ethanol
+- start_s: 513.928
+  end_s: 514.072
+  reason: ethanol
+- start_s: 555.936
+  end_s: 557.112
+  reason: ethanol
+- start_s: 557.496
+  end_s: 559.032
+  reason: ethanol
+- start_s: 560.608
+  end_s: 560.92
+  reason: ethanol
+- start_s: 561.728
+  end_s: 562.672
+  reason: ethanol
+- start_s: 565.352
+  end_s: 566.104
+  reason: ethanol
+- start_s: 601.904
+  end_s: 603.344
+  reason: ethanol
+- start_s: 603.464
+  end_s: 604.792
+  reason: ethanol
+- start_s: 607.552
+  end_s: 608.16
+  reason: ethanol
+- start_s: 610.336
+  end_s: 611.008
+  reason: ethanol
+- start_s: 651.952
+  end_s: 653.536
+  reason: ethanol
+- start_s: 653.728
+  end_s: 654.032
+  reason: ethanol
+- start_s: 654.112
+  end_s: 654.504
+  reason: ethanol
+- start_s: 656.984
+  end_s: 657.48
+  reason: ethanol
+- start_s: 659.12
+  end_s: 660.376
+  reason: ethanol
+- start_s: 661.184
+  end_s: 661.304
+  reason: ethanol
+- start_s: 662.08
+  end_s: 662.088
+  reason: ethanol
+- start_s: 662.104
+  end_s: 662.152
+  reason: ethanol
+- start_s: 700.96
+  end_s: 702.352
+  reason: ethanol
+- start_s: 702.984
+  end_s: 703.456
+  reason: ethanol
+- start_s: 703.904
+  end_s: 705.024
+  reason: ethanol
+- start_s: 705.184
+  end_s: 705.6
+  reason: ethanol
+- start_s: 708.656
+  end_s: 709.272
+  reason: ethanol
+- start_s: 710.384
+  end_s: 710.432
+  reason: ethanol
+- start_s: 710.952
+  end_s: 711.272
+  reason: ethanol
+- start_s: 751.48
+  end_s: 752.592
+  reason: ethanol
+- start_s: 752.6
+  end_s: 752.608
+  reason: ethanol
+- start_s: 757.96
+  end_s: 758.008
+  reason: ethanol
+- start_s: 758.248
+  end_s: 759.0
+  reason: ethanol
+- start_s: 759.888
+  end_s: 760.536
+  reason: ethanol
+- start_s: 799.2
+  end_s: 800.24
+  reason: ethanol
+- start_s: 801.616
+  end_s: 803.504
+  reason: ethanol
+- start_s: 803.872
+  end_s: 804.168
+  reason: ethanol
+- start_s: 805.856
+  end_s: 806.024
+  reason: ethanol
+- start_s: 843.848
+  end_s: 844.6
+  reason: ethanol
+- start_s: 844.608
+  end_s: 844.616
+  reason: ethanol
+- start_s: 846.376
+  end_s: 846.704
+  reason: ethanol
+- start_s: 846.728
+  end_s: 846.736
+  reason: ethanol
+- start_s: 849.928
+  end_s: 850.968
+  reason: ethanol
+- start_s: 894.496
+  end_s: 895.336
+  reason: ethanol
+- start_s: 895.968
+  end_s: 896.784
+  reason: ethanol
+- start_s: 899.488
+  end_s: 899.864
+  reason: ethanol
+- start_s: 899.88
+  end_s: 899.888
+  reason: ethanol
+- start_s: 943.832
+  end_s: 945.264
+  reason: ethanol
+- start_s: 945.272
+  end_s: 945.28
+  reason: ethanol
+- start_s: 946.456
+  end_s: 946.792
+  reason: ethanol
+- start_s: 947.112
+  end_s: 947.12
+  reason: ethanol
+- start_s: 948.056
+  end_s: 948.336
+  reason: ethanol
+- start_s: 948.712
+  end_s: 948.896
+  reason: ethanol
+- start_s: 950.104
+  end_s: 950.472
+  reason: ethanol
+- start_s: 951.696
+  end_s: 952.888
+  reason: ethanol
+- start_s: 989.136
+  end_s: 989.232
+  reason: ethanol
+- start_s: 989.24
+  end_s: 989.256
+  reason: ethanol
+- start_s: 989.264
+  end_s: 989.288
+  reason: ethanol
+- start_s: 989.296
+  end_s: 989.304
+  reason: ethanol
+- start_s: 989.336
+  end_s: 989.344
+  reason: ethanol
+- start_s: 990.192
+  end_s: 991.016
+  reason: ethanol
+- start_s: 991.024
+  end_s: 991.032
+  reason: ethanol
+- start_s: 991.048
+  end_s: 991.056
+  reason: ethanol
+- start_s: 991.08
+  end_s: 991.088
+  reason: ethanol
+- start_s: 991.12
+  end_s: 991.128
+  reason: ethanol
+- start_s: 991.144
+  end_s: 991.152
+  reason: ethanol
+- start_s: 993.624
+  end_s: 993.632
+  reason: ethanol
+- start_s: 993.736
+  end_s: 993.752
+  reason: ethanol
+- start_s: 993.768
+  end_s: 993.776
+  reason: ethanol
+- start_s: 993.8
+  end_s: 993.808
+  reason: ethanol
+- start_s: 996.256
+  end_s: 996.368
+  reason: ethanol
+- start_s: 997.904
+  end_s: 998.016
+  reason: ethanol
+- start_s: 998.152
+  end_s: 998.608
+  reason: ethanol
+- start_s: 1036.0
+  end_s: 1036.08
+  reason: ethanol
+- start_s: 1041.48
+  end_s: 1042.384
+  reason: ethanol
+- start_s: 2.024
+  end_s: 2.184
+  reason: ISI outlier
+- start_s: 11.608
+  end_s: 13.48
+  reason: ISI outlier
+- start_s: 13.672
+  end_s: 14.456
+  reason: ISI outlier
+- start_s: 15.792
+  end_s: 16.792
+  reason: ISI outlier
+- start_s: 17.056
+  end_s: 18.072
+  reason: ISI outlier
+- start_s: 18.264
+  end_s: 18.592
+  reason: ISI outlier
+- start_s: 18.944
+  end_s: 19.704
+  reason: ISI outlier
+- start_s: 20.496
+  end_s: 21.0
+  reason: ISI outlier
+- start_s: 22.376
+  end_s: 22.528
+  reason: ISI outlier
+- start_s: 23.328
+  end_s: 23.984
+  reason: ISI outlier
+- start_s: 24.392
+  end_s: 24.896
+  reason: ISI outlier
+- start_s: 25.464
+  end_s: 26.624
+  reason: ISI outlier
+- start_s: 64.024
+  end_s: 64.296
+  reason: ISI outlier
+- start_s: 64.496
+  end_s: 64.648
+  reason: ISI outlier
+- start_s: 66.048
+  end_s: 66.296
+  reason: ISI outlier
+- start_s: 67.216
+  end_s: 67.744
+  reason: ISI outlier
+- start_s: 69.608
+  end_s: 70.296
+  reason: ISI outlier
+- start_s: 71.168
+  end_s: 71.672
+  reason: ISI outlier
+- start_s: 71.872
+  end_s: 72.288
+  reason: ISI outlier
+- start_s: 72.52
+  end_s: 73.208
+  reason: ISI outlier
+- start_s: 73.448
+  end_s: 73.768
+  reason: ISI outlier
+- start_s: 146.232
+  end_s: 146.904
+  reason: ISI outlier
+- start_s: 150.968
+  end_s: 151.408
+  reason: ISI outlier
+- start_s: 153.648
+  end_s: 153.976
+  reason: ISI outlier
+- start_s: 154.384
+  end_s: 154.784
+  reason: ISI outlier
+- start_s: 157.176
+  end_s: 157.56
+  reason: ISI outlier
+- start_s: 159.128
+  end_s: 160.328
+  reason: ISI outlier
+- start_s: 161.008
+  end_s: 161.136
+  reason: ISI outlier
+- start_s: 161.328
+  end_s: 161.8
+  reason: ISI outlier
+- start_s: 163.024
+  end_s: 163.472
+  reason: ISI outlier
+- start_s: 163.84
+  end_s: 164.568
+  reason: ISI outlier
+- start_s: 165.16
+  end_s: 165.328
+  reason: ISI outlier
+- start_s: 166.424
+  end_s: 166.712
+  reason: ISI outlier
+- start_s: 166.904
+  end_s: 167.408
+  reason: ISI outlier
+- start_s: 167.776
+  end_s: 168.192
+  reason: ISI outlier
+- start_s: 168.512
+  end_s: 168.952
+  reason: ISI outlier
+- start_s: 169.216
+  end_s: 169.728
+  reason: ISI outlier
+- start_s: 170.736
+  end_s: 171.24
+  reason: ISI outlier
+- start_s: 171.352
+  end_s: 172.808
+  reason: ISI outlier
+- start_s: 174.024
+  end_s: 174.144
+  reason: ISI outlier
+- start_s: 174.88
+  end_s: 175.384
+  reason: ISI outlier
+- start_s: 175.672
+  end_s: 175.8
+  reason: ISI outlier
+- start_s: 176.224
+  end_s: 176.392
+  reason: ISI outlier
+- start_s: 177.76
+  end_s: 177.928
+  reason: ISI outlier
+- start_s: 178.456
+  end_s: 179.264
+  reason: ISI outlier
+- start_s: 179.456
+  end_s: 179.88
+  reason: ISI outlier
+- start_s: 181.224
+  end_s: 181.784
+  reason: ISI outlier
+- start_s: 188.176
+  end_s: 188.592
+  reason: ISI outlier
+- start_s: 194.032
+  end_s: 194.432
+  reason: ISI outlier
+- start_s: 196.896
+  end_s: 197.28
+  reason: ISI outlier
+- start_s: 198.52
+  end_s: 198.928
+  reason: ISI outlier
+- start_s: 199.296
+  end_s: 200.472
+  reason: ISI outlier
+- start_s: 200.824
+  end_s: 201.984
+  reason: ISI outlier
+- start_s: 203.976
+  end_s: 204.384
+  reason: ISI outlier
+- start_s: 204.744
+  end_s: 205.544
+  reason: ISI outlier
+- start_s: 207.648
+  end_s: 208.04
+  reason: ISI outlier
+- start_s: 208.408
+  end_s: 208.8
+  reason: ISI outlier
+- start_s: 213.2
+  end_s: 214.376
+  reason: ISI outlier
+- start_s: 214.72
+  end_s: 215.104
+  reason: ISI outlier
+- start_s: 216.496
+  end_s: 216.88
+  reason: ISI outlier
+- start_s: 217.248
+  end_s: 217.648
+  reason: ISI outlier
+- start_s: 222.776
+  end_s: 223.352
+  reason: ISI outlier
+- start_s: 223.704
+  end_s: 224.552
+  reason: ISI outlier
+- start_s: 224.912
+  end_s: 225.328
+  reason: ISI outlier
+- start_s: 236.264
+  end_s: 236.408
+  reason: ISI outlier
+- start_s: 237.088
+  end_s: 237.584
+  reason: ISI outlier
+- start_s: 238.736
+  end_s: 239.24
+  reason: ISI outlier
+- start_s: 239.584
+  end_s: 240.456
+  reason: ISI outlier
+- start_s: 242.912
+  end_s: 243.312
+  reason: ISI outlier
+- start_s: 243.624
+  end_s: 244.88
+  reason: ISI outlier
+- start_s: 246.4
+  end_s: 247.24
+  reason: ISI outlier
+- start_s: 249.0
+  end_s: 249.424
+  reason: ISI outlier
+- start_s: 253.72
+  end_s: 254.104
+  reason: ISI outlier
+- start_s: 256.688
+  end_s: 257.528
+  reason: ISI outlier
+- start_s: 261.304
+  end_s: 261.712
+  reason: ISI outlier
+- start_s: 264.544
+  end_s: 264.92
+  reason: ISI outlier
+- start_s: 266.44
+  end_s: 266.832
+  reason: ISI outlier
+- start_s: 267.384
+  end_s: 267.792
+  reason: ISI outlier
+- start_s: 268.336
+  end_s: 268.72
+  reason: ISI outlier
+- start_s: 269.4
+  end_s: 269.8
+  reason: ISI outlier
+- start_s: 270.504
+  end_s: 270.952
+  reason: ISI outlier
+- start_s: 278.232
+  end_s: 278.632
+  reason: ISI outlier
+- start_s: 282.4
+  end_s: 283.072
+  reason: ISI outlier
+- start_s: 359.272
+  end_s: 359.648
+  reason: ISI outlier
+- start_s: 382.76
+  end_s: 383.264
+  reason: ISI outlier
+- start_s: 384.088
+  end_s: 384.928
+  reason: ISI outlier
+- start_s: 400.536
+  end_s: 400.704
+  reason: ISI outlier
+- start_s: 454.576
+  end_s: 454.968
+  reason: ISI outlier
+- start_s: 479.76
+  end_s: 479.92
+  reason: ISI outlier
+- start_s: 480.096
+  end_s: 480.488
+  reason: ISI outlier
+- start_s: 485.12
+  end_s: 485.288
+  reason: ISI outlier
+- start_s: 489.224
+  end_s: 489.504
+  reason: ISI outlier
+- start_s: 489.864
+  end_s: 490.248
+  reason: ISI outlier
+- start_s: 491.12
+  end_s: 491.28
+  reason: ISI outlier
+- start_s: 501.056
+  end_s: 501.184
+  reason: ISI outlier
+- start_s: 502.528
+  end_s: 502.832
+  reason: ISI outlier
+- start_s: 503.288
+  end_s: 503.432
+  reason: ISI outlier
+- start_s: 503.64
+  end_s: 503.792
+  reason: ISI outlier
+- start_s: 506.032
+  end_s: 506.192
+  reason: ISI outlier
+- start_s: 506.632
+  end_s: 507.648
+  reason: ISI outlier
+- start_s: 507.848
+  end_s: 508.136
+  reason: ISI outlier
+- start_s: 508.592
+  end_s: 509.264
+  reason: ISI outlier
+- start_s: 509.704
+  end_s: 510.6
+  reason: ISI outlier
+- start_s: 511.408
+  end_s: 511.96
+  reason: ISI outlier
+- start_s: 512.2
+  end_s: 513.096
+  reason: ISI outlier
+- start_s: 513.656
+  end_s: 514.16
+  reason: ISI outlier
+- start_s: 514.368
+  end_s: 514.872
+  reason: ISI outlier
+- start_s: 515.144
+  end_s: 515.648
+  reason: ISI outlier
+- start_s: 517.384
+  end_s: 517.544
+  reason: ISI outlier
+- start_s: 517.776
+  end_s: 517.944
+  reason: ISI outlier
+- start_s: 518.52
+  end_s: 519.128
+  reason: ISI outlier
+- start_s: 519.864
+  end_s: 520.168
+  reason: ISI outlier
+- start_s: 520.352
+  end_s: 520.52
+  reason: ISI outlier
+- start_s: 520.736
+  end_s: 520.792
+  reason: ISI outlier
+- start_s: 520.976
+  end_s: 521.48
+  reason: ISI outlier
+- start_s: 523.008
+  end_s: 523.672
+  reason: ISI outlier
+- start_s: 524.392
+  end_s: 524.536
+  reason: ISI outlier
+- start_s: 524.816
+  end_s: 524.976
+  reason: ISI outlier
+- start_s: 525.384
+  end_s: 525.776
+  reason: ISI outlier
+- start_s: 526.432
+  end_s: 526.936
+  reason: ISI outlier
+- start_s: 527.048
+  end_s: 527.552
+  reason: ISI outlier
+- start_s: 528.256
+  end_s: 529.104
+  reason: ISI outlier
+- start_s: 532.744
+  end_s: 534.752
+  reason: ISI outlier
+- start_s: 535.104
+  end_s: 535.896
+  reason: ISI outlier
+- start_s: 537.232
+  end_s: 537.728
+  reason: ISI outlier
+- start_s: 538.032
+  end_s: 539.392
+  reason: ISI outlier
+- start_s: 539.76
+  end_s: 540.568
+  reason: ISI outlier
+- start_s: 542.328
+  end_s: 542.72
+  reason: ISI outlier
+- start_s: 543.568
+  end_s: 544.912
+  reason: ISI outlier
+- start_s: 545.872
+  end_s: 547.504
+  reason: ISI outlier
+- start_s: 549.256
+  end_s: 549.76
+  reason: ISI outlier
+- start_s: 549.824
+  end_s: 550.232
+  reason: ISI outlier
+- start_s: 550.872
+  end_s: 553.768
+  reason: ISI outlier
+- start_s: 554.496
+  end_s: 554.928
+  reason: ISI outlier
+- start_s: 555.264
+  end_s: 556.12
+  reason: ISI outlier
+- start_s: 557.736
+  end_s: 558.76
+  reason: ISI outlier
+- start_s: 559.016
+  end_s: 559.12
+  reason: ISI outlier
+- start_s: 559.408
+  end_s: 559.552
+  reason: ISI outlier
+- start_s: 560.072
+  end_s: 560.904
+  reason: ISI outlier
+- start_s: 561.472
+  end_s: 561.936
+  reason: ISI outlier
+- start_s: 562.296
+  end_s: 563.208
+  reason: ISI outlier
+- start_s: 564.128
+  end_s: 565.64
+  reason: ISI outlier
+- start_s: 566.264
+  end_s: 566.648
+  reason: ISI outlier
+- start_s: 584.888
+  end_s: 585.272
+  reason: ISI outlier
+- start_s: 604.048
+  end_s: 604.216
+  reason: ISI outlier
+- start_s: 607.416
+  end_s: 608.064
+  reason: ISI outlier
+- start_s: 608.264
+  end_s: 609.096
+  reason: ISI outlier
+- start_s: 612.08
+  end_s: 612.472
+  reason: ISI outlier
+- start_s: 616.856
+  end_s: 617.68
+  reason: ISI outlier
+- start_s: 633.504
+  end_s: 633.936
+  reason: ISI outlier
+- start_s: 643.704
+  end_s: 644.08
+  reason: ISI outlier
+- start_s: 653.728
+  end_s: 654.176
+  reason: ISI outlier
+- start_s: 660.016
+  end_s: 660.432
+  reason: ISI outlier
+- start_s: 660.64
+  end_s: 661.032
+  reason: ISI outlier
+- start_s: 662.28
+  end_s: 662.784
+  reason: ISI outlier
+- start_s: 663.136
+  end_s: 663.92
+  reason: ISI outlier
+- start_s: 666.704
+  end_s: 667.08
+  reason: ISI outlier
+- start_s: 685.208
+  end_s: 685.352
+  reason: ISI outlier
+- start_s: 695.12
+  end_s: 695.536
+  reason: ISI outlier
+- start_s: 709.624
+  end_s: 710.024
+  reason: ISI outlier
+- start_s: 723.072
+  end_s: 723.216
+  reason: ISI outlier
+- start_s: 723.656
+  end_s: 724.032
+  reason: ISI outlier
+- start_s: 725.112
+  end_s: 725.264
+  reason: ISI outlier
+- start_s: 725.848
+  end_s: 726.272
+  reason: ISI outlier
+- start_s: 753.32
+  end_s: 753.824
+  reason: ISI outlier
+- start_s: 821.888
+  end_s: 822.296
+  reason: ISI outlier
+- start_s: 823.504
+  end_s: 823.888
+  reason: ISI outlier
+- start_s: 826.64
+  end_s: 826.808
+  reason: ISI outlier
+- start_s: 840.336
+  end_s: 840.72
+  reason: ISI outlier
+- start_s: 847.152
+  end_s: 848.064
+  reason: ISI outlier
+- start_s: 848.808
+  end_s: 849.312
+  reason: ISI outlier
+- start_s: 912.616
+  end_s: 913.52
+  reason: ISI outlier
+- start_s: 925.536
+  end_s: 925.856
+  reason: ISI outlier
+- start_s: 926.048
+  end_s: 926.208
+  reason: ISI outlier
+- start_s: 926.52
+  end_s: 928.16
+  reason: ISI outlier
+- start_s: 928.512
+  end_s: 928.912
+  reason: ISI outlier
+- start_s: 932.224
+  end_s: 932.512
+  reason: ISI outlier
+- start_s: 932.696
+  end_s: 932.84
+  reason: ISI outlier
+- start_s: 933.032
+  end_s: 933.48
+  reason: ISI outlier
+- start_s: 933.656
+  end_s: 933.824
+  reason: ISI outlier
+- start_s: 935.568
+  end_s: 936.528
+  reason: ISI outlier
+- start_s: 936.952
+  end_s: 937.104
+  reason: ISI outlier
+- start_s: 937.72
+  end_s: 938.392
+  reason: ISI outlier
+- start_s: 938.648
+  end_s: 939.12
+  reason: ISI outlier
+- start_s: 939.944
+  end_s: 940.072
+  reason: ISI outlier
+- start_s: 940.632
+  end_s: 940.928
+  reason: ISI outlier
+- start_s: 941.816
+  end_s: 942.32
+  reason: ISI outlier
+- start_s: 942.568
+  end_s: 943.072
+  reason: ISI outlier
+- start_s: 944.192
+  end_s: 944.696
+  reason: ISI outlier
+- start_s: 945.912
+  end_s: 946.312
+  reason: ISI outlier
+- start_s: 950.624
+  end_s: 950.792
+  reason: ISI outlier
+- start_s: 952.84
+  end_s: 953.0
+  reason: ISI outlier
+- start_s: 964.264
+  end_s: 965.2
+  reason: ISI outlier
+- start_s: 965.704
+  end_s: 965.848
+  reason: ISI outlier
+- start_s: 966.024
+  end_s: 966.344
+  reason: ISI outlier
+- start_s: 966.824
+  end_s: 967.24
+  reason: ISI outlier
+- start_s: 967.472
+  end_s: 967.64
+  reason: ISI outlier
+- start_s: 967.824
+  end_s: 968.288
+  reason: ISI outlier
+- start_s: 968.512
+  end_s: 968.904
+  reason: ISI outlier
+- start_s: 969.128
+  end_s: 969.744
+  reason: ISI outlier
+- start_s: 980.856
+  end_s: 981.024
+  reason: ISI outlier
+- start_s: 982.984
+  end_s: 983.12
+  reason: ISI outlier
+- start_s: 991.584
+  end_s: 991.728
+  reason: ISI outlier
+- start_s: 992.408
+  end_s: 992.544
+  reason: ISI outlier
+- start_s: 1014.792
+  end_s: 1015.568
+  reason: ISI outlier
+- start_s: 1015.76
+  end_s: 1015.912
+  reason: ISI outlier
+- start_s: 1016.376
+  end_s: 1016.944
+  reason: ISI outlier
+- start_s: 1017.688
+  end_s: 1018.192
+  reason: ISI outlier
+- start_s: 1018.848
+  end_s: 1020.512
+  reason: ISI outlier
+- start_s: 1020.976
+  end_s: 1021.368
+  reason: ISI outlier
+- start_s: 1034.592
+  end_s: 1035.248
+  reason: ISI outlier
+- start_s: 1048.552
+  end_s: 1048.84
+  reason: ISI outlier
+- start_s: 0.0
+  end_s: 0.216
+  reason: non-sniff noise
+- start_s: 16.792
+  end_s: 16.872
+  reason: non-sniff noise
+- start_s: 21.0
+  end_s: 21.816
+  reason: non-sniff noise
+- start_s: 24.896
+  end_s: 24.992
+  reason: non-sniff noise
+- start_s: 71.672
+  end_s: 71.872
+  reason: non-sniff noise
+- start_s: 146.904
+  end_s: 148.048
+  reason: non-sniff noise
+- start_s: 160.328
+  end_s: 161.008
+  reason: non-sniff noise
+- start_s: 167.408
+  end_s: 167.464
+  reason: non-sniff noise
+- start_s: 171.24
+  end_s: 171.352
+  reason: non-sniff noise
+- start_s: 175.384
+  end_s: 175.464
+  reason: non-sniff noise
+- start_s: 239.24
+  end_s: 239.352
+  reason: non-sniff noise
+- start_s: 283.072
+  end_s: 283.832
+  reason: non-sniff noise
+- start_s: 383.264
+  end_s: 384.088
+  reason: non-sniff noise
+- start_s: 509.264
+  end_s: 509.528
+  reason: non-sniff noise
+- start_s: 513.096
+  end_s: 513.176
+  reason: non-sniff noise
+- start_s: 514.16
+  end_s: 514.168
+  reason: non-sniff noise
+- start_s: 514.872
+  end_s: 515.144
+  reason: non-sniff noise
+- start_s: 515.648
+  end_s: 515.848
+  reason: non-sniff noise
+- start_s: 521.48
+  end_s: 521.992
+  reason: non-sniff noise
+- start_s: 526.936
+  end_s: 527.048
+  reason: non-sniff noise
+- start_s: 527.552
+  end_s: 527.616
+  reason: non-sniff noise
+- start_s: 549.76
+  end_s: 549.824
+  reason: non-sniff noise
+- start_s: 565.64
+  end_s: 566.264
+  reason: non-sniff noise
+- start_s: 662.784
+  end_s: 663.136
+  reason: non-sniff noise
+- start_s: 753.824
+  end_s: 754.464
+  reason: non-sniff noise
+- start_s: 848.064
+  end_s: 848.512
+  reason: non-sniff noise
+- start_s: 849.312
+  end_s: 849.344
+  reason: non-sniff noise
+- start_s: 936.528
+  end_s: 936.72
+  reason: non-sniff noise
+- start_s: 938.392
+  end_s: 938.432
+  reason: non-sniff noise
+- start_s: 942.32
+  end_s: 942.392
+  reason: non-sniff noise
+- start_s: 943.072
+  end_s: 943.976
+  reason: non-sniff noise
+- start_s: 944.696
+  end_s: 945.184
+  reason: non-sniff noise
+- start_s: 1018.192
+  end_s: 1018.304
+  reason: non-sniff noise
+- start_s: 1035.248
+  end_s: 1035.752
+  reason: non-sniff noise
+- start_s: 1079.328
+  end_s: 1079.6
+  reason: non-sniff noise

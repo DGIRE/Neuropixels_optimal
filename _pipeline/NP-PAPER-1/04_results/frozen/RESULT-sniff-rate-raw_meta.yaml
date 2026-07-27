@@ -1,0 +1,42 @@
+schema:
+- session: 11-01-2021
+  n_raw_sniffs: 9015
+  n_isi_trim_valid: 8234
+  inst_rate_key: 11-01-2021__inst_rate_hz
+  isi_trim_valid_key: 11-01-2021__isi_trim_valid
+- session: 11-03-2021
+  n_raw_sniffs: 7810
+  n_isi_trim_valid: 7065
+  inst_rate_key: 11-03-2021__inst_rate_hz
+  isi_trim_valid_key: 11-03-2021__isi_trim_valid
+- session: 12-15-2021
+  n_raw_sniffs: 5877
+  n_isi_trim_valid: 5334
+  inst_rate_key: 12-15-2021__inst_rate_hz
+  isi_trim_valid_key: 12-15-2021__isi_trim_valid
+- session: 5-17-2022
+  n_raw_sniffs: 8321
+  n_isi_trim_valid: 7536
+  inst_rate_key: 5-17-2022__inst_rate_hz
+  isi_trim_valid_key: 5-17-2022__isi_trim_valid
+- session: 06-24-2022
+  n_raw_sniffs: 8228
+  n_isi_trim_valid: 7503
+  inst_rate_key: 06-24-2022__inst_rate_hz
+  isi_trim_valid_key: 06-24-2022__isi_trim_valid
+- session: 09-14-2022
+  n_raw_sniffs: 3510
+  n_isi_trim_valid: 3190
+  inst_rate_key: 09-14-2022__inst_rate_hz
+  isi_trim_valid_key: 09-14-2022__isi_trim_valid
+note: FIG-PAPER1-SNIFFRATE histogram/KDE gap-fill (2026-07-25, not a deviation). One
+  1-D float64 array per session at key '<session>__inst_rate_hz' (raw per-sniff instantaneous
+  rate, 1/ISI, Hz), restricted to control epochs ONLY -- the SAME restriction already
+  used for RESULT-sniff-rate.yaml's frozen 5-number summary (median/Q1/Q3/IQR/min/max),
+  verified bit-for-bit (median/Q1/Q3/min/max recomputed from this raw array match
+  the frozen file exactly). NOT further restricted by the ISI-percentile trim that
+  gates coherence windows -- doing so would make this array inconsistent with the
+  frozen summary it backs. A companion boolean array at '<session>__isi_trim_valid'
+  (same length, same order) marks which of these raw sniffs additionally pass the
+  ISI-percentile trim, for optional overlay/filtering without altering what the primary
+  frozen summary describes.

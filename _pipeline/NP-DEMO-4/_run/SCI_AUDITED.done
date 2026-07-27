@@ -1,0 +1,7 @@
+artifact: 05_validation/scientific_audit.md
+kind: agent
+note: ''
+recorded_by: scientific-auditor
+state: SCI_AUDITED
+timestamp: '2026-07-24T00:40:16Z'
+who: scientific-auditor

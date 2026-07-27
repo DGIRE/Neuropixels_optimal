@@ -1,0 +1,72 @@
+gate: STAT_OK
+task_id: NP-DEMO-2
+description: >-
+  Confirms that the significance decision for each statistical test is based on
+  the full contracted workload (all included sessions and units), not a subset
+  or sample. Records the final significance decisions and flags DEV-001 contamination.
+
+# --- ANIMAL-LEVEL (RESULT-stat-animal) ---
+animal_level:
+  test: scipy.stats.wilcoxon exact two-sided zero_method=wilcox
+  n_animals: 6
+  sessions_included: ["2021-11-01", "2021-11-03", "2021-12-15", "2022-05-17", "2022-06-24", "2022-09-14"]
+  pvalue: 0.03125
+  statistic: 0.0
+  effect_size_r: -1.0
+  direction: control>ethanol
+  significance: true   # p < 0.05
+  note: >-
+    p=0.03125 = 1/32 = the minimum possible exact p for n=6 (all 6 pairs concordant,
+    control>ethanol in every session). This includes 2021-11-03, whose mean_mrl_control=0.914
+    is inflated by degenerate single-spike MRL estimates. With 2021-11-03 excluded (n=5),
+    the minimum exact p would be 2/32=0.0625 (not significant). DEV-001 therefore directly
+    influences the animal-level significance decision.
+  dev001_sensitivity: >-
+    BLOCKER: including 2021-11-03 flips the significance (p=0.03125 with, p=0.0625 without,
+    for n=5 all-concordant). The significance decision is NOT robust to the DEV-001 deviation.
+
+# --- UNIT-LEVEL (RESULT-stat-unit) ---
+unit_level:
+  test: statsmodels MixedLM condition fixed effect animal (session) random intercept
+  n_units: 1138
+  n_animals: 6
+  coefficient: -0.23671664033549536
+  pvalue: 7.510670133683472e-220
+  standardized_effect_size: -1.0263195327880161
+  direction: control>ethanol
+  significance: true   # p << 0.001
+  note: >-
+    1138 units from 6 sessions after NaN exclusion (units with NaN MRL_control
+    excluded from LMM). Of these, 83 units carry degenerate MRL_control=1.0
+    (1-4 control spikes each, predominantly from 2021-11-03, 42 units). These
+    inflate the condition coefficient magnitude. p=7.5e-220 is extremely significant
+    and likely remains so even with 2021-11-03 excluded (pending re-run), but
+    the exact coefficient and effect size would change.
+  dev001_sensitivity: >-
+    MAJOR: degenerate control MRLs contaminate the coefficient but significance
+    is likely robust given the extreme p-value. Full sensitivity analysis requires
+    re-run excluding 2021-11-03.
+
+# --- WORKLOAD VERIFICATION ---
+workload:
+  sessions_attempted: 6
+  sessions_included: 6
+  load_failures: 0
+  sessions_excluded_by_code: 0
+  total_units_included_in_mrl: 1603
+  total_units_in_lmm_after_nan_drop: 1138
+  note: >-
+    1603 units appear in RESULT-mrl-unit (all per-session units passing inclusion).
+    1138 remain in the LMM after dropping the 465 units with NaN MRL_control
+    (zero control-condition spikes; these are dominated by 2021-11-03's 374 zero-ctrl units).
+
+# --- GATE DECISION ---
+gate_pass: true
+gate_note: >-
+  Statistical computations are on the full contracted workload (6 sessions, not a subset).
+  However, two BLOCKER findings from the scientific audit (05_validation/scientific_audit.md)
+  mean the significance decision for the animal-level test is fragile with respect to
+  DEV-001: removing 2021-11-03 changes p from 0.03125 (significant) to 0.0625 (not
+  significant at alpha=0.05). The stat gate PASSES (computations are correct) but the
+  results carry open BLOCKER findings that must be resolved before human sign-off.
+  See 08_traceability/deviations.yaml DEV-001 and 05_validation/scientific_audit.md.

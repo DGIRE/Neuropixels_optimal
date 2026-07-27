@@ -1,0 +1,417 @@
+# Contract spec for NP-DEMO-3 — authored from "NP-DEMO-3 request.docx"
+# (canonical_request.yaml: REQ-NP-DEMO-3), per Blueprint v2 P2 (D9).
+#
+# Scope:
+#  * ethanol-vs-control sniff-phase locking of OB single units, using the SNF
+#    sensor (NOT LFP) and the validated compute_sniff_phase / compute_spike_phase
+#  * a NEW ethanol-contact detection algorithm (mean-subtract ETH, threshold 0.05)
+#    that is explicitly NOT the existing threshold_eth.py kernel function -> this
+#    is a new, not-yet-validated kernel function (see open_decisions/OPEN-001);
+#    per D7/D9 this contract does NOT authorize editing threshold_eth.py, the
+#    kernel, Golden Fixtures, or any tolerance file to accommodate it.
+#  * TWO separate report deliverables: an interim Methods/QC document and a
+#    Results document, each with their own figures (D11: figure + report
+#    contracts are fixed here, before any result exists)
+#  * every clause below carries docx_source_refs (>=1 item_id from
+#    01_request/canonical_request.yaml) per D5
+#
+# Every unresolved scientific/methodological choice is deferred to
+# open_decisions (gate A blocks approval until these are resolved by a human).
+task_id: NP-DEMO-3
+contract_version: 1
+analysis:
+  scientific_question:
+    description: >-
+      Does ethanol exposure alter the phase-locking of olfactory-bulb single-unit
+      spikes to the sniff (SNF sensor) signal phase, relative to control periods,
+      both at the individual-unit population level and at the animal/experiment
+      level?
+    docx_source_refs: [PROH-001]
+  status: confirmatory
+  risk: red   # new (not-yet-validated) ethanol-detection algorithm + two-level
+              # inferential stats (LME + paired Wilcoxon) + multi-document,
+              # multi-figure, report-critical deliverable -> request Opus model
+  experimental_structure:
+    description: >-
+      Units are nested within animal/experiment (6 sessions = 6 animals/experiments).
+      The animal/experiment is the independent unit for the animal-level test
+      (paired Wilcoxon on per-experiment mean per-unit MRL). The unit-level test
+      (LME) treats units as the observation but corrects for non-independence via
+      a random intercept for animal/experiment, so units nested within the same
+      animal are not pseudoreplicated.
+    docx_source_refs: [DATA-001, PROH-003]
+  inputs:
+    - {object: D-dict, from: load_experiment_data, fields: [SNF, ETH, sp.st, sp.clu, unitIDs, LV_Fs, unitDepths, unitAmps, unitFiringRate, xcoords, ycoords], docx_source_refs: [DATA-001]}
+    - {object: SNF, description: raw sniff-sensor signal used for sniff detection/phase (NOT the LFP), rate_Hz_source: LV_Fs, docx_source_refs: [PROH-001]}
+    - {object: ETH, description: raw ethanol-trace signal; mean-subtracted per-experiment before thresholding, docx_source_refs: [PROH-002]}
+    - {object: spike_times, source: Kilosort dir via load_experiment_data (requires _fix_ks_dir for 2022-09-14, multi-shank session), units: seconds, docx_source_refs: [DATA-001]}
+  required_validated_functions:
+    - {name: compute_sniff_phase, module: "Optimized Python/analyses/compute_sniff_phase.py", usage: "sniff detection + phase; threshold_std=-0.5 PINNED (default, do not change)", docx_source_refs: [PROH-001]}
+    - {name: compute_spike_phase, module: "Optimized Python/analyses/compute_spike_phase.py", usage: "assign each spike its SNF phase (spike_SNF_PH); valid spike = spike_SNF_PH >= 0", docx_source_refs: [PROH-001]}
+    - {name: compute_sniff_psth, module: "Optimized Python/analyses/compute_sniff_psth.py", usage: "sniff-locked PSTHs for QC strongest/weakest figure and Results examples figure", docx_source_refs: [OUT-001, PROH-003]}
+    - {name: plot_unit_locations, module: "Optimized Python/plot_unit_locations.py", usage: "adapted (not edited) for per-unit probe-location inset in the examples figure; see OPEN-004 for layout resolution", docx_source_refs: [PROH-003]}
+    - {name: load_experiment_data, module: "Optimized Python/load_experiment_data.py", usage: "standard D-dict loader; MUST apply _fix_ks_dir() helper for the 2022-09-14 session (multi-shank, KS output one level deeper)", docx_source_refs: [DATA-001]}
+  new_kernel_functions_required:
+    - name: detect_eth_contact
+      proposed_signature: "detect_eth_contact(D, eth_threshold=0.05)"
+      algorithm: >-
+        Subtract the mean of the ENTIRE ETH time series for the experiment,
+        then threshold the mean-subtracted trace at 0.05: samples strictly
+        above 0.05 are "ethanol present", samples at or below 0.05 are
+        "control". n_trials for the experiment = count of discrete contiguous
+        runs of samples above threshold.
+      status: >-
+        NOT YET VALIDATED — no MATLAB reference exists for this function.
+        Fixture will be established from the first validated implementation
+        run: the initial outputs (binary mask, n_trials) across the six
+        sessions become the golden slice for regression testing. The
+        implementation must be code-reviewed and the outputs inspected
+        manually before the fixture is locked in.
+      constraint: >-
+        This is a NEW algorithm, distinct from and NOT a reuse of the existing
+        threshold_eth.py kernel function (which does floor-clipping at 0.11).
+        Per D7/D9 this contract does not authorize editing threshold_eth.py or
+        any existing kernel/fixture/tolerance file; detect_eth_contact must be
+        implemented, code-reviewed, and fixture-gated before P3 execution
+        proceeds. OPEN-001 resolved: no MATLAB reference; fixture from first run.
+      docx_source_refs: [PROH-002]
+  analysis_definition:
+    description: >-
+      Per experiment: (1) detect ethanol-contact periods from the ETH trace via
+      the new detect_eth_contact (mean-subtract, threshold 0.05, fixed rule, no
+      per-experiment adjustment); (2) detect sniffs and instantaneous sniff phase
+      from the SNF signal via the validated compute_sniff_phase (threshold_std
+      default -0.5, pinned); (3) assign each spike its sniff phase via the
+      validated compute_spike_phase, keeping only spikes with spike_SNF_PH >= 0
+      (valid/non-noise sniff segments) and logging/discarding the rest; (4) apply
+      unit inclusion criteria (firing rate, valid-sniff spike count); (5) per
+      included unit, compute MRL and preferred phase of valid-sniff spikes
+      separately for the ethanol and control conditions (defined by the
+      detect_eth_contact mask), plus a condition-agnostic MRL pooling both
+      conditions' valid-sniff spikes; (6) test ethanol-vs-control phase locking
+      at the unit-population level (LME, random intercept for animal) and at the
+      animal/experiment level (paired exact two-sided Wilcoxon on per-experiment
+      mean per-unit MRL).
+    docx_source_refs: [PROH-001, PROH-002, PROH-003]
+  preprocessing:
+    - {step: "For each of the 6 sessions, subtract the mean of the ENTIRE ETH time series, then threshold the mean-subtracted trace at 0.05 (above = ethanol, at/below = control) via the new detect_eth_contact; count contiguous above-threshold runs as n_trials. Apply this identical fixed rule to all six sessions with no per-experiment adjustment.", docx_source_refs: [PROH-002]}
+    - {step: "For each session, compute sniff phase from SNF via compute_sniff_phase(D, threshold_std=-0.5) (validated kernel default, pinned).", docx_source_refs: [PROH-001]}
+    - {step: "Assign each spike its sniff phase via compute_spike_phase; a spike is valid only if spike_SNF_PH >= 0.", docx_source_refs: [PROH-001]}
+    - {step: "Log every discarded SNF section (spike_SNF_PH < 0 / non-sniffing / noise segments) per experiment with start_s, end_s, and reason; discard those spikes from all downstream analysis.", docx_source_refs: [PROH-001, OUT-001]}
+    - {step: "Apply unit inclusion criteria: overall firing rate >= 0.1 Hz AND >= 50 valid-sniff spikes combined across ethanol + control conditions.", docx_source_refs: [CON-001]}
+  aggregation:
+    - {step: "Per included unit: MRL and preferred phase of valid-sniff spikes, computed separately for ethanol and control conditions (per the detect_eth_contact mask).", docx_source_refs: [PROH-001]}
+    - {step: "Per included unit: condition-agnostic MRL, pooling all valid-sniff spikes across both conditions -- used only to select the strongest/weakest QC PSTH examples (global across all experiments, not per-experiment pairs).", docx_source_refs: [OUT-001]}
+    - {step: "Per experiment: mean per-unit MRL, separately for ethanol and control, for the animal-level paired test.", docx_source_refs: [PROH-003]}
+    - {step: "Per included unit: delta_MRL = |MRL_ethanol - MRL_control|, used to rank the top-5 example units (from experiments with > 500 spikes per unit per condition).", docx_source_refs: [PROH-003]}
+  statistical_model:
+    - level: unit_population
+      method: >-
+        Linear mixed-effects model (statsmodels MixedLM): per-unit MRL ~
+        condition (fixed effect: ethanol vs control) + (1 | animal/experiment)
+        random intercept, so units nested within the same animal are corrected
+        for. Single population model -- report the condition fixed-effect exact
+        p and the standardized fixed-effect estimate as the effect size; no
+        per-unit multiple-comparison correction is applied. OPEN-002 resolved:
+        the Wald z-approximation (statsmodels MixedLM under REML) is the
+        accepted convention for "exact p" in this contract; Satterthwaite
+        df correction is NOT required.
+      docx_source_refs: [PROH-003]
+    - level: animal_experiment
+      method: >-
+        Paired, exact, two-sided Wilcoxon signed-rank test comparing each
+        experiment mean per-unit MRL (ethanol vs control). Report the exact
+        p and matched-pairs rank-biserial r as the effect size.
+      docx_source_refs: [PROH-003]
+  multiple_comparison:
+    description: >-
+      None. The unit-level test is a single population LME model (condition is
+      one fixed effect, not per-unit repeated tests). The animal-level test is a
+      single paired test across the 6 experiments. No correction is contracted
+      for either.
+    docx_source_refs: [PROH-003]
+  randomization_seed: "5489"
+  inclusion_exclusion:
+    - {rule: "Unit included only if overall firing rate >= 0.1 Hz AND >= 50 valid-sniff spikes combined across ethanol + control conditions.", docx_source_refs: [CON-001]}
+    - {rule: "Spike included only if spike_SNF_PH >= 0 (falls within a validly detected sniff cycle, per compute_sniff_phase / compute_spike_phase).", docx_source_refs: [PROH-001]}
+    - {rule: "Every discarded SNF section is logged (experiment, start_s, end_s, reason) for the Methods/QC document -- no silent discards.", docx_source_refs: [OUT-001]}
+    - {rule: "For the top-5 |delta_MRL| examples figure, additionally require > 500 spikes in each selected unit in EACH condition (ethanol and control separately); units/experiments not meeting this are excluded from the examples ranking regardless of delta_MRL.", docx_source_refs: [PROH-003]}
+    - {rule: "Ethanol vs control condition is defined solely by the detect_eth_contact mask (mean-subtracted ETH thresholded at 0.05), identical fixed rule for all 6 sessions, no per-experiment adjustment.", docx_source_refs: [PROH-002]}
+  data_provenance:
+    description: >-
+      Six sessions under C:\Projects\Repos\Neuropixels\DATA: 2021-11-01,
+      2021-11-03, 2021-12-15, 2022-05-17, 2022-06-24, 2022-09-14. The 2022-09-14
+      session is multi-shank and requires the _fix_ks_dir() helper in
+      load_experiment_data (KS output one directory level deeper). OPEN-003
+      resolved: 2021-11-03 is INCLUDED; detect_eth_contact will determine
+      from the data whether usable control periods exist for this session.
+      If detect_eth_contact finds no control samples for 2021-11-03, that
+      session is logged as excluded with reason "no control periods detected"
+      and dropped from all downstream statistics.
+    docx_source_refs: [DATA-001]
+  required_outputs:
+    - {result_id: RESULT-eth-mask, type: table, desc: "Per-experiment mean-subtracted ETH trace, binary ethanol-contact mask, and n_trials (count of discrete contiguous above-threshold runs).", docx_source_refs: [PROH-002]}
+    - {result_id: RESULT-sniff-qc, type: table, desc: "Per-experiment n_sniffs detected, n_neurons recorded, n_trials used, experiment duration (min), and percent of time with usable sniffs. OPEN-005 resolved: pct_usable_sniff_time = (sum of detected sniff-cycle durations in seconds) / (total recording duration in seconds) x 100.", docx_source_refs: [OUT-001]}
+    - {result_id: RESULT-discard-log, type: table, desc: "Per-experiment table of discarded SNF sections: start_s, end_s, reason.", docx_source_refs: [PROH-001, OUT-001]}
+    - {result_id: RESULT-mrl-per-unit, type: table, desc: "Per-unit table: unit_id, experiment, MRL_ethanol, preferred_phase_eth, n_valid_spikes_eth, MRL_control, preferred_phase_ctrl, n_valid_spikes_ctrl, MRL_cond_agnostic, delta_MRL.", docx_source_refs: [PROH-001, PROH-003]}
+    - {result_id: RESULT-mrl-per-experiment, type: table, desc: "Per-experiment table: mean per-unit MRL_ethanol, mean per-unit MRL_control.", docx_source_refs: [PROH-003]}
+    - {result_id: RESULT-lme, type: object, desc: "LME model result: condition fixed-effect exact p, standardized fixed-effect estimate (effect size), model formula, n_units, n_experiments.", docx_source_refs: [PROH-003]}
+    - {result_id: RESULT-wilcoxon, type: object, desc: "Paired exact two-sided Wilcoxon result: statistic, exact p, matched-pairs rank-biserial r, n_pairs.", docx_source_refs: [PROH-003]}
+    - {result_id: RESULT-examples-top5, type: table, desc: "Top-5 units by |delta_MRL| (from experiments/units with > 500 spikes per condition): unit_id, experiment, delta_MRL.", docx_source_refs: [PROH-003]}
+  acceptance_criteria:
+    - {output_id: RESULT-eth-mask, level: 1, tolerance: "binary mask and integer n_trials must match exactly (deterministic threshold rule, no tolerance)", comparison_method: exact}
+    - {output_id: RESULT-sniff-qc, level: 2, tolerance: "n_sniffs / n_neurons / n_trials exact integers; duration_min within 1e-3 min; pct_usable_sniff_time within 0.01 percentage points, all on fixture slice", comparison_method: numeric}
+    - {output_id: RESULT-discard-log, level: 1, tolerance: "exact enumeration of discarded intervals (start_s/end_s within 1e-6 s of detected boundary) and exact reason string match", comparison_method: exact}
+    - {output_id: RESULT-mrl-per-unit, level: 3, tolerance: "MRL and preferred phase within 1e-6 on fixture slice; distributional agreement on full workload", comparison_method: distributional}
+    - {output_id: RESULT-mrl-per-experiment, level: 3, tolerance: "derived per-experiment means within 1e-6 on fixture slice; distributional agreement on full workload", comparison_method: distributional}
+    - {output_id: RESULT-lme, level: 3, tolerance: "same significance decision (alpha=0.05) on full workload; standardized fixed-effect estimate within 1e-4 on fixture slice", comparison_method: statistical_decision}
+    - {output_id: RESULT-wilcoxon, level: 3, tolerance: "same significance decision (alpha=0.05) on full workload; exact p within 1e-6 and rank-biserial r within 1e-4 on fixture slice", comparison_method: statistical_decision}
+    - {output_id: RESULT-examples-top5, level: 1, tolerance: "exact set of the 5 (unit_id, experiment) pairs must match the ranked selection; ties broken by unit_id ascending", comparison_method: exact}
+  prohibited_changes:
+    - {change: "Using the LFP instead of the SNF signal for sniff/spike phase — SNF is required.", docx_source_refs: [PROH-001]}
+    - {change: "Using the raw (non mean-subtracted) ETH signal for ethanol-contact thresholding.", docx_source_refs: [PROH-002]}
+    - {change: "Reusing the existing threshold_eth.py kernel function (floor-clip at 0.11) in place of the new mean-subtract/0.05-threshold detect_eth_contact algorithm — they are not equivalent.", docx_source_refs: [PROH-002]}
+    - {change: "Including spikes/SNF sections with spike_SNF_PH < 0 (noise/non-sniffing) in any locking statistic.", docx_source_refs: [PROH-001]}
+    - {change: "Per-experiment adjustment of the 0.05 ethanol-contact threshold — the identical fixed rule must apply to all 6 sessions.", docx_source_refs: [PROH-002]}
+    - {change: "Applying multiple-comparison correction to the single population LME condition fixed effect.", docx_source_refs: [PROH-003]}
+    - {change: "Editing kernel files under 'Optimized Python/' (including threshold_eth.py), Golden Fixtures, or any tolerance config to accommodate detect_eth_contact or any other new function.", docx_source_refs: [PROH-001, PROH-002]}
+    - {change: "Changing the compute_sniff_phase default threshold_std (-0.5) without human sign-off.", docx_source_refs: [PROH-001]}
+  failure_conditions:
+    - {condition: "detect_eth_contact cannot be executed/validated because no fixture exists (blocks P3 until OPEN-001 is resolved).", docx_source_refs: [PROH-002]}
+    - {condition: "An experiment yields zero ethanol-contact runs or zero control samples under the fixed 0.05 rule (see OPEN-003).", docx_source_refs: [PROH-002, DATA-001]}
+    - {condition: "SNF / spike clock misalignment detected for a session.", docx_source_refs: [DATA-001]}
+    - {condition: "Fixture-slice disagreement beyond the pinned tolerance for any output.", docx_source_refs: [PROH-001]}
+figures:
+  - figure_id: FIG-DEMO3-QC-SNIFF
+    title: "Methods: per-experiment sniffing and ethanol-contact examples"
+    docx_source_refs: [OUT-001]
+    scientific_purpose: >-
+      For each of the 6 experiments, show a representative example of the SNF
+      signal (with detected sniff onsets) and the concurrent mean-subtracted
+      ETH signal (with detected ethanol contact), so the reader can see exactly
+      what thresholds produced the sniff/condition calls used downstream.
+    required: true
+    source_results: [RESULT-eth-mask, RESULT-sniff-qc, RESULT-discard-log]
+    axis_requirements:
+      x_label: "time (s)"
+      y_label: "SNF_z (top panel) / mean-subtracted ETH (a.u., bottom panel)"
+      zero_reference: true
+      log_scale: false
+      truncation_permitted: false
+    visual_encoding:
+      condition_mapping: {sniff_onset_threshold: "red dashed line at threshold_std=-0.5 (top panel)", ethanol_contact_threshold: "red dashed line at 0.05 (bottom panel)"}
+      raw_data_also_available: true
+    statistical_annotations:
+      permitted_tests: []
+      exact_p_values: false
+      significance_stars: false
+    quality: {vector: true, raster_dpi: 300, colorblind_review: true, min_font: 7, truncation_permitted: false}
+    caption_requirements:
+      - "one two-panel block per experiment, labeled by session date"
+      - "both red-dashed thresholds (sniff-onset -0.5, ethanol-contact 0.05) shown on the correct panel"
+      - "state n_sniffs, n_neurons, n_trials, duration_min, and pct_usable_sniff_time per experiment, computed from RESULT-sniff-qc, never typed by hand"
+  - figure_id: FIG-DEMO3-QC-PSTH
+    title: "Methods: sniff-locked PSTH examples (strongest and weakest phase-locking units)"
+    docx_source_refs: [OUT-001]
+    scientific_purpose: >-
+      Show sniff-locked PSTHs for the single unit with the strongest and the
+      single unit with the weakest condition-agnostic phase locking (MRL
+      pooled across ethanol + control valid-sniff spikes), selected globally
+      across all experiments (two units total, not one pair per experiment).
+    required: true
+    source_results: [RESULT-mrl-per-unit]
+    axis_requirements:
+      x_label: "sniff phase (cycle time, s)"
+      y_label: "spike rate (Hz)"
+      zero_reference: true
+      log_scale: false
+      truncation_permitted: false
+    visual_encoding:
+      condition_mapping: {strongest_locking_unit: solid, weakest_locking_unit: dashed}
+      raw_data_also_available: true
+    statistical_annotations:
+      permitted_tests: []
+      exact_p_values: false
+      significance_stars: false
+    quality: {vector: true, raster_dpi: 300, colorblind_review: true, min_font: 7, truncation_permitted: false}
+    caption_requirements:
+      - "identify each unit's experiment/session date and its condition-agnostic MRL (computed from RESULT-mrl-per-unit, not typed)"
+      - "state the selection rule used: strongest/weakest MRL_cond_agnostic across all experiments combined"
+  - figure_id: FIG-DEMO3-RESULTS-ANIMAL
+    title: "Results: experiment-level MRL comparison (ethanol vs control)"
+    docx_source_refs: [PROH-003]
+    scientific_purpose: >-
+      Show the paired, per-experiment shift in mean per-unit MRL between
+      ethanol and control, supporting the animal-level Wilcoxon result.
+    required: true
+    source_results: [RESULT-mrl-per-experiment, RESULT-wilcoxon]
+    axis_requirements:
+      x_label: "condition (control, ethanol)"
+      y_label: "mean per-unit MRL"
+      zero_reference: true
+      log_scale: false
+      truncation_permitted: false
+    visual_encoding:
+      condition_mapping: {control: filled_marker, ethanol: open_marker}
+      raw_data_also_available: true
+    statistical_annotations:
+      permitted_tests: [paired_wilcoxon_signed_rank]
+      exact_p_values: true
+      significance_stars: false
+    quality: {vector: true, raster_dpi: 300, colorblind_review: true, min_font: 7, truncation_permitted: false}
+    caption_requirements:
+      - "state n_experiments, exact p, and rank-biserial r from RESULT-wilcoxon (computed, never typed)"
+      - "show individual experiment paired points plus the summary statistic"
+    sketch_guidance:
+      source: "figure_examples/Demo figure.bmp"
+      note: NON-BINDING — presentation/layout intent only, per §10.
+      intent: >-
+        Follow the general layout implied by the included sketch for how the
+        paired experiment-level comparison is laid out. Layout/overlay/marker
+        style only — values, N, error bars, axis units, exact p, effect size,
+        and no-truncation all come from the contract + RESULT-mrl-per-experiment
+        / RESULT-wilcoxon, never from the sketch.
+  - figure_id: FIG-DEMO3-RESULTS-UNIT
+    title: "Results: unit-level MRL comparison (LME, ethanol vs control)"
+    docx_source_refs: [PROH-003]
+    scientific_purpose: >-
+      Show the population-level (per-unit) shift in MRL between ethanol and
+      control that underlies the LME condition fixed effect.
+    required: true
+    source_results: [RESULT-mrl-per-unit, RESULT-lme]
+    axis_requirements:
+      x_label: "condition (control, ethanol)"
+      y_label: "per-unit MRL"
+      zero_reference: true
+      log_scale: false
+      truncation_permitted: false
+    visual_encoding:
+      condition_mapping: {control: filled_marker, ethanol: open_marker}
+      raw_data_also_available: true
+    statistical_annotations:
+      permitted_tests: [linear_mixed_effects_model]
+      exact_p_values: true
+      significance_stars: false
+    quality: {vector: true, raster_dpi: 300, colorblind_review: true, min_font: 7, truncation_permitted: false}
+    caption_requirements:
+      - "state n_units, n_experiments, exact p, and standardized fixed-effect estimate from RESULT-lme (computed, never typed)"
+      - "per-unit points shown as raw data (e.g. scatter/strip), not just a summary bar"
+  - figure_id: FIG-DEMO3-EXAMPLES
+    title: "Results: top-5 units by |delta_MRL| — sniff-locked PSTHs and probe maps"
+    docx_source_refs: [PROH-003]
+    scientific_purpose: >-
+      Illustrate the 5 units showing the largest absolute change in phase
+      locking between conditions, with their sniff-locked PSTHs and their
+      recording location on the Neuropixels probe.
+    required: true
+    source_results: [RESULT-examples-top5, RESULT-mrl-per-unit]
+    axis_requirements:
+      x_label: "sniff phase (cycle time, s) [PSTH sub-panel]; probe depth (um) [map sub-panel]"
+      y_label: "spike rate (Hz) [PSTH sub-panel]; probe x-position [map sub-panel]"
+      zero_reference: true
+      log_scale: false
+      truncation_permitted: false
+    visual_encoding:
+      condition_mapping: {ethanol: solid, control: dashed}
+      raw_data_also_available: true
+    statistical_annotations:
+      permitted_tests: []
+      exact_p_values: false
+      significance_stars: false
+    quality: {vector: true, raster_dpi: 300, colorblind_review: true, min_font: 7, truncation_permitted: false}
+    caption_requirements:
+      - "one row per example unit (5 rows): (a) sniff-locked PSTH, ethanol + control overlaid; (b) full plot_unit_locations() layout (probe map + depth histogram + FR histogram) with the target unit highlighted in the probe panel. OPEN-004 resolved: full layout required."
+      - "label each unit with its experiment/session date and delta_MRL, computed from RESULT-examples-top5, never typed"
+      - "only units from experiments meeting the > 500 spikes per unit per condition rule (enforced upstream in RESULT-examples-top5)"
+report:
+  methods_report:
+    output_filename: NP-DEMO-3_methods.docx
+    docx_source_refs: [OUT-001]
+    intended_audience: lab + demo (interim QC deliverable)
+    scientific_status: interim
+    separate_from_results_report: true
+    required_sections: [Methods, QC Figures, Per-Experiment Table, Discard Log]
+    required_figures: [FIG-DEMO3-QC-SNIFF, FIG-DEMO3-QC-PSTH]
+    required_tables: [RESULT-sniff-qc, RESULT-discard-log]
+    reporting_rules:
+      exact_N: true
+      report_exclusions: true
+      report_effect_sizes: false
+      report_exact_p: false
+      prohibit_causal_language: true
+      prohibit_uncontracted_post_hoc: true
+      separate_qc_document_required: true
+  results_report:
+    output_filename: NP-DEMO-3_results.docx
+    docx_source_refs: [PROH-003]
+    intended_audience: lab + demo
+    scientific_status: confirmatory
+    required_sections: [Question, Methods, Results, Figure, Limitations]
+    required_figures: [FIG-DEMO3-RESULTS-ANIMAL, FIG-DEMO3-RESULTS-UNIT, FIG-DEMO3-EXAMPLES]
+    required_tables: [RESULT-mrl-per-unit, RESULT-mrl-per-experiment]
+    reporting_rules:
+      exact_N: true
+      report_exclusions: true
+      report_effect_sizes: true
+      report_exact_p: true
+      prohibit_causal_language: false
+      prohibit_uncontracted_post_hoc: true
+      separate_qc_document_required: false
+  appendices:
+    - "Methods report (NP-DEMO-3_methods.docx) is a SEPARATE document from the Results report (NP-DEMO-3_results.docx), per OUT-001 / PROH-001 (two reports and sets of figures required)."
+open_decisions:
+  - id: OPEN-001
+    question: >-
+      detect_eth_contact (mean-subtract ETH then threshold at 0.05) — does a
+      MATLAB reference exist, and what constitutes its fixture?
+    resolution: >-
+      No MATLAB reference exists. Fixture will be established from the first
+      validated implementation run: initial outputs (binary mask, n_trials)
+      across the six sessions become the golden slice for regression testing.
+      Code review and manual inspection of outputs required before the fixture
+      is locked in.
+    blocks_approval: false
+    resolved_by: David Gire
+    docx_source_refs: [PROH-002]
+  - id: OPEN-002
+    question: >-
+      "Exact p" for the unit-level LME — Satterthwaite df correction or
+      statsmodels z-approximation?
+    resolution: >-
+      The Wald z-approximation (statsmodels MixedLM under REML) is acceptable
+      as "exact p" for this contract. Satterthwaite correction is NOT required.
+    blocks_approval: false
+    resolved_by: David Gire
+    docx_source_refs: [PROH-003]
+  - id: OPEN-003
+    question: >-
+      Should session 2021-11-03 be excluded a priori (NP-DEMO-1 precedent)
+      or left to detect_eth_contact to decide?
+    resolution: >-
+      Include 2021-11-03 and let detect_eth_contact determine from the data
+      whether usable control periods exist. If none are found, log the session
+      as excluded with reason "no control periods detected" and drop from all
+      downstream statistics.
+    blocks_approval: false
+    resolved_by: David Gire
+    docx_source_refs: [DATA-001, PROH-002]
+  - id: OPEN-004
+    question: >-
+      Full plot_unit_locations() layout or simplified depth-only panel for the
+      FIG-DEMO3-EXAMPLES probe insets?
+    resolution: >-
+      Full plot_unit_locations() layout (probe map + depth histogram + FR
+      histogram), with the target unit highlighted in the probe panel.
+    blocks_approval: false
+    resolved_by: David Gire
+    docx_source_refs: [PROH-003]
+  - id: OPEN-005
+    question: >-
+      "% time with usable sniffs": sample-count-based or cycle-duration-based?
+    resolution: >-
+      Cycle-duration-based: pct_usable_sniff_time = (sum of detected
+      sniff-cycle durations in seconds) / (total recording duration in
+      seconds) × 100.
+    blocks_approval: false
+    resolved_by: David Gire
+    docx_source_refs: [OUT-001]

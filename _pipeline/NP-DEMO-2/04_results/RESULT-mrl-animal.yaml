@@ -1,0 +1,25 @@
+sessions:
+- session: '2021-11-01'
+  mean_mrl_ethanol: 0.01202463294885257
+  mean_mrl_control: 0.2114962315044155
+  n_units_included: 232
+- session: '2021-11-03'
+  mean_mrl_ethanol: 0.016390635932362417
+  mean_mrl_control: 0.9137961423080561
+  n_units_included: 429
+- session: '2021-12-15'
+  mean_mrl_ethanol: 0.01612986546808727
+  mean_mrl_control: 0.11754259148176333
+  n_units_included: 236
+- session: '2022-05-17'
+  mean_mrl_ethanol: 0.07180189755190818
+  mean_mrl_control: 0.14228948232442543
+  n_units_included: 109
+- session: '2022-06-24'
+  mean_mrl_ethanol: 0.043086287123129535
+  mean_mrl_control: 0.39062232426901883
+  n_units_included: 287
+- session: '2022-09-14'
+  mean_mrl_ethanol: 0.025158978043861156
+  mean_mrl_control: 0.2529515910084973
+  n_units_included: 310

@@ -1,0 +1,57 @@
+ ---
+  OPEN-001 — Instantaneous sniff rate algorithm [blocks_approval]
+
+  Ref: RQ-002
+  The request says "log the instantaneous sniff rate at each timepoint" but doesn't specify the method. The SNF field is
+  a raw pressure trace. Which algorithm should compute_sniff_rate use?
+  - ANSWER:(a) Detect sniff onsets via threshold/peak-finding on SNF → compute inter-onset intervals → interpolate 1/ISI to
+  each LV sample
+
+  ---
+  OPEN-002 — Time axis and window for Figures 1–3 [blocks_approval]
+
+  Ref: OUT-003, OUT-004, OUT-005
+  Each figure shows "time on the x-axis" within a trial, but the request doesn't specify:
+ANSWERS: time reference: for whole trial analyses and displays use time reference LabView trial start (TS=0) with window being the entire trial.
+
+
+  ---
+  OPEN-003 — "Control period before that contact" (CON-003) [blocks_approval]
+
+  Ref: CON-003
+  CON-003 says to compare sniff rate "within the first ethanol contact" vs "the control period before that contact."
+  Options:
+  - ANSWER: (a) The LabView pre-valve window (TS = 0–10 s per experimental conventions)
+
+  ---
+  OPEN-004 — "Average ethanol contacts per trial" semantics (OUT-001) [blocks_approval]
+
+  Ref: OUT-001, PROH-001
+  Under PROH-001, n_trials = count of discrete contact events, making "contacts per trial" = 1.0 trivially. The
+  statistic only carries information if "trial" here means a conventionally structured LabView trial (TR field, 0–20 s).
+  Which meaning is intended? ANSWER: "trial" means a conventionally structured LabView trial (TR field).
+
+  ---
+  OPEN-005 — "Average sniffs per trial" counting method (OUT-001) [blocks_approval]
+
+  Ref: OUT-001, RQ-002
+  What constitutes one "sniff" (onset detection? full cycle?), counted over what period (per contact event? per LabView
+  trial?), and using which detection method (same as OPEN-001)? ANSWER: detection method - see answer 1. Counted per LabView trial.
+
+  ---
+  OPEN-006 — Statistical test for CON-003 [blocks_approval]
+
+  Ref: CON-003
+  The request says "perform statistical analysis across animals" but does not name the test. Candidates:
+ 
+ ANSWER - (b) Exact two-sided Wilcoxon signed-rank test (precedent from NP-DEMO-3)
+
+  Also: which effect size measure (Cohen's d, rank-biserial r)?
+ANSWER: r
+  ---
+  OPEN-007 — Animal-to-session mapping [blocks_approval]
+
+  Ref: CON-003, DATA-002
+  CON-003 requires "averaging within animal" and testing "across animals." Are the 6 sessions (2021-11-01, 2021-11-03,
+  2021-12-15, 2022-05-17, 2022-06-24, 2022-09-14) each from a distinct animal, or do some share an animal? This
+  determines n_animals and whether a nested statistical model is needed. ANSWER: Each is from a distinct animal. One animal per session.
